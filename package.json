@@ -1,0 +1,35 @@
+{
+  "name": "crimsonlevelsbot",
+  "version": "2.0.0",
+  "description": "A Leveling Bot that stays a Leveling Bot and nothing more",
+  "main": "index.js",
+  "dependencies": {
+    "canvas": "^2.6.1",
+    "bufferutil": "^4.0.1",
+    "discord.js": "^12.2.0",
+    "erlpack": "^0.1.3",
+    "libsodium-wrappers": "^0.7.6",
+    "utf-8-validate": "^5.0.2",
+    "zlib-sync": "^0.1.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TwilightZebby/CrimsonLevelsBot.git"
+  },
+  "keywords": [
+    "discordjs",
+    "discord",
+    "discord-bot",
+    "nodejs"
+  ],
+  "author": "TwilightZebby",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TwilightZebby/CrimsonLevelsBot/issues"
+  },
+  "homepage": "https://github.com/TwilightZebby/CrimsonLevelsBot#readme"
+}
