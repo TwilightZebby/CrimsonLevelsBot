@@ -114,6 +114,79 @@ client.once('ready', async () => {
 
 
 
+
+// ********** BOT_JOIN_GUILD EVENT
+// Fetch functions
+let log = require('./bot_modules/onEvents/log.js');
+
+client.on('guildCreate', async (guild) => {
+
+  // Log
+  await log.JoinedGuild(guild);
+
+  return;
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ********** BOT_LEAVE_GUILD EVENT
+client.on('guildDelete', async (guild) => {
+
+  // Log
+  await log.LeftGuild(guild);
+
+  return;
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ********** MESSAGE EVENT
 client.on('message', async (message) => {
 
