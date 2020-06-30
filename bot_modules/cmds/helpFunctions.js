@@ -6,6 +6,11 @@ let { PREFIX } = require('../../config.js');
 module.exports = {
     name: `help`,
     description: `Outputs Help message, changes dependant on inputs and who triggered command`,
+
+
+
+
+    // Output a list of all the commands (for all Users)
     async ListCommands(embed, message, commands) {
 
         embed.setTitle(`Command List`)
@@ -28,6 +33,176 @@ module.exports = {
 
 
         return await message.channel.send(embed);
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Search for given command
+    async CommandSearch(name, commands) {
+
+        // Check if given name is a CMD Name
+        let result = commands.get(name);
+
+        // If not, check CMD Aliases
+        if (!result) {
+
+            for ( let [key, value] of commands ) {
+
+                if ( value.aliases === undefined ) {
+                    continue;
+                }
+
+                if ( value.aliases.includes(name) ) {
+                    return command.get(key);
+                }
+
+            }
+
+        }
+        else {
+            return result;
+        }
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Output help on the specified command
+    async CommandHelp(embed, message, commands, name) {
+
+        // Search for commands
+        let command = await this.CommandSearch(name, commands);
+
+        if (!command) {
+            embed.setDescription(`Sorry, but that isn\'t a valid command.\nUse \`${PREFIX}help\` to bring up a list of all my commands!`);
+            return await message.channel.send(embed);
+        } else {
+
+            embed.setTitle(`${command.name} command`);
+
+
+            // COMMAND DETAILS
+
+            if ( command.aliases ) {
+                embed.addFields(
+                    {
+                        name: `Aliases`,
+                        value: `\u200B ${command.aliases.join(', ')}`
+                    }
+                )
+            }
+
+
+            if ( command.description ) {
+                embed.addFields(
+                    {
+                        name: `Description`,
+                        value: `\u200B ${command.description}`
+                    }
+                )
+            }
+
+
+            if ( command.usage ) {
+                embed.addFields(
+                    {
+                        name: `Usage`,
+                        value: `\u200B ${PREFIX}${command.name} ${command.usage}`
+                    }
+                )
+            }
+
+
+            if ( command.limitation ) {
+                switch (command.limitation) {
+
+                    case 'dev':
+                        embed.addFields(
+                            {
+                                name: `Limitations`,
+                                value: `\u200B Can only be used by this Bot\'s Developer`
+                            }
+                        )
+                        break;
+                    
+
+                    case 'owner':
+                        embed.addFields(
+                            {
+                                name: `Limitations`,
+                                value: `\u200B Can only be used by this Server\'s Owner`
+                            }
+                        )
+                        break;
+
+
+                    case 'admin':
+                        embed.addFields(
+                            {
+                                name: `Limitations`,
+                                value: `\u200B Can only be used by this Server\'s assigned Admins and the Server Owner`
+                            }
+                        )
+                        break;
+
+
+                    case 'mod':
+                        embed.addFields(
+                            {
+                                name: `Limitations`,
+                                value: `\u200B Can only be used by this Server\'s assigned Mods, Admins, and Server Owner`
+                            }
+                        )
+                        break;
+
+
+                    default:
+                        break;
+
+                }
+            }
+
+
+
+            // Send Embed
+            return await message.channel.send(embed);
+
+        }
 
     }
 }

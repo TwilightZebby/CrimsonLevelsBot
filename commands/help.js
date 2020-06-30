@@ -34,6 +34,14 @@ module.exports = {
         return await help.ListCommands(embed, message, commands);
 
       }
+      // ********** ARGUMENT WAS PASSED
+      else {
+
+        let name = args[0].toLowerCase();
+
+        return await help.CommandHelp(embed, message, commands, name);
+
+      }
 
 
 
