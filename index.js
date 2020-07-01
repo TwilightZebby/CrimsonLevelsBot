@@ -1,11 +1,16 @@
 // ********** Libraries required
 const fs = require('fs');
 const Discord = require('discord.js');
+const Sequelize = require('sequelize');
 
 // ********** Global Variables
 // Discord
 const { client } = require('./bot_modules/constants.js');
 let { PREFIX, TOKEN, DBLTOKEN } = require('./config.js');
+
+// Database (Sequlize)
+const { sequelize } = require('./bot_modules/constants.js');
+const Tables = require('./bot_modules/tables.js');
 
 // Maps / Collections
 client.commands = new Discord.Collection();
@@ -84,6 +89,14 @@ client.once('ready', async () => {
           status: 'online'
         });
     }, 1.08e+7);
+
+
+
+
+
+    // ***** Sync Database Tables
+    await Tables.StaffRoles.sync();
+    await Tables.StaffMembers.sync();
     
     
     console.log(`I am ready!`);
