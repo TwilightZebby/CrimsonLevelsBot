@@ -21,6 +21,11 @@ module.exports = {
     //     otherwise, comment out for everyone to be able to use
     //limitation: 'owner',
 
+    // FLAGS
+    //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
+    //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
+    //flags: [],
+
     async execute(message) {
       
       return await message.reply(`Pong! \n Your ping is ${message.client.ws.ping.toFixed(2)}ms`);

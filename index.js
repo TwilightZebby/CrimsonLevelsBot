@@ -363,7 +363,7 @@ client.on('message', async (message) => {
 
         // GUILD OWNER
         case 'owner':
-          if ( message.author.id !== ( message.guild.ownerID || '156482326887530498' ) ) {
+          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
             return await message.reply(`Sorry, but this command can only be used by the Owner of this Guild (**${message.guild.owner.displayName}**).`);
           }
           break;
