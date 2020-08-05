@@ -97,6 +97,8 @@ client.once('ready', async () => {
     // ***** Sync Database Tables
     await Tables.StaffRoles.sync();
     await Tables.StaffMembers.sync();
+    await Tables.UserXP.sync();
+    await Tables.UserPrefs.sync();
     
     
     console.log(`I am ready!`);
