@@ -23,6 +23,10 @@ for ( const file of commandFiles ) {
     client.commands.set(command.name, command);
 }
 
+// Other Stuff
+const Errors = require('./bot_modules/onEvents/errors.js');
+const Levels = require('./bot_modules/leveling/levelFunctions.js');
+
 
 
 
@@ -43,13 +47,84 @@ for ( const file of commandFiles ) {
 
 
 // ********** Debugging / Error Handling
-process.on('warning', console.warn);
-process.on('unhandledRejection', error => console.error(`Uncaught Promise Rejection\n${error}`));
+process.on('warning', async (warning) => {
 
-//client.on('debug', console.log);
-client.on('error', console.error);
-client.on('rateLimit', console.error);
-client.on('warn', console.warn);
+  // Log to console
+  console.warn(warning);
+
+  // Log to error log channel
+  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+
+  return await errorChannel.send(`\`\`\`Warning:\n
+  ${warning}
+  \`\`\``);
+
+})
+
+// Extra Error Catching
+process.on('unhandledRejection', async (error) => {
+
+  // Log to console
+  console.error(`Uncaught Promise Rejection:\n`, error);
+
+  // Log to error log channel
+  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+
+  return await errorChannel.send(`\`\`\`Uncaught Promise Rejection:\n
+  ${error.stack}
+  \`\`\``);
+
+});
+
+
+// Discord Error Handling
+client.on('error', async (error) => {
+
+  // Log to console
+  console.error(error);
+
+  // Log to error log channel
+  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+
+  return await errorChannel.send(`\`\`\`Discord Error:\n
+  ${error.stack}
+  \`\`\``);
+
+});
+
+
+client.on('rateLimit', async (rateLimitInfo) => {
+
+  // Log to Console
+  console.warn(rateLimitInfo);
+
+  // Log to error log channel
+  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+
+  return await errorChannel.send(`\`\`\`Discord Ratelimit Error:\n
+  Timeout (ms): ${rateLimitInfo.timeout}
+  Limit: ${rateLimitInfo.limit}
+  Method: ${rateLimitInfo.method}
+  Path: ${rateLimitInfo.path}
+  Route: ${rateLimitInfo.route}
+  \`\`\``);
+
+});
+
+
+client.on('warn', async (warning) => {
+
+  // Log to console
+  console.warn(warning);
+
+  // Log to error log channel
+  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+
+  return await errorChannel.send(`\`\`\`Discord Warning:\n
+  ${warning}
+  \`\`\``);
+
+});
 
 
 
@@ -265,6 +340,7 @@ client.on('message', async (message) => {
 
   // ***** NO PREFIX
   if ( !prefixRegex.test(message.content) ) {
+    await Levels.FetchXP(message);
     return;
   }
   // ***** YES PREFIX
@@ -420,7 +496,7 @@ client.on('message', async (message) => {
     try {
       command.execute(message, args);
     } catch (error) {
-      console.error(error);
+      await Errors.Log(error);
       return await message.reply(`There was an error trying to run that command!`);
     }
 
