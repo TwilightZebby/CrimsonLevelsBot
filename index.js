@@ -151,7 +151,7 @@ client.once('ready', async () => {
     // ***** Set Status
     await client.user.setPresence({
         activity: {
-          name: `CrimsonRoulette v2 WIP Test`
+          name: `c%help | CrimsonLevel WIP`
         },
         status: 'online'
     });
@@ -159,7 +159,7 @@ client.once('ready', async () => {
     client.setInterval(async function () {
         await client.user.setPresence({
           activity: {
-            name: `CrimsonRoulette v2 WIP Test`
+            name: `c%help | CrimsonLevel WIP`
           },
           status: 'online'
         });
@@ -170,8 +170,6 @@ client.once('ready', async () => {
 
 
     // ***** Sync Database Tables
-    await Tables.StaffRoles.sync();
-    await Tables.StaffMembers.sync();
     await Tables.UserXP.sync();
     await Tables.UserPrefs.sync();
     
