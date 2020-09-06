@@ -30,7 +30,7 @@ module.exports = {
     async execute(message, args) {
       
       let currentXP = await XPs.FetchXP(message);
-      return await message.channel.send(`You currently have **${currentXP.xp}** XP!`);
+      return await message.reply(`You currently have **${currentXP.xp}** XP!`);
 
       //END OF COMMAND
     },
