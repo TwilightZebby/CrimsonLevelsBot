@@ -15,6 +15,7 @@ const Tables = require('./bot_modules/tables.js');
 // Maps / Collections
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
+const xpCooldowns = new Discord.Collection();
 
 // General Commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -23,9 +24,16 @@ for ( const file of commandFiles ) {
     client.commands.set(command.name, command);
 }
 
+// Levelling Commands
+const levelCommandFiles = fs.readdirSync('./commands/level').filter(file => file.endsWith('.js'));
+for ( const file of levelCommandFiles ) {
+  const levelCommand = require(`./commands/level/${file}`);
+  client.commands.set(levelCommand.name, levelCommand);
+}
+
 // Other Stuff
 const Errors = require('./bot_modules/onEvents/errors.js');
-const Levels = require('./bot_modules/leveling/levelFunctions.js');
+const XPs = require('./bot_modules/leveling/xpFunctions.js');
 
 
 
@@ -64,15 +72,7 @@ process.on('warning', async (warning) => {
 // Extra Error Catching
 process.on('unhandledRejection', async (error) => {
 
-  // Log to console
-  console.error(`Uncaught Promise Rejection:\n`, error);
-
-  // Log to error log channel
-  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
-
-  return await errorChannel.send(`\`\`\`Uncaught Promise Rejection:\n
-  ${error.stack}
-  \`\`\``);
+  return await Errors.LogCustom(error, `Unhandled Promise Rejection:`)
 
 });
 
@@ -80,15 +80,7 @@ process.on('unhandledRejection', async (error) => {
 // Discord Error Handling
 client.on('error', async (error) => {
 
-  // Log to console
-  console.error(error);
-
-  // Log to error log channel
-  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
-
-  return await errorChannel.send(`\`\`\`Discord Error:\n
-  ${error.stack}
-  \`\`\``);
+  return await Errors.LogCustom(error, `Discord Error:`);
 
 });
 
@@ -308,11 +300,30 @@ client.on('message', async (message) => {
 
   // IF NO PERMISSION, ping a quick DM to Guild Owner
   if ( !readPerms || !sendPerms ) {
+
     let guildOwner = message.guild.owner;
-    let ownerDMs = await guildOwner.createDM();
-    return await ownerDMs.send(`Buzz! I don't seem to have the \`VIEW_CHANNELS\`, \`READ_MESSAGES\`, or \`SEND_MESSAGES\` permission(s) in **${message.guild.name}**!
-    I need these permissions to respond to my commands and be a useful Leveling Bot!`);
+
+    try {
+
+      let ownerDMs = await guildOwner.createDM();
+      await ownerDMs.send(`Buzz! I don't seem to have the \`VIEW_CHANNELS\`, \`READ_MESSAGES\`, or \`SEND_MESSAGES\` permission(s) in **${message.guild.name}**!
+      I need these permissions to respond to my commands and be a useful Leveling Bot!`);
+
+    } catch(err) {
+      await Errors.LogCustom(err, `Failed to send DM to ${guildOwner.user.username}`);
+    }
+
+    return;
+
+    
   }
+
+
+
+    // IS THERE A DISCORD OUTAGE AFFECTING THIS GUILD OR NOT
+    if ( !message.guild.available ) {
+      return;
+    }
 
 
 
@@ -338,8 +349,58 @@ client.on('message', async (message) => {
 
   // ***** NO PREFIX
   if ( !prefixRegex.test(message.content) ) {
-    await Levels.FetchXP(message);
+
+    // Levelling Cooldowns
+    if ( !xpCooldowns.has(message.author.id) ) {
+      xpCooldowns.set(message.author.id, new Discord.Collection());
+    }
+
+    const now = Date.now();
+    const timestamps = xpCooldowns.get(message.author.id);
+    const cooldownLength = 3500;
+
+    if ( timestamps.has(message.author.id) ) {
+
+      const expirationTime = timestamps.get(message.author.id) + cooldownLength;
+
+      if ( now < expirationTime ) {
+        //const timeLeft = (expirationTime - now) / 1000; // Used for debugging (converts milliseconds into seconds)
+        return;
+      }
+
+    }
+    else {
+
+      timestamps.set(message.author.id, now);
+      setTimeout(() => timestamps.delete(message.author.id), cooldownLength);
+
+    }
+
+
+
+
+
+
+    // Give XP
+    let fetched = await XPs.FetchXP(message);
+    let newXP = await XPs.GenerateXP();
+    let newXPTotal = await XPs.AddXP(newXP, fetched.xp);
+    await XPs.SaveXP(message.guild.id, message.author.id, newXPTotal);
+
+
+
+
+
     return;
+
+
+
+
+
+
+
+
+
   }
   // ***** YES PREFIX
   else {

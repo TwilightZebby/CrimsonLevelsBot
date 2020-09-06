@@ -20,8 +20,74 @@ module.exports = {
 
         let authorCurrent = authorData[0].dataValues;
         
-        // Pass to UpdateXP()
-        return await this.UpdateXP(message, authorCurrent);
+        return authorCurrent;
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Generate new amount of XP
+    async GenerateXP() {
+
+        // Generate a random amount of XP
+        return Math.floor( ( Math.random() * 10 ) + 1 );
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Add newXP to currentXP
+    async AddXP(newXP, currentXP) {
+
+        return Math.floor(currentXP + newXP);
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Subtract newXP from currentXP
+    async SubtractXP(newXP, currentXP) {
+
+        return Math.floor(currentXP - newXP);
 
     },
 
@@ -40,23 +106,16 @@ module.exports = {
 
 
 
-    // Update User's XP
-    async UpdateXP(message, authorCurrent) {
-
-        // Generate a random amount of XP
-        let generatedXP = Math.floor( ( Math.random() * 10 ) + 1 );
-
-        // Add to previous XP amount
-        let authorNewXP = authorCurrent.xp + generatedXP;
-        console.log(authorNewXP);
+    // Save User's XP
+    async SaveXP(guildID, userID, newXP) {
 
         // Save back to Database
         await Tables.UserXP.update({
-            xp: authorNewXP
+            xp: newXP
         }, {
             where: {
-                guildID: message.guild.id,
-                userID: message.author.id
+                guildID: guildID,
+                userID: userID
             }
         })
         .catch(async err => {

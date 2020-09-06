@@ -10,7 +10,7 @@
     "erlpack": "^0.1.3",
     "libsodium-wrappers": "^0.7.8",
     "mysql2": "^2.1.0",
-    "sequelize": "^6.3.4",
+    "sequelize": "^6.3.5",
     "utf-8-validate": "^5.0.2",
     "zlib-sync": "^0.1.7"
   },
