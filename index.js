@@ -34,6 +34,7 @@ for ( const file of levelCommandFiles ) {
 // Other Stuff
 const Errors = require('./bot_modules/onEvents/errors.js');
 const XPs = require('./bot_modules/leveling/xpFunctions.js');
+const Levels = require('./bot_modules/leveling/levelFunctions.js');
 
 
 

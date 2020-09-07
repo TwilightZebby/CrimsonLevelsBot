@@ -2,7 +2,8 @@ const Discord = require("discord.js");
 const { client } = require('../../bot_modules/constants.js');
 
 let { PREFIX } = require('../../config.js');
-let XPs = require('../../bot_modules/leveling/xpFunctions.js');
+const XPs = require('../../bot_modules/leveling/xpFunctions.js');
+const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 
 
 module.exports = {
@@ -30,7 +31,8 @@ module.exports = {
     async execute(message, args) {
       
       let currentXP = await XPs.FetchXP(message);
-      return await message.reply(`You currently have **${currentXP.xp}** XP!`);
+      let currentLevel = await Levels.FetchLevel(currentXP.xp);
+      return await message.reply(`You currently have **${currentXP.xp}** XP, and are Level **${currentLevel}**!`);
 
       //END OF COMMAND
     },

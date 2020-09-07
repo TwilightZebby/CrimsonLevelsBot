@@ -68,10 +68,10 @@ module.exports = {
         inline: true
       }, {
         name: `Support Server`,
-        value: `[Click here](https://discord.gg/hTstSCv)`,
+        value: `[Click here](https://discord.gg/YuxSF39)`,
         inline: true
       }, {
-        name: `Invite Link`,
+        name: `Invite Bot`,
         value: `[Click here](https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=268487680)`,
         inline: true
       });
