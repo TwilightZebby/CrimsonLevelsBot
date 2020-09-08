@@ -31,6 +31,13 @@ for ( const file of levelCommandFiles ) {
   client.commands.set(levelCommand.name, levelCommand);
 }
 
+// Management Commands
+const manageCommandFiles = fs.readdirSync('./commands/management').filter(file => file.endsWith('.js'));
+for ( const file of manageCommandFiles ) {
+  const manageCommand = require(`./commands/management/${file}`);
+  client.commands.set(manageCommand.name, manageCommand);
+}
+
 // Other Stuff
 const Errors = require('./bot_modules/onEvents/errors.js');
 const XPs = require('./bot_modules/leveling/xpFunctions.js');

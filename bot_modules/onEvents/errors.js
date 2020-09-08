@@ -1,4 +1,5 @@
 const { client } = require('../constants.js');
+const Discord = require('discord.js');
 
 module.exports = {
 
@@ -38,6 +39,20 @@ module.exports = {
         ];
 
         return await errorLogChannel.send(`${eMessage}\n${messageArray.join(`\n`)}`);
+
+    },
+
+
+
+    // For outputting Errors to the User
+    async LogToUser(messageTarget, eMessageContent) {
+
+        const embed = new Discord.MessageEmbed();
+        embed.setColor('#9c0000')
+        .setTitle(`⚠️ An error has occurred!`)
+        .setDescription(`${eMessageContent}`);
+
+        return await messageTarget.send(embed);
 
     }
 

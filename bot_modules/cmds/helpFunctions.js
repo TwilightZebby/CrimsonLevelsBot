@@ -29,6 +29,10 @@ module.exports = {
                 value: commands.filter(command => command.commandType === 'level' && !command.limitation).map(command => command.name).join(', ')
             },
             {
+                name: `Management Commands`,
+                value: commands.filter(command => command.commandType === 'management' && !command.limitation).map(command => command.name).join(', ')
+            },
+            {
                 name: `\u200B`,
                 value: `You can use \`${PREFIX}help [command]\` to get more information on a specific command!`
             }
@@ -78,6 +82,10 @@ module.exports = {
                 value: commands.filter(command => command.commandType === 'level').map(command => command.name).join(', ')
             },
             {
+                name: `Management Commands`,
+                value: commands.filter(command => command.commandType === 'management').map(command => command.name).join(', ')
+            },
+            {
                 name: `\u200B`,
                 value: `You can use \`${PREFIX}help [command]\` to get more information on a specific command!`
             }
@@ -125,6 +133,10 @@ module.exports = {
             {
                 name: `Level Commands`,
                 value: commands.filter(command => command.commandType === 'level' && command.limitation !== 'dev').map(command => command.name).join(', ')
+            },
+            {
+                name: `Management Commands`,
+                value: commands.filter(command => command.commandType === 'management' && command.limitation !== 'dev').map(command => command.name).join(', ')
             },
             {
                 name: `\u200B`,
