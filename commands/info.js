@@ -35,7 +35,7 @@ module.exports = {
 
 
       // Embed
-      let embed = new Discord.MessageEmbed().setColor('#07f51b')
+      let embed = new Discord.MessageEmbed().setColor('#DC143C')
       .setTitle(`${client.user.username} Information`)
       .setDescription(`These are my stats and links! If you want my commands, use \`${PREFIX}help\``)
       .addFields({

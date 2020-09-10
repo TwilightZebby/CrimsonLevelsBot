@@ -33,7 +33,7 @@ module.exports = {
     async execute(message, args) {
       
       const { commands } = message.client; // Fetch commands
-      const embed = new Discord.MessageEmbed().setColor('#07f51b').setFooter(`Help Module`);
+      const embed = new Discord.MessageEmbed().setColor('#DC143C').setFooter(`Help Module`);
 
 
       // ********** NO ARGUMENT WAS PASSED
