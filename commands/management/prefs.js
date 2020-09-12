@@ -156,7 +156,7 @@ module.exports = {
             })
 
 
-            embed.setTitle(`Updated ${message.author.username} Preferences`)
+            embed.setTitle(`Updated Preferences`)
             .setDescription(`Your preferences for **${option}** have been updated to **${value}**`);
 
             return await message.channel.send(embed);

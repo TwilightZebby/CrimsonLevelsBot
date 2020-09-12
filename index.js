@@ -172,6 +172,7 @@ client.once('ready', async () => {
     // ***** Sync Database Tables
     await Tables.UserXP.sync();
     await Tables.UserPrefs.sync();
+    await Tables.GuildConfig.sync();
     
     
     console.log(`I am ready!`);
