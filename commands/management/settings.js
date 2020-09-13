@@ -229,6 +229,84 @@ module.exports = {
             }
 
           }
+          else if ( option === `level-up` ) {
+
+            // Changing the Level Up Message
+            args.shift(); // Removes the Option parameter
+
+            let valueString = args.join(' ');
+
+            if ( !valueString.includes("{user}") || !valueString.includes("{level}") ) {
+              return await Error.LogToUser(message.channel, `I was unable to find \`{user}\` and/or \`{level}\` in that message. Please try again, ensuring both are included.`);
+            }
+
+            if ( valueString.length >= 250 ) {
+              return await Error.LogToUser(message.channel, `Sorry, but that message is too long for me to save. The maximum character count is 250, but you had ${valueString.length} characters in your message!`);
+            }
+
+
+
+
+            await Tables.GuildConfig.update(
+              {
+                levelUpMessage: valueString
+              },
+              {
+                where: {
+                  guildID: message.guild.id
+                }
+              }
+            ).catch(async err => {
+              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+            });
+
+
+            embed.setTitle(`Updated Configuration`)
+            .setDescription(`The **${option}** setting has been updated to \`${valueString}\``);
+
+            return await message.channel.send(embed);
+
+          }
+          else if ( option === `level-down` ) {
+
+            // Changing the Level Down Message
+            args.shift(); // Removes the Option parameter
+
+            let valueString = args.join(' ');
+
+            if ( !valueString.includes("{user}") || !valueString.includes("{level}") ) {
+              return await Error.LogToUser(message.channel, `I was unable to find \`{user}\` and/or \`{level}\` in that message. Please try again, ensuring both are included.`);
+            }
+
+            if ( valueString.length >= 250 ) {
+              return await Error.LogToUser(message.channel, `Sorry, but that message is too long for me to save. The maximum character count is 250, but you had ${valueString.length} characters in your message!`);
+            }
+
+
+
+
+            await Tables.GuildConfig.update(
+              {
+                levelDownMessage: valueString
+              },
+              {
+                where: {
+                  guildID: message.guild.id
+                }
+              }
+            ).catch(async err => {
+              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+            });
+
+
+            embed.setTitle(`Updated Configuration`)
+            .setDescription(`The **${option}** setting has been updated to \`${valueString}\``);
+
+            return await message.channel.send(embed);
+
+          }
 
         }
 
