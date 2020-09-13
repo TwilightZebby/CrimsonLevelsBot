@@ -42,6 +42,7 @@ for ( const file of manageCommandFiles ) {
 const Errors = require('./bot_modules/onEvents/errors.js');
 const XPs = require('./bot_modules/leveling/xpFunctions.js');
 const Levels = require('./bot_modules/leveling/levelFunctions.js');
+const Broadcasts = require('./bot_modules/leveling/broadcastFunctions.js');
 
 
 
@@ -207,6 +208,7 @@ client.once('ready', async () => {
 // ********** BOT_JOIN_GUILD EVENT
 // Fetch functions
 let log = require('./bot_modules/onEvents/log.js');
+const broadcastFunctions = require('./bot_modules/leveling/broadcastFunctions.js');
 
 client.on('guildCreate', async (guild) => {
 
@@ -393,8 +395,24 @@ client.on('message', async (message) => {
     // Give XP
     let fetched = await XPs.FetchXP(message);
     let newXP = await XPs.GenerateXP();
-    let newXPTotal = await XPs.AddXP(newXP, fetched.xp);
+    let newXPTotal = await XPs.AddXP(newXP, fetched);
     await XPs.SaveXP(message.guild.id, message.author.id, newXPTotal);
+
+    // Announce, if allowed
+    let oldLevel = await Levels.FetchLevel(fetched);
+    let newLevel = await Levels.FetchLevel(newXPTotal);
+
+    let levelChange = await Levels.CompareLevels(oldLevel, newLevel);
+
+    if ( levelChange === "nochange" ) {
+      return;
+    }
+    else if ( levelChange === "levelup" ) {
+      await broadcastFunctions.Main(message, message.author, message.guild, "up");
+    }
+    else if ( levelChange === "leveldown" ) {
+      await broadcastFunctions.Main(message, message.author, message.guild, "down");
+    }
 
 
 

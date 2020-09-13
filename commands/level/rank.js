@@ -31,8 +31,8 @@ module.exports = {
     async execute(message, args) {
       
       let currentXP = await XPs.FetchXP(message);
-      let currentLevel = await Levels.FetchLevel(currentXP.xp);
-      return await message.reply(`You currently have **${currentXP.xp}** XP, and are Level **${currentLevel}**!`);
+      let currentLevel = await Levels.FetchLevel(currentXP);
+      return await message.reply(`You currently have **${currentXP}** XP, and are Level **${currentLevel}**!`);
 
       //END OF COMMAND
     },

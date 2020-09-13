@@ -20,7 +20,7 @@ module.exports = {
 
         let authorCurrent = authorData[0].dataValues;
         
-        return authorCurrent;
+        return authorCurrent.xp;
 
     },
     
