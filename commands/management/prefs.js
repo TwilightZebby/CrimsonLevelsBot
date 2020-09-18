@@ -126,12 +126,66 @@ module.exports = {
 
           // Save new value for preference
           if( option === `rank` ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
             
             // PLACEHOLDER
             return await message.channel.send(`Placeholder - will be added soon...`);
 
           }
           else if( [`mentions`, `mention`].includes(option) ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             let mentionArray = [ `true`, `false` ];
 
