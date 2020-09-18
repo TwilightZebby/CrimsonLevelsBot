@@ -9,7 +9,9 @@ let validOptions = [
   'guide',
   'broadcast',
   'level-up',
-  'level-down'
+  'level-down',
+  'roulette',
+  'risky'
 ]
 
 
@@ -82,6 +84,16 @@ module.exports = {
             inline: true
           },
           {
+            name: `Enable __Roulette__ Commmand`,
+            value: `${serverData.roulette}`,
+            inline: true
+          },
+          {
+            name: `Enable __Risky__ Roulette Results`,
+            value: `${serverData.riskyRoulette}`,
+            inline: true
+          },
+          {
             name: `__Level-Up__ Message`,
             value: `${serverData.levelUpMessage}`
           },
@@ -124,6 +136,14 @@ module.exports = {
             {
               name: `Level-Up/Down Messages`,
               value: `These are the messages used in your Server if *Broadcast Channel* isn't disabled. **Must include** \`{user}\` and \`{level}\` so the Bot knows where in the Message to place the @user pings and Level Numbers!`
+            },
+            {
+              name: `Enable Roulette Command`,
+              value: `This toggles if the \`roulette\` command is enabled or not on this Server. Use \`true\` to enable, and \`false\` to disable.`
+            },
+            {
+              name: `Enable Risky Roulette Results`,
+              value: `Toggles if the more risky results of the \`roulette\` command are enabled or not. Use \`true\` to enable, and \`false\` to disable. (Risky results can affect multiple Server Members at once!)`
             }
           );
 
@@ -138,6 +158,28 @@ module.exports = {
           }
 
           if( option === `broadcast` ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             // Check if the value is either "disable", "current", or a #channel mention
             let value = String(args[1]).toLowerCase();
@@ -231,6 +273,29 @@ module.exports = {
           }
           else if ( option === `level-up` ) {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             // Changing the Level Up Message
             args.shift(); // Removes the Option parameter
 
@@ -270,6 +335,29 @@ module.exports = {
           }
           else if ( option === `level-down` ) {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             // Changing the Level Down Message
             args.shift(); // Removes the Option parameter
 
@@ -303,6 +391,136 @@ module.exports = {
 
             embed.setTitle(`Updated Configuration`)
             .setDescription(`The **${option}** setting has been updated to \`${valueString}\``);
+
+            return await message.channel.send(embed);
+
+          }
+          else if ( option === `roulette` ) {
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Toggling if the Roulette Command is enabled on the Server or not
+            let valueRoulette = String(args[1]).toLowerCase();
+
+            if ( valueRoulette !== `true` && valueRoulette !== `false` ) {
+              return await Error.LogToUser(message.channel, `An invalid value was provided. The **roulette** setting only accepts either \`true\` or \`false\``);
+            }
+
+
+            // IF setting to false, also disable the RISKY_ROULETTE option
+            if ( valueRoulette === `false` ) {
+
+              await Tables.GuildConfig.update({
+                roulette: valueRoulette,
+                riskyRoulette: `false`
+              },
+              {
+                where: {
+                  guildID: message.guild.id
+                }
+              }).catch(async err => {
+                await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+                return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+              });
+
+              embed.setTitle(`Updated Configuration`)
+              .setDescription(`The **${option}** setting has been updated to \`${valueString}\``);
+
+              return await message.channel.send(embed);
+
+            }
+            else if ( valueRoulette === `true` ) {
+
+              // Otherwise, only enable the ROULETTE option
+              await Tables.GuildConfig.update({
+                roulette: valueRoulette,
+              },
+              {
+                where: {
+                  guildID: message.guild.id
+                }
+              }).catch(async err => {
+                await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+                return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+              });
+
+              embed.setTitle(`Updated Configuration`)
+              .setDescription(`The **${option}** setting has been updated to \`${valueRoulette}\``);
+
+              return await message.channel.send(embed);
+
+            }
+
+
+          }
+          else if ( option === `risky` ) {
+
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Toggling the risky Roulette results for the Server
+            let valueRisky = String(args[1]).toLowerCase();
+
+            if ( valueRisky !== `true` && valueRisky !== `false` ) {
+              return await Error.LogToUser(message.channel, `An invalid value was provided. The **risky** roulette setting only accepts either \`true\` or \`false\``);
+            }
+
+            await Tables.GuildConfig.update({
+              riskyRoulette: valueRisky
+            },
+            {
+              where: {
+                guildID: message.guild.id
+              }
+            }).catch(async err => {
+              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+            });
+
+            embed.setTitle(`Updated Configuration`)
+            .setDescription(`The **${option}** setting has been updated to \`${valueRisky}\``);
 
             return await message.channel.send(embed);
 
