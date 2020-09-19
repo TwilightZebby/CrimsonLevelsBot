@@ -74,7 +74,8 @@ module.exports = {
           {
             name: `Preferences Guide`,
             value: `To change a preference, use \`${PREFIX}prefs [option] [value]\`, where \`[option]\` is one of the __underlined__ words above.
-            For more information, use \`${PREFIX}prefs guide\``
+            For more information, use \`${PREFIX}prefs guide\`
+            For specific information on Rank Backgrounds, use \`${PREFIX}prefs rank guide\``
           }
         );
 
@@ -430,6 +431,86 @@ module.exports = {
                   // Output!
                   const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `background_${backgroundValue}_preview.png`);
                   return await message.channel.send(`Here's your preview of the **${backgroundValue}** Rank Background!`, attachment);
+                                  
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // DISABLE BGs
+                case 'disable':
+                  await Tables.UserPrefs.update(
+                    {
+                      rankBackground: 'disable'
+                    },
+                    {
+                      where: {
+                        userID: message.author.id
+                      }
+                    }
+                  )
+                  .catch(async err => {
+                    await Error.LogCustom(err, `Attempted UserPrefs DB Update`);
+                    return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the updated User Preference value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+                  });
+
+                  embed.setTitle(`Updated Preferences`)
+                  .setDescription(`Your preferences for **${option}** background have been updated to **${value}**`);
+
+                  return await message.channel.send(embed);
+                                                    
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // SET BGs
+                default:
+
+                  // Double-check BG input
+                  if ( !backgrounds.includes(value) ) {
+                    return await Error.LogToUser(message.channel, `That background/value doesn't exist! Please try again`);
+                  }
+
+                  await Tables.UserPrefs.update(
+                    {
+                      rankBackground: value
+                    },
+                    {
+                      where: {
+                        userID: message.author.id
+                      }
+                    }
+                  )
+                  .catch(async err => {
+                    await Error.LogCustom(err, `Attempted UserPrefs DB Update`);
+                    return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the updated User Preference value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+                  });
+
+                  embed.setTitle(`Updated Preferences`)
+                  .setDescription(`Your preferences for **${option}** background have been updated to **${value}**`);
+
+                  return await message.channel.send(embed);
 
               }
 
@@ -488,7 +569,7 @@ module.exports = {
             .catch(async err => {
               await Error.LogCustom(err, `Attempted UserPrefs DB Update`);
               return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the updated User Preference value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
-            })
+            });
 
 
             embed.setTitle(`Updated Preferences`)
