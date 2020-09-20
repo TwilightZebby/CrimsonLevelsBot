@@ -352,12 +352,12 @@ module.exports = {
                     // XPs
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#000000';
-                    ctx.fillText(`Tokens:`, canvas.width / 2.5, canvas.height / 1.3);
+                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.3);
 
                     // LEVELS
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#000000';
-                    ctx.fillText(`Level:`, canvas.width / 2.5, canvas.height / 1.6);
+                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 1.6);
 
                   }
                   else if ( darkenJustUsername.includes(backgroundValue) ) {
@@ -370,12 +370,12 @@ module.exports = {
                     // XPs
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`Tokens:`, canvas.width / 2.5, canvas.height / 1.3);
+                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.3);
 
                     // LEVELS
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`Level:`, canvas.width / 2.5, canvas.height / 1.6);
+                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 1.6);
 
                   }
                   else if ( darkenJustLevels.includes(backgroundValue) ) {
@@ -388,12 +388,12 @@ module.exports = {
                     // XPs
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#000000';
-                    ctx.fillText(`Tokens:`, canvas.width / 2.5, canvas.height / 1.3);
+                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.3);
 
                     // LEVELS
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#000000';
-                    ctx.fillText(`Level:`, canvas.width / 2.5, canvas.height / 1.6);
+                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 1.6);
 
                   }
                   else {
@@ -406,7 +406,7 @@ module.exports = {
                     // XPs
                     ctx.font = '28px sans-serif';
                     ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`Tokens`, canvas.width / 2.5, canvas.height / 1.3);
+                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.3);
 
                     // LEVELS
                     ctx.font = '28px sans-serif';
