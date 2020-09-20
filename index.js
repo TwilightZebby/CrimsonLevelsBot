@@ -235,9 +235,11 @@ client.on('guildCreate', async (guild) => {
   // Add Members to database
   for ( let i = 0; i < guildMembers.length; i++ ) {
 
-    await Tables.UserPrefs.create(
+    await Tables.UserPrefs.findOrCreate(
       {
-        userID: guildMembers[i].id
+        where: {
+          userID: guildMembers[i].id
+        }
       }
     ).catch(async err => {
       return await Error.LogCustom(err, `Attempted User Prefs DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator}`);
