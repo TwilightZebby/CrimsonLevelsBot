@@ -215,6 +215,45 @@ client.on('guildCreate', async (guild) => {
   // Log
   await log.JoinedGuild(guild);
 
+  // ***** Add to Databases
+
+  // First, add to GuildConfig
+  await Tables.GuildConfig.create(
+    {
+      guildID: guild.id
+    }
+  ).catch(async err => {
+    return await Error.LogCustom(err, `Attempted Guild Config DB Addition for ${message.guild.name}`);
+  });
+
+
+
+  // Fetch all Members who are NOT a Bot
+  await guild.members.fetch();
+  let guildMembers = Array.from(guild.members.cache.values).filter(member => !member.user.bot);
+
+  // Add Members to database
+  for ( let i = 0; i < guildMembers.length; i++ ) {
+
+    await Tables.UserPrefs.create(
+      {
+        userID: guildMembers[i].id
+      }
+    ).catch(async err => {
+      return await Error.LogCustom(err, `Attempted User Prefs DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator}`);
+    });
+
+    await Tables.UserXP.create(
+      {
+        userID: guildMembers[i].id,
+        guildID: guild.id
+      }
+    ).catch(async err => {
+      return await Error.LogCustom(err, `Attempted User XP DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} in Guild ${guild.name}`);
+    });
+
+  }
+
   return;
 
 });
@@ -251,6 +290,143 @@ client.on('guildDelete', async (guild) => {
 
   // Log
   await log.LeftGuild(guild);
+
+
+
+  // ***** Remove from Databases
+
+  // First, remove from GuildConfig
+  await Tables.GuildConfig.destroy(
+    {
+      where: {
+        guildID: guild.id
+      }      
+    }
+  ).catch(async err => {
+    return await Error.LogCustom(err, `Attempted Guild Config DB Removal for ${message.guild.name}`);
+  });
+
+
+
+
+  // Remove from User XP DB
+
+  await Tables.UserXP.destroy(
+    {
+      where: {
+        guildID: guild.id
+      }
+    }
+  ).catch(async err => {
+    return await Error.LogCustom(err, `Attempted User XP DB Removal for Guild ${guild.name}`);
+  });
+
+
+  return;
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ********** USER_JOIN_GUILD EVENT
+client.on('guildMemberAdd', async (member) => {
+
+  // If Bot, do NOTHING
+  if ( member.user.bot ) {
+    return;
+  }
+  else {
+
+    await Tables.UserXP.create(
+      {
+        userID: member.id,
+        guildID: member.guild.id
+      }
+    ).catch(async err => {
+      return await Error.LogCustom(err, `Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} in Guild ${member.guild.name}`);
+    });
+
+    await Tables.UserPrefs.findOrCreate(
+      {
+        where: {
+          userID: member.id
+        }
+      }
+    ).catch(async err => {
+      return await Error.LogCustom(err, `Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator}`);
+    });
+
+    return;
+
+  }
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ********** USER_LEAVE_GUILD EVENT
+client.on('guildMemberRemove', async (member) => {
+
+  await Tables.UserXP.destroy(
+    {
+      where: {
+        userID: member.id,
+        guildID: member.guild.id
+      }
+    }
+  ).catch(async err => {
+    return await Error.LogCustom(err, `Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} in Guild ${member.guild.name}`);
+  });
 
   return;
 
