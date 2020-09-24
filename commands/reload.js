@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const { client } = require('../bot_modules/constants.js');
 
 let { PREFIX } = require('../config.js');
+const Error = require('../bot_modules/onEvents/errors.js');
 
 
 module.exports = {
@@ -38,17 +39,54 @@ module.exports = {
         return await message.reply(`There is no command with the name/alias of **${commandName}**`);
       }
 
-      // Delete from cache
-      delete require.cache[require.resolve(`./${commandName}.js`)];
 
-      // Fetch updated command
-      try {
-        let newCommand = require(`./${commandName}.js`);
-        client.commands.set(newCommand.name, newCommand);
-        return await message.reply(`Successfully reloaded the **${commandName}** command!`);
-      } catch (error) {
-        console.error(error);
-        return await message.reply(`There was an error while reloading the **${commandName}** command. Please see the Console Logs for more details...`);
+      if ( command.commandType === `level` ) {
+
+        // Delete from cache
+        delete require.cache[require.resolve(`./level/${command.name}.js`)];
+
+        // Fetch updated command
+        try {
+          let newCommand = require(`./level/${command.name}.js`);
+          client.commands.set(newCommand.name, newCommand);
+          return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+        } catch (err) {
+          await Error.LogCustom(err, `Error while reloading ${commandName} command:`);
+          return Error.LogToUser(message.channel, `I was unable to reload the **${commandName}** command - please check the Console Logs for more details...`);
+        }
+
+      }
+      else if ( command.commandType === `management` ) {
+
+        // Delete from cache
+        delete require.cache[require.resolve(`./management/${command.name}.js`)];
+
+        // Fetch updated command
+        try {
+          let newCommand = require(`./management/${command.name}.js`);
+          client.commands.set(newCommand.name, newCommand);
+          return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+        } catch (err) {
+          await Error.LogCustom(err, `Error while reloading ${commandName} command:`);
+          return Error.LogToUser(message.channel, `I was unable to reload the **${commandName}** command - please check the Console Logs for more details...`);
+        }
+
+      }
+      else {
+
+        // Delete from cache
+        delete require.cache[require.resolve(`./${command.name}.js`)];
+
+        // Fetch updated command
+        try {
+          let newCommand = require(`./${command.name}.js`);
+          client.commands.set(newCommand.name, newCommand);
+          return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+        } catch (err) {
+          await Error.LogCustom(err, `Error while reloading ${commandName} command:`);
+          return Error.LogToUser(message.channel, `I was unable to reload the **${commandName}** command - please check the Console Logs for more details...`);
+        }
+
       }
 
       //END OF COMMAND
