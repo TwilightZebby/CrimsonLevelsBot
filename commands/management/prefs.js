@@ -300,7 +300,7 @@ module.exports = {
                   // Arrays so Bot knows if the Text Colour needs changing or not
                   // ANY backgrounds not listed in these will use the full default white font colour
                   let darkenAllFont = [
-                    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow'
+                    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian'
                   ];
                   let darkenJustUsername = [
                     'genderfluid', 'nonBinary', 'straightAlly'
