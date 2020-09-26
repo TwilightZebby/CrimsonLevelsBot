@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const { client } = require('../bot_modules/constants.js');
+const Prefixs = require('../bot_modules/prefixFunctions.js');
 
 let { PREFIX } = require('../config.js');
 const Error = require('../bot_modules/onEvents/errors.js');
@@ -28,6 +29,9 @@ module.exports = {
     //flags: [],
 
     async execute(message, args) {
+
+      // Check for custom Prefix
+      PREFIX = await Prefixs.Fetch(message.guild.id);
       
       // Grab the input
       let commandName = args.shift().toLowerCase();

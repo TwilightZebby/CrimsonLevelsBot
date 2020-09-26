@@ -43,6 +43,7 @@ const Errors = require('./bot_modules/onEvents/errors.js');
 const XPs = require('./bot_modules/leveling/xpFunctions.js');
 const Levels = require('./bot_modules/leveling/levelFunctions.js');
 const Broadcasts = require('./bot_modules/leveling/broadcastFunctions.js');
+const Prefixs = require('./bot_modules/prefixFunctions.js');
 
 
 
@@ -524,6 +525,10 @@ client.on('message', async (message) => {
 
 
   // ***** PREFIX CHECK
+
+  // Check for custom Prefix
+  PREFIX = await Prefixs.Fetch(message.guild.id);
+
   const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(PREFIX)})\\s*`);
   

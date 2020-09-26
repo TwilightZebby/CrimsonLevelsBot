@@ -8,6 +8,7 @@ const Discord = require("discord.js");
 //const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
+const Prefixs = require('../../bot_modules/prefixFunctions.js');
 
 
 module.exports = {
@@ -33,6 +34,9 @@ module.exports = {
     //flags: [],
 
     async execute(message, args) {
+
+      // Check for custom Prefix
+      PREFIX = await Prefixs.Fetch(message.guild.id);
 
       // Fetch database
       let guildXP = await Tables.UserXP.findAll(

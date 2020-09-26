@@ -3,6 +3,7 @@ const { client } = require('../bot_modules/constants.js');
 
 let { PREFIX } = require('../config.js');
 let help = require('../bot_modules/cmds/helpFunctions.js');
+const Prefixs = require('../bot_modules/prefixFunctions.js');
 
 
 module.exports = {
@@ -31,6 +32,9 @@ module.exports = {
     ],
 
     async execute(message, args) {
+
+      // Check for custom Prefix
+      PREFIX = await Prefixs.Fetch(message.guild.id);
       
       const { commands } = message.client; // Fetch commands
       const embed = new Discord.MessageEmbed().setColor('#DC143C').setFooter(`Help Module`);

@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const { client } = require('../bot_modules/constants.js');
+const Prefixs = require('../bot_modules/prefixFunctions.js');
 
 let { PREFIX } = require('../config.js');
 let { version, dependencies } = require('../package.json');
@@ -28,6 +29,9 @@ module.exports = {
     //flags: [],
 
     async execute(message) {
+
+      // Check for custom Prefix
+      PREFIX = await Prefixs.Fetch(message.guild.id);
 
       // Fetch values
       let guildCount = Array.from(client.guilds.cache.values()).length;

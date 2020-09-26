@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const { client } = require('../../bot_modules/constants.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
+const Prefixs = require('../../bot_modules/prefixFunctions.js');
 
 let { PREFIX } = require('../../config.js');
 const { crypto_aead_xchacha20poly1305_ietf_keygen } = require("libsodium-wrappers");
@@ -38,6 +39,9 @@ module.exports = {
     //flags: [],
 
     async execute(message, args) {
+
+      // Check for custom Prefix
+      PREFIX = await Prefixs.Fetch(message.guild.id);
       
       const embed = new Discord.MessageEmbed();
       embed.setColor('#DC143C')
