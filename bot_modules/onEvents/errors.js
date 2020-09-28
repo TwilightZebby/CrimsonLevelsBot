@@ -10,7 +10,7 @@ module.exports = {
         console.error(error);
 
         // Log to Channel
-        let errorLogChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+        let errorLogChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
         let messageArray = [
             `**Error**`,
             `\`\`\`${error}\`\`\``,
@@ -30,7 +30,7 @@ module.exports = {
         console.error(`${eMessage}\n`, error);
 
         // Log to Channel
-        let errorLogChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+        let errorLogChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
         let messageArray = [
             `**Error**`,
             `\`\`\`${error}\`\`\``,

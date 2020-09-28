@@ -71,7 +71,7 @@ process.on('warning', async (warning) => {
   console.warn(warning);
 
   // Log to error log channel
-  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+  let errorChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
 
   return await errorChannel.send(`\`\`\`Warning:\n
   ${warning}
@@ -101,7 +101,7 @@ client.on('rateLimit', async (rateLimitInfo) => {
   console.warn(rateLimitInfo);
 
   // Log to error log channel
-  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+  let errorChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
 
   return await errorChannel.send(`\`\`\`Discord Ratelimit Error:\n
   Timeout (ms): ${rateLimitInfo.timeout}
@@ -120,7 +120,7 @@ client.on('warn', async (warning) => {
   console.warn(warning);
 
   // Log to error log channel
-  let errorChannel = client.guilds.resolve('681805468749922308').channels.resolve('726336306497454081');
+  let errorChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
 
   return await errorChannel.send(`\`\`\`Discord Warning:\n
   ${warning}
@@ -480,7 +480,7 @@ client.on('message', async (message) => {
 
 
   // ***** Check for READ and SEND permissions
-  let botMember = message.guild.members.resolve(client.user.id); // Resolve GuildMember object from this Bot's User ID
+  let botMember = await message.guild.members.fetch(client.user.id); // Resolve GuildMember object from this Bot's User ID
   let readPerms = botMember.hasPermission('VIEW_CHANNEL', {
     checkAdmin: true
   });
