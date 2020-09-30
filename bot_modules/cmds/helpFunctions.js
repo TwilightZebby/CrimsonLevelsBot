@@ -10,7 +10,15 @@ module.exports = {
 
 
 
-    // Output a list of all the commands (for all Users)
+    /**
+     * Returns all the commands a standard User can use
+     * 
+     * @param {Discord.MessageEmbed} embed The Discord Embed to insert the cmd list into
+     * @param {Discord.Message} message The Discord Message OBJ to return the Embed to
+     * @param {Array<Object>} commands All the commands stored in the Bot
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async ListCommands(embed, message, commands) {
 
         embed.setTitle(`Command List`)
@@ -63,7 +71,15 @@ module.exports = {
 
 
 
-    // List all commands (Yes, all - this is for if I use it)
+    /**
+     * Returns all the commands this Bot's developer can use
+     * 
+     * @param {Discord.MessageEmbed} embed The Discord Message Embed to insert the Commands into
+     * @param {Discord.Message} message The Message object to return the Embed to
+     * @param {Array<Object>} commands All the Commands stored in the Bot
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async ListDevCommands(embed, message, commands) {
 
         embed.setTitle(`Command List (Developer\'s List)`)
@@ -116,7 +132,15 @@ module.exports = {
 
 
 
-    // List all Commands a Server Owner can see
+    /**
+     * Returns all the Commands a Guild Owner can use
+     * 
+     * @param {Discord.MessageEmbed} embed The Discord Message Embed to insert the Commands into
+     * @param {Discord.Message} message The Message Object to return the Embed to
+     * @param {Array<Object>} commands All the Commands the Bot has
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async ListOwnerCommands(embed, message, commands) {
 
         embed.setTitle(`Command List (Server Owner\'s List)`)
@@ -169,7 +193,14 @@ module.exports = {
 
 
 
-    // Search for given command
+    /**
+     * Searches for an existing Command in this Bot
+     * 
+     * @param {String} name The name, or aliases, of the Command
+     * @param {Array<Object>} commands All the commands in this Bot
+     * 
+     * @returns {Object} command object
+     */
     async CommandSearch(name, commands) {
 
         // Check if given name is a CMD Name
@@ -216,7 +247,16 @@ module.exports = {
 
 
 
-    // Output help on the specified command
+    /**
+     * Returns details of the Command, such as the Cmd's purpose, how it works, etc
+     * 
+     * @param {Discord.MessageEmbed} embed The Message Embed to insert the help into
+     * @param {Discord.Message} message The Message obj to return the Embed to
+     * @param {Array<Object>} commands All the commands in the Bot
+     * @param {String} name Name of the specific Command we want details on
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async CommandHelp(embed, message, commands, name) {
 
         // Search for commands

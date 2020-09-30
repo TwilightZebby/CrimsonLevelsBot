@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const { client } = require('../constants.js');
 const { sequelize } = require('../constants.js');
 const Tables = require('../tables.js');
@@ -5,7 +6,13 @@ const Errors = require('../onEvents/errors.js');
 
 module.exports = {
 
-    // Fetch User's XP
+    /**
+     * Returns the User's current XP
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * 
+     * @returns {Number} The User's current XP
+     */
     async FetchXP(message) {
 
         let authorData = await Tables.UserXP.findOrCreate({
@@ -39,7 +46,11 @@ module.exports = {
 
 
 
-    // Generate new amount of XP
+    /**
+     * Generate a random amount of XP between 1 and 10
+     * 
+     * @returns {Number} xp
+     */
     async GenerateXP() {
 
         // Generate a random amount of XP
@@ -62,7 +73,14 @@ module.exports = {
 
 
 
-    // Add newXP to currentXP
+    /**
+     * Returns an updated XP total via addition
+     * 
+     * @param {Number} newXP The XP to add to the total
+     * @param {Number} currentXP The User's current XP amount
+     * 
+     * @returns {Number} new XP total
+     */
     async AddXP(newXP, currentXP) {
 
         return Math.floor(currentXP + newXP);
@@ -84,7 +102,14 @@ module.exports = {
 
 
 
-    // Subtract newXP from currentXP
+    /**
+     * Returns an updated XP total via subtraction
+     * 
+     * @param {Number} newXP The XP to subtract from the total
+     * @param {Number} currentXP The User's current XP amount
+     * 
+     * @returns {Number} new XP total
+     */
     async SubtractXP(newXP, currentXP) {
 
         return Math.floor(currentXP - newXP);
@@ -106,7 +131,13 @@ module.exports = {
 
 
 
-    // Save User's XP
+    /**
+     * Save an updated XP total back to the USERXP database
+     * 
+     * @param {String} guildID The ID of the Discord Guild
+     * @param {String} userID ID of the Discord User
+     * @param {Number} newXP The new XP total to save
+     */
     async SaveXP(guildID, userID, newXP) {
 
         // Save back to Database

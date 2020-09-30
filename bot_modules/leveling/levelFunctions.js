@@ -6,7 +6,13 @@ const LevelAmounts = require('../levels.json');
 
 module.exports = {
 
-    // Fetch the User's Current Level
+    /**
+     * Returns the User's Level calculated from the given XP
+     * 
+     * @param {Number} xp An amount of XP to calculate the Level from
+     * 
+     * @returns {Number} The calculated Level
+     */
     async FetchLevel(xp) {
 
         let lvlAmounts = Object.values(LevelAmounts);
@@ -54,7 +60,14 @@ module.exports = {
 
 
 
-    // Compare Levels
+    /**
+     * Compare two different Levels together to see if there are any changes between them
+     * 
+     * @param {Number} oldLevel The User's old Level
+     * @param {Number} newLevel The User's new Level
+     * 
+     * @returns {String} String stating if there was a change or not. EITHER "levelup", "nochange", "leveldown"
+     */
     async CompareLevels(oldLevel, newLevel) {
 
         if( newLevel > oldLevel ) {

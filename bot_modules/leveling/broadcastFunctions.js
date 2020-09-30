@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const { client } = require('../constants.js');
 const { sequelize } = require('../constants.js');
 const Tables = require('../tables.js');
@@ -8,8 +9,14 @@ const Levels = require('./levelFunctions.js');
 
 module.exports = {
 
-    // MAIN
-    //    - Does the Guild have a set Broadcast Channel in Settings?
+    /**
+     * Checks if the Guild has a set Broadcast Channel in the CONFIG cmd
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Discord.User} author Discord User Object
+     * @param {Discord.Guild} guild Discord Guild Object
+     * @param {String} up_or_down If the User is levelling up or down
+     */
     async Main(message, author, guild, up_or_down) {
 
         // Check if Guild has a set Broadcast Channel
@@ -68,8 +75,18 @@ module.exports = {
 
 
 
-    // MainCurrent
-    //      - Output to current channel
+    /**
+     * Outputs the Level Message to the CURRENT channel
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Discord.Author} author Discord User Object
+     * @param {Discord.Guild} guild Discord Guild Object
+     * @param {String} up_or_down If the User is leveling up or down
+     * @param {*} serverData GUILD_CONFIG data pulled from Database
+     * @param {*} memberData USER_PREFS data pulled from Database
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async MainCurrent(message, author, guild, up_or_down, serverData, memberData) {
 
         // Calculate the Level
@@ -120,8 +137,19 @@ module.exports = {
 
 
 
-    // MainChannel
-    //      - Output to set channel
+    /**
+     * Outputs the Level message to a SET channel
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Discord.User} author Discord User Object
+     * @param {Discord.Guild} guild Discord Guild Object
+     * @param {String} up_or_down If the User is leveling up or down
+     * @param {*} serverData GUILD_CONFIG data pulled from Database
+     * @param {*} memberData USER_PREFS data pulled from Database
+     * @param {Discord.TextChannel} broadChannel Discord TextChannel Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async MainChannel(message, author, guild, up_or_down, serverData, memberData, broadChannel) {
 
         // Calculate the Level

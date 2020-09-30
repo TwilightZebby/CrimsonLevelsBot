@@ -5,6 +5,15 @@ const { client } = require('../constants.js');
 module.exports = {
     name: `log`,
     description: `Logs the Guild name and amount of members for each time the Bot is invited to or kicked from a Guild`,
+
+
+    /**
+     * Logs to Bot Developer whenever the Bot is invited to a Guild
+     * 
+     * @param {Discord.Guild} guild Discord Guild Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async JoinedGuild(guild) {
 
         // FOR WHEN THE BOT IS INVITED TO A GUILD
@@ -63,7 +72,14 @@ module.exports = {
 
 
 
-
+    
+    /**
+     * Logs to the Bot Developer whenever Bot leaves a Guild
+     * 
+     * @param {Discord.Guild} guild Discord Guild Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async LeftGuild(guild) {
 
         // FOR WHEN THE BOT IS KICKED FROM A GUILD

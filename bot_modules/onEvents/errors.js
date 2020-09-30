@@ -3,7 +3,13 @@ const Discord = require('discord.js');
 
 module.exports = {
 
-    // Dump log in Error Channel and Console!
+    /**
+     * Throw Error into Console AND Discord Error Logs Channel
+     * 
+     * @param {Error} error 
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async Log(error) {
 
         // Log to Console
@@ -23,7 +29,14 @@ module.exports = {
     },
 
 
-    // Same as above, but with a custom message for the Discord Output
+    /**
+     * Throws Error to Console AND Discord Channel, with a custom Message prefixing it
+     * 
+     * @param {Error} error 
+     * @param {String} eMessage 
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async LogCustom(error, eMessage) {
 
         // Log to Console
@@ -44,7 +57,14 @@ module.exports = {
 
 
 
-    // For outputting Errors to the User
+    /**
+     * Send a custom Error message to the Discord User
+     * 
+     * @param {Discord.Channel} messageTarget Where to send the Message (NEEDS .send() FUNCTION)
+     * @param {String} eMessageContent The Custom message itself
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
     async LogToUser(messageTarget, eMessageContent) {
 
         const embed = new Discord.MessageEmbed();
