@@ -9,6 +9,7 @@ const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
+const Devs = require('../../bot_modules/cmds/devFunctions.js');
 
 
 module.exports = {
@@ -38,7 +39,25 @@ module.exports = {
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
       
-      // PLACEHOLDER FOR NOW
+      
+      // Check first argument
+      let subCmd = args.shift();
+      switch (subCmd) {
+
+        case `user`:
+          return await Devs.UserMain(message, args);
+
+        
+
+        case `global`:
+          return await Devs.GlobalMain(message, args);
+
+
+
+        default:
+          return await Error.LogToUser(message.channel, `That was not a valid sub-command of the Developer Module! Please check the [GitHub README](https://github.com/TwilightZebby/CrimsonLevelsBot) for more details...`);
+
+      }
 
       //END OF COMMAND
     },

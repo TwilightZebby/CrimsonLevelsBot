@@ -17,7 +17,8 @@ module.exports = {
     async JoinedGuild(guild) {
 
         // FOR WHEN THE BOT IS INVITED TO A GUILD
-        let logChannel = await client.guilds.fetch('681805468749922308').channels.resolve('718720727829708811');
+        let logChannel = await client.guilds.fetch('681805468749922308');
+        logChannel = logChannel.channels.resolve('718720727829708811');
         const embed = new Discord.MessageEmbed().setColor('#33db00');
 
 
@@ -83,7 +84,8 @@ module.exports = {
     async LeftGuild(guild) {
 
         // FOR WHEN THE BOT IS KICKED FROM A GUILD
-        let logChannel = await client.guilds.fetch('681805468749922308').channels.resolve('718720727829708811');
+        let logChannel = await client.guilds.fetch('681805468749922308');
+        logChannel = logChannel.channels.resolve('718720727829708811');
         const embed = new Discord.MessageEmbed().setColor('#800000');
 
 

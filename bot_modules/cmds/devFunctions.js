@@ -1,0 +1,276 @@
+const Discord = require("discord.js");
+const fs = require('fs');
+const Canvas = require('canvas');
+const { client } = require('../../bot_modules/constants.js');
+
+let { PREFIX } = require('../../config.js');
+const XPs = require('../../bot_modules/leveling/xpFunctions.js');
+const Levels = require('../../bot_modules/leveling/levelFunctions.js');
+const Tables = require('../../bot_modules/tables.js');
+const Error = require('../../bot_modules/onEvents/errors.js');
+const Prefixs = require('../../bot_modules/prefixFunctions.js');
+
+module.exports = {
+    name: `dev`,
+    description: `All the sub-commands for the developer command`,
+
+
+
+
+    /**
+     * The main point of entry for the user-sub-commands
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Array<Object>} args The arguments inputted by the User
+     */
+    async UserMain(message, args) {
+
+        // Check that the inputted @userMention or UserID is valid
+        let selectedUser = args.shift();
+        selectedUser = await this.UserCheck(selectedUser);
+
+        if (selectedUser === "fail") {
+            return await Error.LogToUser(message.channel, `I was unable to find that User!`);
+        }
+        else {
+
+            // Check what action is wanted
+            let action = args.shift();
+            let option = args.shift();
+
+            switch (action) {
+
+                case 'view':
+                    if ( ["xp", "level"].includes(option) ) {
+                        return await this.UserViewRank(message, args.shift(), selectedUser);
+                    }
+                    else {
+                        return await Error.LogToUser(message.channel, `That wasn't a valid option!\n(For **user view**, this would be either **xp**, **level**, or **prefs**)`);
+                    }
+
+
+                case 'set':
+                    //.
+
+
+                default:
+                    return Error.LogToUser(message.channel, `That wasn't a valid action!\n(For **user**, this would be either **view** or **set**)`);
+
+            }
+
+        }
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {String} guildid Guild ID
+     * @param {Discord.User} selectedUser Discord User Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async UserViewRank(message, guildid, selectedUser) {
+
+        // Fetch Guild
+        let fetchedGuild = await this.GuildCheck(guildid);
+
+        if ( fetchedGuild === "fail" ) {
+            return await Error.LogToUser(message.channel, `I'm unable to fetch Guild from the given ID!`);
+        }
+        else {
+
+            // Fetch Database
+            let userRankData = await Tables.UserXP.findOrCreate(
+                {
+                    where: {
+                        userID: selectedUser.id,
+                        guildID: fetchedGuild.id
+                    }
+                }
+            ).catch(async (err) => {
+                await Error.LogCustom(err, `Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
+                return await Error.LogToUser(message.channel, `I was unable to fetch the XP data for **${selectedUser.username}#${selectedUser.discriminator}**`);
+            });
+
+            userRankData = userRankData[0].dataValues.xp;
+
+
+            // Calculate Level
+            let userRankLevel = await Levels.FetchLevel(userRankData);
+
+
+            // Output
+            const embed = new Discord.MessageEmbed().setColor('#00ffee')
+            .setTitle(`${selectedUser.username} Rank Data`)
+            .setDescription(`**For Guild:** ${fetchedGuild.name}
+            **Level:** ${userRankLevel}
+            **XP:** ${userRankData}`)
+            .setFooter(`Developer Module`);
+
+            return await message.channel.send(embed);
+
+        }
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Main point of entry for the global-sub-commands
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Array<Object>} args The arguments inputted by the User
+     */
+    async GlobalMain(message, args) {
+
+        //.
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {String} guildid The ID to fetch into a Guild Object
+     * 
+     * @returns {(Promise<Discord.Guild>|String)} wrapped User Object or "fail"
+     */
+    async GuildCheck(guildid) {
+
+        let fetchedGuild = null;
+
+        try {
+            fetchedGuild = await client.guilds.fetch(guildid);
+        } catch (err) {
+            return "fail";
+        }
+
+        return fetchedGuild;
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {String} selectedUser The User Mention or ID to check
+     * 
+     * @returns {(Promise<Discord.User>|String)} wrapped User Object or "fail"
+     */
+    async UserCheck(selectedUser) {
+
+
+        let fetchedUser = null;
+
+        // Check as if it was a User ID first
+        try {
+            fetchedUser = await client.users.fetch(selectedUser);
+        } catch (err) {
+            // It ain't a User ID, go for User Mention now
+            fetchedUser = "mention";
+        }
+
+
+
+        if (fetchedUser !== "mention") {
+            return fetchedUser;
+        }
+        else if (fetchedUser === null || fetchedUser === undefined) {
+            return "fail";
+        }
+        else {
+
+            // Fetch User based off Mention
+
+            const matches = selectedUser.match(/^<@!?(\d+)>$/);
+            // The id is the first and only match found by the RegEx.
+            // However the first element in the matches array will be the entire mention, not just the ID,
+            // so use index 1.
+
+            try {
+                fetchedUser = await client.users.fetch(matches[1]);
+            } catch (err) {
+                return "fail";
+            }
+
+            return fetchedUser;
+
+        }
+
+    }
+}

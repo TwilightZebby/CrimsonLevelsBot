@@ -71,7 +71,8 @@ process.on('warning', async (warning) => {
   console.warn(warning);
 
   // Log to error log channel
-  let errorChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
+  let errorChannel = await client.guilds.fetch('681805468749922308');
+  errorChannel = errorChannel.channels.resolve('726336306497454081');
 
   return await errorChannel.send(`\`\`\`Warning:\n
   ${warning}
@@ -101,7 +102,8 @@ client.on('rateLimit', async (rateLimitInfo) => {
   console.warn(rateLimitInfo);
 
   // Log to error log channel
-  let errorChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
+  let errorChannel = await client.guilds.fetch('681805468749922308');
+  errorChannel = errorChannel.channels.resolve('726336306497454081');
 
   return await errorChannel.send(`\`\`\`Discord Ratelimit Error:\n
   Timeout (ms): ${rateLimitInfo.timeout}
@@ -120,7 +122,8 @@ client.on('warn', async (warning) => {
   console.warn(warning);
 
   // Log to error log channel
-  let errorChannel = await client.guilds.fetch('681805468749922308').channels.resolve('726336306497454081');
+  let errorChannel = await client.guilds.fetch('681805468749922308');
+  errorChannel = errorChannel.channels.resolve('726336306497454081');
 
   return await errorChannel.send(`\`\`\`Discord Warning:\n
   ${warning}
