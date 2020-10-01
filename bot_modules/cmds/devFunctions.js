@@ -53,13 +53,95 @@ module.exports = {
 
 
                 case 'set':
-                    //.
+                    if (option === "xp") {
+                        return await this.UserSetRank(message, args[1], selectedUser, args[0]);
+                    }
+                    else {
+                        return await Error.LogToUser(message.channel, `That wasn't a valid option!\n(For **user set**, this would be either **xp** or **prefs**)`);
+                    }
 
 
                 default:
                     return Error.LogToUser(message.channel, `That wasn't a valid action!\n(For **user**, this would be either **view** or **set**)`);
 
             }
+
+        }
+
+    },
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {String} guildid Guild ID to fetch
+     * @param {Discord.User} selectedUser Discord User Object
+     * @param {Number} xpAmount XP amount to set as the User's new XP total
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async UserSetRank(message, guildid, selectedUser, xpAmount) {
+
+        // Fetch Guild
+        let fetchedGuild = await this.GuildCheck(guildid);
+
+        if ( fetchedGuild === "fail" ) {
+            return await Error.LogToUser(message.channel, `I'm unable to fetch Guild from the given ID!`);
+        }
+        else {
+
+            // Check xpAmount is an INTEGER
+            xpAmount = Number(xpAmount);
+
+            if ( isNaN(xpAmount) ) {
+                return await Error.LogToUser(message.channel, `That wasn't a valid number for the XP amount!`);
+            }
+
+
+            // Save new XP amount
+            await Tables.UserXP.update(
+                {
+                    xp: xpAmount
+                },
+                {
+                    where: {
+                        userID: selectedUser.id,
+                        guildID: fetchedGuild.id
+                    }
+                }
+            ).catch(async (err) => {
+                await Error.LogCustom(err, `Attempted UserXP data update for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
+                return await Error.LogToUser(message.channel, `I was unable to update the XP data for **${selectedUser.username}#${selectedUser.discriminator}** in Guild **${fetchedGuild.name}**`);
+            });
+
+
+            // Output
+            const embed = new Discord.MessageEmbed().setColor('#00ffee')
+            .setDescription(`Successfully updated **${selectedUser.username}** XP total in Guild __${fetchedGuild.name}__ to **${xpAmount}**`)
+            .setFooter(`Developer Module`);
+
+            return await message.channel.send(embed);
+
 
         }
 
