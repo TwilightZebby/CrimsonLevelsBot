@@ -44,6 +44,9 @@ module.exports = {
                     if ( ["xp", "level"].includes(option) ) {
                         return await this.UserViewRank(message, args.shift(), selectedUser);
                     }
+                    else if (option === "prefs") {
+                        return await this.UserViewPrefs(message, selectedUser);
+                    }
                     else {
                         return await Error.LogToUser(message.channel, `That wasn't a valid option!\n(For **user view**, this would be either **xp**, **level**, or **prefs**)`);
                     }
@@ -59,6 +62,62 @@ module.exports = {
             }
 
         }
+
+    },
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Discord.User} selectedUser Discord User Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async UserViewPrefs(message, selectedUser) {
+
+        // Fetch Database
+        let userPrefsData = await Tables.UserPrefs.findOrCreate(
+            {
+                where: {
+                    userID: selectedUser.id
+                }
+            }
+        ).catch(async (err) => {
+            await Error.LogCustom(err, `Attempted UserPrefs data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
+            return await Error.LogToUser(message.channel, `I was unable to fetch the Prefs data for **${selectedUser.username}#${selectedUser.discriminator}**`);
+        });
+
+        userPrefsData = userPrefsData[0].dataValues;
+
+
+        // Output
+        const embed = new Discord.MessageEmbed().setColor('#00ffee')
+        .setTitle(`${selectedUser.username} Prefs Data`)
+        .setDescription(`**Rank Background:** ${userPrefsData.rankBackground}
+        **Allow Mentions:** ${userPrefsData.mentions}`)
+        .setFooter(`Developer Module`);
+
+        return await message.channel.send(embed);
 
     },
     
@@ -109,8 +168,8 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
-                return await Error.LogToUser(message.channel, `I was unable to fetch the XP data for **${selectedUser.username}#${selectedUser.discriminator}**`);
+                await Error.LogCustom(err, `Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
+                return await Error.LogToUser(message.channel, `I was unable to fetch the XP data for **${selectedUser.username}#${selectedUser.discriminator}** in Guild **${fetchedGuild.name}**`);
             });
 
             userRankData = userRankData[0].dataValues.xp;
