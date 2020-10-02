@@ -178,6 +178,7 @@ client.once('ready', async () => {
     await Tables.UserXP.sync();
     await Tables.UserPrefs.sync();
     await Tables.GuildConfig.sync();
+    await Tables.GuildRoles.sync();
     
     
     console.log(`I am ready!`);
