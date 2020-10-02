@@ -443,4 +443,94 @@ module.exports = {
         }
 
     },
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Discord.MessageEmbed} embed Discord Message Embed Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async ResetRoles(message, embed) {
+
+        // Send confirmation message
+        embed.setTitle(`Reset Level Roles Confirmation`)
+        .setDescription(`Please click the ✅ emoji reaction on this message to confirm that you do indeed want to wipe all the assigned Roles from this Server's Database`);
+
+        const confirmationMessage = await message.channel.send(embed);
+        await confirmationMessage.react('✅').catch(async (err) => {
+            await Error.Log(err);
+        });
+
+
+        // Wait for reaction
+        const filter = (reaction, user) => reaction.emoji.name === '✅' && user.id === message.author.id;
+        const collector = confirmationMessage.createReactionCollector(filter, {
+            time: 10000
+        })
+        .on("collect", (reaction, user) => {
+            collector.stop("confirmed");
+        })
+        .on("end", async (collected, reason) => {
+
+            if ( ["time", "idle"].includes(reason) ) {
+
+                embed.setTitle(`⌛ Confirmation Timed Out`)
+                .setDescription(`You were too slow to respond, sorry! (Trigger this again using \`${PREFIX}role reset\` if need be)`);
+
+                await confirmationMessage.edit(embed);
+                return await confirmationMessage.reactions.removeAll();
+
+            }
+            else if ( ["user", "confirmed"].includes(reason) ) {
+
+                await Tables.GuildRoles.destroy(
+                    {
+                        where: {
+                            guildID: message.guild.id
+                        }
+                    }
+                ).catch(async (err) => {
+                    
+                    await Error.LogCustom(err, `Attempted GuildRoles data removal for ${message.guild.name}`);
+
+                    embed.setColor('#9c0000')
+                    .setTitle(`⚠️ An error has occurred!`)
+                    .setDescription(`I was unable to remove the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+
+                    return await confirmationMessage.edit(embed);
+
+                });
+
+
+                embed.setTitle(`Reset Level Roles`)
+                .setDescription(`Successfully cleared all previously assigned Roles for this Server ( ${message.guild.name} )`);
+                return await confirmationMessage.edit(embed);
+
+            }
+
+        });
+
+    },
 }

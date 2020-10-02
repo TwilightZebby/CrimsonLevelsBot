@@ -71,6 +71,12 @@ module.exports = {
 
 
 
+          case 'reset':
+            // Reset all assigned Roles from this Guild's DB
+            return await Roles.ResetRoles(message, embed);
+
+
+
           default:
             return await Error.LogToUser(message.channel, `That wasn't a valid option for the \`${PREFIX}role\` command!\nPlease use \`${PREFIX} role guide\` to see all the valid options`);
           
