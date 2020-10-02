@@ -242,6 +242,13 @@ module.exports = {
             levelNumber = Math.floor(levelNumber);
 
 
+            // Check levelNumber isn't greater than 200
+            if ( levelNumber >= 201 ) {
+                return await Error.LogToUser(message.channel, `Seems like you are trying to assign a Role for a Level *above* my maximum!
+                (The maximum Level is 200)`);
+            }
+
+
 
             // Now attempt to fetch Role
             const roleArg = args.shift();
@@ -334,6 +341,105 @@ module.exports = {
 
             }
 
+        }
+
+    },
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Checks the inputted User Mention or ID to see if it's valid
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     * @param {Array<String>} args User inputted Arguments
+     * @param {Discord.MessageEmbed} embed Discord Message Embed Object
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async RemoveRole(message, args, embed) {
+
+        // First check args
+        if ( !args || !args.length ) {
+            return await Error.LogToUser(message.channel, `I couldn't see a Level Number in that!`);
+        }
+        else {
+
+            // Attempt converting of STRING to INT for levelNumber
+            let levelNumber = Number(args.shift());
+
+            if (isNaN(levelNumber)) {
+                return await Error.LogToUser(message.channel, `Looks like that given level number wasn't a number! Please try again...`);
+            }
+
+            levelNumber = Math.floor(levelNumber);
+
+
+            // Check levelNumber isn't greater than 200
+            if ( levelNumber >= 201 ) {
+                return await Error.LogToUser(message.channel, `Seems like you are trying to remove a Role for a Level *above* my maximum!
+                (The maximum Level is 200)`);
+            }
+
+
+
+            // Check to see if there's an existing Role to remove
+            let roleCheck = await Tables.GuildRoles.findAll(
+                {
+                    where: {
+                        guildID: message.guild.id,
+                        level: levelNumber
+                    }
+                }
+            ).catch(async (err) => {
+                await Error.LogCustom(err, `Attempted GuildRoles data removal for ${message.guild.name}`);
+                return await Error.LogToUser(message.channel, `I was unable to remove the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+            });
+
+
+            if ( roleCheck.length < 1 ) {
+                return await Error.LogToUser(message.channel, `There isn't any Role assigned at Level ${levelNumber} for me to remove!`);
+            }
+            else {
+
+                // Clear Role
+                await Tables.GuildRoles.destroy(
+                    {
+                        where: {
+                            guildID: message.guild.id,
+                            level: levelNumber
+                        }
+                    }
+                ).catch(async (err) => {
+                    await Error.LogCustom(err, `Attempted GuildRoles data removal for ${message.guild.name}`);
+                    return await Error.LogToUser(message.channel, `I was unable to remove the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+                });
+
+
+                // Output
+                embed.setTitle(`${message.guild.name} Level Roles`)
+                .setDescription(`Successfully unassigned the Role \<\@\&${roleCheck[0].dataValues.roleID}\> from Level ${levelNumber}`);
+
+                return await message.channel.send(embed);
+
+            }
         }
 
     },

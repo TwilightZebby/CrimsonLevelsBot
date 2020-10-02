@@ -65,6 +65,12 @@ module.exports = {
 
 
 
+          case 'remove':
+            // Unassign/Clear a Role
+            return await Roles.RemoveRole(message, args, embed);
+
+
+
           default:
             return await Error.LogToUser(message.channel, `That wasn't a valid option for the \`${PREFIX}role\` command!\nPlease use \`${PREFIX} role guide\` to see all the valid options`);
           
