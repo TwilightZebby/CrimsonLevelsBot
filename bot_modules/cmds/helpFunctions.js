@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 
 const { client } = require('../constants.js');
 let { PREFIX } = require('../../config.js');
+const Prefixs = require('../prefixFunctions.js');
 
 module.exports = {
     name: `help`,
@@ -21,12 +22,16 @@ module.exports = {
      */
     async ListCommands(embed, message, commands) {
 
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
+
         embed.setTitle(`Command List`)
         .setDescription(`__Definitions__
         < > means that is required.
         [ ] means that is optional.
         | means either/or.
-        **Do __NOT__ include these symbols when typing out the commands!**`)
+        **Do __NOT__ include these symbols when typing out the commands!**
+        *Server Owners can use \`${PREFIX}help --owner\` to see commands that they can use!*`)
         .addFields(
             {
                 name: `General Commands`,
@@ -81,6 +86,9 @@ module.exports = {
      * @returns {Promise<Discord.Message>} wrapped Message
      */
     async ListDevCommands(embed, message, commands) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
 
         embed.setTitle(`Command List (Developer\'s List)`)
         .setDescription(`__Definitions__
@@ -142,6 +150,9 @@ module.exports = {
      * @returns {Promise<Discord.Message>} wrapped Message
      */
     async ListOwnerCommands(embed, message, commands) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
 
         embed.setTitle(`Command List (Server Owner\'s List)`)
         .setDescription(`__Definitions__
@@ -258,6 +269,9 @@ module.exports = {
      * @returns {Promise<Discord.Message>} wrapped Message
      */
     async CommandHelp(embed, message, commands, name) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
 
         // Search for commands
         let command = await this.CommandSearch(name, commands);

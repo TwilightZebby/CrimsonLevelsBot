@@ -27,6 +27,9 @@ module.exports = {
      */
     async ListRoles(message, embed) {
 
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
+
         // Fetch Roles for Guild
         let guildRoleDatabase = await Tables.GuildRoles.findAll(
             {
@@ -159,6 +162,9 @@ module.exports = {
      * @returns {Prmoise<Discord.Message>} wrapped Message
      */
     async Guide(message, embed) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
 
         embed.setTitle(`Role Command Guide`)
         .addFields(
@@ -473,6 +479,9 @@ module.exports = {
      * @returns {Promise<Discord.Message>} wrapped Message
      */
     async ResetRoles(message, embed) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
 
         // Send confirmation message
         embed.setTitle(`Reset Level Roles Confirmation`)

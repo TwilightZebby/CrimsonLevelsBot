@@ -6,18 +6,19 @@ const { client } = require('../../bot_modules/constants.js');
 let { PREFIX } = require('../../config.js');
 //const XPs = require('../../bot_modules/leveling/xpFunctions.js');
 //const Levels = require('../../bot_modules/leveling/levelFunctions.js');
-//const Tables = require('../../bot_modules/tables.js');
+const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
-const Roles = require('../../bot_modules/cmds/roleFunctions.js');
+//const Roles = require('../../bot_modules/cmds/roleFunctions.js');
+const Resets = require('../../bot_modules/cmds/resetFunctions.js');
 
 
 module.exports = {
-    name: 'role',
-    description: 'Used to configure the Level Reward Roles for the Server',
-    usage: ' ',
-    aliases: ['roles'],
-    //args: true,
+    name: 'reset',
+    description: 'Used by Server Owners to reset the XP total of either a specific Member, or all Members in the Server',
+    usage: '<@user||all>',
+    //aliases: [''],
+    args: true,
     commandType: 'management',
     cooldown: 5, // IN SECONDS
 
@@ -35,56 +36,28 @@ module.exports = {
     //flags: [],
 
     async execute(message, args) {
-
+      
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
 
-      let embed = new Discord.MessageEmbed().setColor('#DC143C');
-      
-      if ( !args || !args.length ) {
+      let option = args.shift();
 
-        // Bring up a list of all set Reward Roles, if any
-        return await Roles.ListRoles(message, embed);
-
+      if ( option === "all" ) {
+        return await Resets.Confirm(message, "all")
       }
       else {
 
-        let option = args.shift();
+        // fetch User object
+        let fetchedUser = await Resets.UserCheck(option);
 
-        switch (option) {
-
-          case 'guide':
-            // Bring up Role Module Guide
-            return await Roles.Guide(message, embed);
-
-
-
-          case 'add':
-            // Assign a new Role
-            return await Roles.AddRole(message, args, embed);
-
-
-
-          case 'remove':
-            // Unassign/Clear a Role
-            return await Roles.RemoveRole(message, args, embed);
-
-
-
-          case 'reset':
-            // Reset all assigned Roles from this Guild's DB
-            return await Roles.ResetRoles(message, embed);
-
-
-
-          default:
-            return await Error.LogToUser(message.channel, `That wasn't a valid option for the \`${PREFIX}role\` command!\nPlease use \`${PREFIX} role guide\` to see all the valid options`);
-          
+        if (fetchedUser === "fail") {
+          return message.reply(`That wasn't a valid User or "all" - please try again!`);
+        }
+        else {
+          return await Resets.Confirm(message, "user", fetchedUser);
         }
 
       }
-
-
 
       //END OF COMMAND
     },
