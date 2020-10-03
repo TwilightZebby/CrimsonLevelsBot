@@ -44,6 +44,7 @@ const XPs = require('./bot_modules/leveling/xpFunctions.js');
 const Levels = require('./bot_modules/leveling/levelFunctions.js');
 const Broadcasts = require('./bot_modules/leveling/broadcastFunctions.js');
 const Prefixs = require('./bot_modules/prefixFunctions.js');
+const ManageRoles = require('./bot_modules/leveling/roleManageFunctions.js');
 
 
 
@@ -596,9 +597,11 @@ client.on('message', async (message) => {
     }
     else if ( levelChange === "levelup" ) {
       await broadcastFunctions.Main(message, message.author, message.guild, "up");
+      await ManageRoles.Main(message.member, message.guild, newXPTotal, newLevel);
     }
     else if ( levelChange === "leveldown" ) {
       await broadcastFunctions.Main(message, message.author, message.guild, "down");
+      await ManageRoles.Main(message.member, message.guild, newXPTotal, newLevel, true);
     }
 
 

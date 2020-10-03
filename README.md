@@ -14,11 +14,14 @@ Sub-commands:
 * `user <userID||@user> view <prefs>`
 > Brings up that User's set Preferences
 
-* `user <userID||@user> set <xp||level> <guildID> <amount>`
+* `user <userID||@user> set <xp||level> <amount> <guildID>`
 > Force-sets the User's XP amount in that Guild to either a given XP amount, or to match the given Level
 
 * `user <userID||@user> set <prefOption> <prefValue>`
 > Force-sets the User's `<prefOption>` to be that of the given Value
+
+* `guild <guildID> forceleave||leave`
+> Allows me to force the Bot OUT of a Server should I feel the need to
 
 * `global view modifier`
 > Displays what the current Global Modifier is for XPs

@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const { client } = require('../constants.js');
 const { sequelize } = require('../constants.js');
 const Tables = require('../tables.js');
