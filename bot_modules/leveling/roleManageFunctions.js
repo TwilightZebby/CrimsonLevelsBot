@@ -65,7 +65,7 @@ module.exports = {
             else {
 
                 // Does NOT have MANAGE_ROLE Permission
-                let guildOwner = guild.owner;
+                let guildOwner = await guild.members.fetch(guild.ownerID);
 
                 try {
                     let guildOwnerDM = await guildOwner.createDM();

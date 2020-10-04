@@ -51,7 +51,7 @@ module.exports = {
       else {
 
         if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-          return await message.reply(`Sorry, but only the Owner (**${message.guild.owner.displayName}**) of this Server can change the Bot's Prefix!`);
+          return await message.reply(`Sorry, but only the Owner (**\<\@${message.guild.ownerID}\>**) of this Server can change the Bot's Prefix!`);
         }
         else {
 
