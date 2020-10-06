@@ -1,7 +1,7 @@
 # Crimson Level Bot
 *(Formally "CrimsonRoulette")*
 
-A *free* Leveling Bot that says a Level Bot, with no music modules or the like. We also allow Users to turn off @mentions from the Bot!
+A *free* Leveling Bot that says a free Leveling Bot, with no music modules or the like. We also allow Users to turn off @mentions from the Bot!
 
 ---
 ### Required Permissions
