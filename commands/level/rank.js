@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const fs = require('fs');
 const Canvas = require('canvas');
 const { client } = require('../../bot_modules/constants.js');
+const ns = require('number-string');
 
 let { PREFIX } = require('../../config.js');
 const XPs = require('../../bot_modules/leveling/xpFunctions.js');
@@ -55,6 +56,11 @@ module.exports = {
 
       let currentXP = await XPs.FetchXP(message);
       let currentLevel = await Levels.FetchLevel(currentXP);
+
+      // Add commas if need be
+      currentXP = ns.toClean(currentXP, {
+        thousandSeperator: ",",
+      });
 
       
 
