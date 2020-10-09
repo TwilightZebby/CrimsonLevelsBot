@@ -49,7 +49,7 @@ module.exports = {
       .addFields(
         {
           name: `Latest Version`,
-          value: `[v1.5.1 - Roulette Update](#)`
+          value: `[v1.5.1](#)`
         },
         {
           name: `Previous Versions`,

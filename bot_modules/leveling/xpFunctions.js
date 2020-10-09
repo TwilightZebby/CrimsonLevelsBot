@@ -10,24 +10,49 @@ module.exports = {
      * Returns the User's current XP
      * 
      * @param {Discord.Message} message Discord Message Object
+     * @param {Discord.GuildMember} [member] Discord Guild Member object, if not looking for own XP
      * 
      * @returns {Number} The User's current XP
      */
-    async FetchXP(message) {
+    async FetchXP(message, member) {
 
-        let authorData = await Tables.UserXP.findOrCreate({
-            where: {
-                guildID: message.guild.id,
-                userID: message.author.id
-            }
-        })
-        .catch(async err => {
-            return await Errors.Log(err);
-        })
 
-        let authorCurrent = authorData[0].dataValues;
+        if (!member) {
+
+            let authorData = await Tables.UserXP.findOrCreate({
+                where: {
+                    guildID: message.guild.id,
+                    userID: message.author.id
+                }
+            })
+            .catch(async err => {
+                return await Errors.Log(err);
+            })
+    
+            let authorCurrent = authorData[0].dataValues;
+            
+            return authorCurrent.xp;
+
+        }
+        else {
+
+            let memberData = await Tables.UserXP.findOrCreate({
+                where: {
+                    guildID: message.guild.id,
+                    userID: member.user.id
+                }
+            })
+            .catch(async err => {
+                return await Errors.Log(err);
+            });
+
+            let memberCurrent = memberData[0].dataValues;
+
+            return memberCurrent.xp;
+
+        }
+
         
-        return authorCurrent.xp;
 
     },
     

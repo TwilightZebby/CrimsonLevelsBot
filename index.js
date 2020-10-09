@@ -577,7 +577,7 @@ client.on('message', async (message) => {
 
     const now = Date.now();
     const timestamps = xpCooldowns.get(message.author.id);
-    const cooldownLength = 3500;
+    const cooldownLength = 30500;
 
     if ( timestamps.has(message.author.id) ) {
 
