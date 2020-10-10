@@ -178,7 +178,7 @@ client.once('ready', async () => {
     // ***** Set Status
     await client.user.setPresence({
         activity: {
-          name: `c%help | CrimsonLevel WIP`
+          name: `c!help`
         },
         status: 'online'
     });
@@ -186,7 +186,7 @@ client.once('ready', async () => {
     client.setInterval(async function () {
         await client.user.setPresence({
           activity: {
-            name: `c%help | CrimsonLevel WIP`
+            name: `c!help`
           },
           status: 'online'
         });
@@ -577,7 +577,7 @@ client.on('message', async (message) => {
 
     const now = Date.now();
     const timestamps = xpCooldowns.get(message.author.id);
-    const cooldownLength = 3500;
+    const cooldownLength = 30500;
 
     if ( timestamps.has(message.author.id) ) {
 
@@ -652,7 +652,26 @@ client.on('message', async (message) => {
     const commandName = args.shift().toLowerCase();
     // If there is NOT a command with the given name or aliases, exit early
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    if (!command) return;
+    if (!command) {
+
+      // If the @mention was used, show prefix
+      if ( matchedPrefix === `<@!664495280141500446>` ) {
+        const embed = new Discord.MessageEmbed().setColor('#DC143C')
+        .setDescription(`My prefix on this Server is \`${PREFIX}\``);
+        return await message.channel.send(embed);
+      }
+      
+      return;
+    }
+
+
+
+
+
+    // Prevent the Bot from being triggered in top.gg's Guild unless it was specifically @mentioned
+    if ( message.guild.id === "264445053596991498" && matchedPrefix !== `<@!664495280141500446>` ) {
+      return;
+    }
 
 
 

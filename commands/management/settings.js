@@ -139,7 +139,7 @@ module.exports = {
             },
             {
               name: `Level-Up/Down Messages`,
-              value: `These are the messages used in your Server if *Broadcast Channel* isn't disabled. **Must include** \`{user}\` and \`{level}\` so the Bot knows where in the Message to place the @user pings and Level Numbers!`
+              value: `These are the messages used in your Server if *Broadcast Channel* isn't disabled. **Must include** \`{user}\` and \`{level}\` so the Bot knows where in the Message to place the @user pings and Level Numbers! Include the optional \`{xp}\` for the User's XP total`
             },
             {
               name: `Enable Roulette Command`,

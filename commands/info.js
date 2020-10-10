@@ -10,7 +10,7 @@ module.exports = {
     name: 'info',
     description: 'Displays general information about this Bot',
     usage: ' ',
-    //aliases: [''],
+    aliases: ['about'],
     //args: true,
     commandType: 'general',
     //cooldown: 3, // IN SECONDS
@@ -76,7 +76,7 @@ module.exports = {
         inline: true
       }, {
         name: `Invite Bot`,
-        value: `[Click here](https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=268487680)`,
+        value: `[Click here](https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=268487744)`,
         inline: true
       });
 
