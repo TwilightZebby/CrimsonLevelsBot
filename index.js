@@ -655,7 +655,7 @@ client.on('message', async (message) => {
     if (!command) {
 
       // If the @mention was used, show prefix
-      if ( matchedPrefix === `<@!664495280141500446>` ) {
+      if ( matchedPrefix === `<@!${client.user.id}>` ) {
         const embed = new Discord.MessageEmbed().setColor('#DC143C')
         .setDescription(`My prefix on this Server is \`${PREFIX}\``);
         return await message.channel.send(embed);
@@ -669,7 +669,7 @@ client.on('message', async (message) => {
 
 
     // Prevent the Bot from being triggered in top.gg's Guild unless it was specifically @mentioned
-    if ( message.guild.id === "264445053596991498" && matchedPrefix !== `<@!664495280141500446>` ) {
+    if ( message.guild.id === "264445053596991498" && matchedPrefix !== `<@!${client.user.id}>` ) {
       return;
     }
 

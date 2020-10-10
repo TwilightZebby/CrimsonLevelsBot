@@ -275,6 +275,11 @@ module.exports = {
             return await Error.LogToUser(message.channel, `That wasn't a valid User! Please try again...`);
         }
 
+        // If its a Bot, RETURN
+        if (user.bot) {
+            return await Error.LogToUser(message.channel, `I do not store XP for other Bots!`);
+        }
+
         // Also get Member object as well
         const userMember = await message.guild.members.fetch(user);
 
