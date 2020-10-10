@@ -107,6 +107,10 @@ module.exports = {
         // Format Message
         levelMessage = levelMessage.replace("{user}", `\<\@${author.id}\>`);
         levelMessage = levelMessage.replace("{level}", `${memberLevel}`);
+        // For {xp} which is optional
+        if (levelMessage.includes("{xp}")) {
+            levelMessage = levelMessage.replace("{xp}", `${memberXP}`);
+        }
 
 
         // Does the User have @mentions disabled?
@@ -170,6 +174,10 @@ module.exports = {
         // Format Message
         levelMessage = levelMessage.replace("{user}", `\<\@${author.id}\>`);
         levelMessage = levelMessage.replace("{level}", `${memberLevel}`);
+        // For {xp} which is optional
+        if (levelMessage.includes("{xp}")) {
+            levelMessage = levelMessage.replace("{xp}", `${memberXP}`);
+        }
 
 
         // Does the User have @mentions disabled?
