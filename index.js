@@ -709,25 +709,39 @@ client.on('message', async (message) => {
 
 
     if ( timestamps.has(message.author.id) ) {
-      const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 
-      if (now < expirationTime) {
-        let timeLeft = (expirationTime - now) / 1000;
-
-        // If greater than 60 Seconds, convert into Minutes
-        if (timeLeft > 60 && timeLeft < 3600) {
-          timeLeft = timeLeft / 60;
-          return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
-        }
-        // If greater than 3600 Seconds, convert into Hours
-        else if (timeLeft > 3600) {
-          timeLeft = timeLeft / 3600;
-          return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
-        }
-
-        return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+      if ( message.author.id === "156482326887530498" && message.content.includes("--overridecooldown") ) {
+        timestamps.delete(message.author.id);
       }
-    } else {
+      else {
+
+        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+        if (now < expirationTime) {
+          let timeLeft = (expirationTime - now) / 1000;
+
+          // If greater than 60 Seconds, convert into Minutes
+          if (timeLeft > 60 && timeLeft < 3600) {
+            timeLeft = timeLeft / 60;
+            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
+          }
+          // If greater than 3600 Seconds, convert into Hours
+          else if (timeLeft > 3600) {
+            timeLeft = timeLeft / 3600;
+            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
+          }
+
+          return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+        }
+
+      }
+
+      
+    } 
+    else if ( message.author.id === "156482326887530498" && message.content.includes("--overridecooldown") ) {
+      // Developer override of cooldown, so do NOTHING
+    }
+    else {
       timestamps.set(message.author.id, now);
       setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
     }

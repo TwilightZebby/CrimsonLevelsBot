@@ -48,6 +48,10 @@ module.exports = {
         // Construct Embed
         embed.setTitle(`Joined a new Guild!`)
         .addFields({
+            name: `Guild ID`,
+            value: guild.id
+        },
+        {
             name: `Guild Name`,
             value: guildName
         }, {
@@ -105,9 +109,14 @@ module.exports = {
         // Construct Embed
         embed.setTitle(`Left a Guild`)
         .addFields({
+            name: `Guild ID`,
+            value: guild.id
+        },
+        {
             name: `Guild Name`,
             value: guildName
-        }, {
+        },
+        {
             name: `Guild Owner`,
             value: `${guildOwner.username}\#${guildOwner.discriminator}`
         })

@@ -1,0 +1,96 @@
+const Discord = require("discord.js");
+const fs = require('fs');
+const Canvas = require('canvas');
+const { client } = require('../../bot_modules/constants.js');
+
+let { PREFIX } = require('../../config.js');
+const XPs = require('../../bot_modules/leveling/xpFunctions.js');
+const Levels = require('../../bot_modules/leveling/levelFunctions.js');
+const Tables = require('../../bot_modules/tables.js');
+const Error = require('../../bot_modules/onEvents/errors.js');
+const Prefixs = require('../../bot_modules/prefixFunctions.js');
+const Roles = require('../../bot_modules/cmds/roleFunctions.js');
+
+
+module.exports = {
+    name: 'roulette',
+    description: 'Spin the Roulette Wheel to see if you can increase your level or risk losing XP! (Has a 12-hour cooldown)',
+    usage: '<xpAmount> [--flag]',
+    aliases: ['roul', 'r'],
+    args: true,
+    commandType: 'level',
+    cooldown: 43200, // IN SECONDS // This is 12-hours
+
+    // LIMITATION MUST BE ONE OF THE FOLLOWING:
+    //    'dev' - Limits to me only, as the Bot's Developer
+    //    'owner' - Limits to Guild Owner and me only
+    //    'admin' - Those set as "Admin" in the Bot, the Guild Owner, and me only
+    //    'mod' - Those set as either "Mod" or "Admin", and the Guild Owner, and me only
+    //     otherwise, comment out for everyone to be able to use
+    //limitation: 'owner',
+
+    // FLAGS
+    //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
+    //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
+    flags: [
+      [ '--risk', 'Include the more risky results that could affect other Server Members! *(Toggleable in `settings` command)*' ]
+    ],
+
+    async execute(message, args) {
+      
+      // Check for custom Prefix
+      PREFIX = await Prefixs.Fetch(message.guild.id);
+
+
+      // Bring in Databases
+      let authorXP = await XPs.FetchXP(message);
+      let guildConfig = await Tables.GuildConfig.findOrCreate(
+        {
+          where: {
+            guildID: message.guild.id
+          }
+        }
+      ).catch(async err => {
+        await Error.LogCustom(err, `Attempted data fetch for GUILDCONFIG in Guild ${message.guild.name}`);
+        return await Error.LogToUser(message.channel, `Failed to fetch the set configuration settings for this Guild. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+      });
+
+      guildConfig = guildConfig[0].dataValues;
+
+
+
+
+      // Construct basic Embed
+      const embed = new Discord.MessageEmbed().setColor('#DC143C');
+
+
+
+
+      // Check the Roulette Command is enabled first
+      if ( guildConfig.roulette === "false" ) {
+        embed.setTitle(`⛔ Command disabled by Server Owner`)
+        .setDescription(`The \`roulette\` command was disabled by this Server's Owner (\<\@${message.guild.ownerID}\>)!`);
+        return await message.channel.send(embed);
+      }
+      else {
+
+        // Check args length
+        if ( !args.includes("--risk") ) {
+
+          // No Risky results
+          return await message.channel.send(`[TEST] No risky results`);
+
+        }
+        else if ( args.length > 1 && args.includes("--risk") ) {
+
+          // Include Risky Results
+          return await message.channel.send(`[TEST] Include risky results`);
+
+        }
+
+      }
+
+
+      //END OF COMMAND
+    },
+};

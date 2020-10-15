@@ -1,7 +1,7 @@
 # Crimson Level Bot
 *(Formally "CrimsonRoulette")*
 
-A *free* Leveling Bot that says a free Leveling Bot, with no music modules or the like. We also allow Users to turn off @mentions from the Bot!
+A *free* Leveling Bot that stays a free Leveling Bot, with no music modules or the like. We also allow Users to turn off @mentions from the Bot!
 
 ---
 ### Required Permissions
@@ -22,10 +22,15 @@ Upon inviting the Bot to your Server, you will be asked to grant the Bot some Pe
 	* **Server Owners** can use `help --owner` to see more commands!
 * info
 	* Brings up basic information about the Bot, including links to its `top.gg` page, its invite link, and its support server
+    * Use the `invite` command to only bring up the Bot's Invite Link
+    * Additionally, use the `support` command to bring up the Invite Link to the Bot's Support Server
+* changelog
+    * Where you can easily find links to the changelogs of the Bot's updates!
 * ping
 	* pong (returns your ping in milliseconds to the Bot)
-* rank
+* rank [@user]
 	* Shows what your XP and Level are in the Server
+    * Can also be used to see other user's XP/Level by @mentioning them or pasting their User ID
 * top
 	* Shows up to the top 10 Members of that Server with the highest XP amount
 * prefix [newPrefix]
