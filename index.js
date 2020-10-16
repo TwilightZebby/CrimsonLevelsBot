@@ -18,7 +18,7 @@ const Tables = require('./bot_modules/tables.js');
 
 // Maps / Collections
 client.commands = new Discord.Collection();
-const cooldowns = new Discord.Collection();
+client.cooldowns = new Discord.Collection();
 const xpCooldowns = new Discord.Collection();
 
 // General Commands
@@ -46,7 +46,7 @@ for ( const file of manageCommandFiles ) {
 const Errors = require('./bot_modules/onEvents/errors.js');
 const XPs = require('./bot_modules/leveling/xpFunctions.js');
 const Levels = require('./bot_modules/leveling/levelFunctions.js');
-const Broadcasts = require('./bot_modules/leveling/broadcastFunctions.js');
+const broadcastFunctions = require('./bot_modules/leveling/broadcastFunctions.js');
 const Prefixs = require('./bot_modules/prefixFunctions.js');
 const ManageRoles = require('./bot_modules/leveling/roleManageFunctions.js');
 
@@ -235,7 +235,6 @@ client.once('ready', async () => {
 // ********** BOT_JOIN_GUILD EVENT
 // Fetch functions
 let log = require('./bot_modules/onEvents/log.js');
-const broadcastFunctions = require('./bot_modules/leveling/broadcastFunctions.js');
 
 client.on('guildCreate', async (guild) => {
 
@@ -678,12 +677,12 @@ client.on('message', async (message) => {
 
     // *** Command Cooldowns
     // If a command has 'cooldown: x,' it will enable cooldown IN SECONDS
-    if ( !cooldowns.has(command.name) ) {
-      cooldowns.set(command.name, new Discord.Collection());
+    if ( !client.cooldowns.has(command.name) ) {
+      client.cooldowns.set(command.name, new Discord.Collection());
     }
 
     const now = Date.now();
-    const timestamps = cooldowns.get(command.name);
+    const timestamps = client.cooldowns.get(command.name);
     let cooldownAmount = (command.cooldown || 3) * 1000;
 
 

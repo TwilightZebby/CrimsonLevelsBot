@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const fs = require('fs');
-const Canvas = require('canvas');
+//const Canvas = require('canvas');
 const { client } = require('../../bot_modules/constants.js');
 
 let { PREFIX } = require('../../config.js');
@@ -10,6 +10,7 @@ const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
 const Roles = require('../../bot_modules/cmds/roleFunctions.js');
+const Roulettes = require('../../bot_modules/cmds/rouletteFunctions.js');
 
 
 module.exports = {
@@ -73,6 +74,42 @@ module.exports = {
         return await message.channel.send(embed);
       }
       else {
+
+        // Check first argument is a number for the XP Bet
+        if (isNaN(args[0])) {
+
+          // Remove roulette cooldown due to error
+          let timestamps = client.cooldowns.get("roulette");
+
+          if (timestamps.has(message.author.id)) {
+            timestamps.delete(message.author.id);
+          }
+
+          return await Error.LogToUser(message.channel, `I was unable to convert that Bet into a Number! Please try again...`);
+
+        }
+
+        let bet = Number(args.shift());
+
+
+
+
+        // Check Bet is SMALLER THAN Author's current XP count
+        if ( bet > authorXP ) {
+
+          // Remove roulette cooldown due to error
+          let timestamps = client.cooldowns.get("roulette");
+
+          if (timestamps.has(message.author.id)) {
+            timestamps.delete(message.author.id);
+          }
+
+          return await Error.LogToUser(message.channel, `Sorry, but you can't bet more XP then you actually have!\n*Your bet is **${bet - authorXP}** XP over what you have*`);
+
+        }
+
+
+
 
         // Check args length
         if ( !args.includes("--risk") ) {
