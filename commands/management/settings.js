@@ -449,7 +449,7 @@ module.exports = {
               });
 
               embed.setTitle(`Updated Configuration`)
-              .setDescription(`The **${option}** setting has been updated to \`${valueString}\``);
+              .setDescription(`The **${option}** setting has been updated to \`${valueRoulette}\``);
 
               return await message.channel.send(embed);
 
