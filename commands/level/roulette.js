@@ -25,8 +25,8 @@ module.exports = {
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
     //    'owner' - Limits to Guild Owner and me only
-    //    'admin' - Those set as "Admin" in the Bot, the Guild Owner, and me only
-    //    'mod' - Those set as either "Mod" or "Admin", and the Guild Owner, and me only
+    //    'admin' - Those with the ADMIN Permission, the Guild Owner, and me only
+    //    'mod' - Those with the MANAGE_SERVER/BAN_MEMBERS/ADMIN Permissions, the Guild Owner, and me only
     //     otherwise, comment out for everyone to be able to use
     //limitation: 'owner',
 
