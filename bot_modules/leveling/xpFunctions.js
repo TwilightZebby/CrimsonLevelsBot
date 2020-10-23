@@ -137,7 +137,14 @@ module.exports = {
      */
     async SubtractXP(newXP, currentXP) {
 
-        return Math.floor(currentXP - newXP);
+        let subtractXP = Math.floor(currentXP - newXP);
+
+        if (subtractXP <= 0) {
+            return 0;
+        }
+        else {
+            return subtractXP;
+        }
 
     },
 

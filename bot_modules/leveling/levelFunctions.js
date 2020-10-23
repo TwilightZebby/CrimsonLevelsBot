@@ -62,6 +62,42 @@ module.exports = {
 
 
     /**
+     * Fetch the amount of XP required for a Level
+     * 
+     * @param {Number} level The Level Number to search for
+     * 
+     * @returns {Number} The amount of XP that Level requires
+     */
+    async FetchXPForLevel(level) {
+
+        if (level > 200) {
+            return LevelAmounts[`l200`];
+        }
+        else if (level < 0) {
+            return LevelAmounts[`l0`];
+        }
+        else {
+            return LevelAmounts[`l${level}`];
+        }
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
      * Compare two different Levels together to see if there are any changes between them
      * 
      * @param {Number} oldLevel The User's old Level

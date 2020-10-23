@@ -21,6 +21,10 @@ module.exports = {
             return String(PREFIX);
         });
 
+        if (!guildData) {
+            return String(PREFIX);
+        }
+
         guildData = guildData[0].dataValues;
 
         let prefixValue = guildData.prefix;

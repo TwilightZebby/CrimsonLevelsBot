@@ -70,7 +70,7 @@ module.exports = {
       // Check the Roulette Command is enabled first
       if ( guildConfig.roulette === "false" ) {
         embed.setTitle(`⛔ Command disabled by Server Owner`)
-        .setDescription(`The \`roulette\` command was disabled by this Server's Owner (\<\@${message.guild.ownerID}\>)!`);
+        .setDescription(`The \`roulette\` command was disabled by this Server's Owner!`);
         return await message.channel.send(embed);
       }
       else {
@@ -111,14 +111,40 @@ module.exports = {
 
 
 
+
+        // For ease when it comes to halving, have a minimum bet of 2
+        if ( bet < 2 ) {
+
+          // Remove command cooldown
+          let timestamps = client.cooldowns.get("roulette");
+
+          if (timestamps.has(message.author.id)) {
+            timestamps.delete(message.author.id);
+          }
+
+          return await Error.LogToUser(message.channel, `Sorry, but the smallest amount of XP you can bet is \`2\` XP.`);
+
+        }
+
+
+
+
         // Check args length
         if ( !args.includes("--risk") ) {
 
           // No Risky results
-          return await message.channel.send(`[TEST] No risky results`);
+          return await Roulettes.MainStandard(message, bet, authorXP);
 
         }
         else if ( args.length > 1 && args.includes("--risk") ) {
+
+          // Ensure risky results aren't disabled
+          if (guildConfig.riskyRoulette === "false") {
+            embed.setTitle(`⛔ Risky Results disabled by Server Owner`)
+            .setDescription(`Risky Results for the Roulette have been disabled by this Server's Owner. Sorry!`);
+            return await message.channel.send(embed);
+          }
+
 
           // Include Risky Results
           return await message.channel.send(`[TEST] Include risky results`);
