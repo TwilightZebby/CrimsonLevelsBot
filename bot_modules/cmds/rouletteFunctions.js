@@ -101,7 +101,7 @@ module.exports = {
         }
         else if ( levelChange === "leveldown" ) {
           await broadcastFunctions.Main(message, message.author, message.guild, "down");
-          await ManageRoles.Main(message.member, message.guild, newXPTotal, newLevel, true);
+          await ManageRoles.Main(message.member, message.guild, newXPTotal, newLevel, true, oldXPTotal);
         }
 
     },

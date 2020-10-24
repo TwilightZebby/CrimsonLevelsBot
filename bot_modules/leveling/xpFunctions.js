@@ -12,7 +12,7 @@ module.exports = {
      * @param {Discord.Message} message Discord Message Object
      * @param {Discord.GuildMember} [member] Discord Guild Member object, if not looking for own XP
      * 
-     * @returns {Number} The User's current XP
+     * @returns {Promise<Number>} The User's current XP
      */
     async FetchXP(message, member) {
 
@@ -74,7 +74,7 @@ module.exports = {
     /**
      * Generate a random amount of XP between 1 and 10
      * 
-     * @returns {Number} xp
+     * @returns {Promise<Number>} xp
      */
     async GenerateXP() {
 
@@ -104,7 +104,7 @@ module.exports = {
      * @param {Number} newXP The XP to add to the total
      * @param {Number} currentXP The User's current XP amount
      * 
-     * @returns {Number} new XP total
+     * @returns {Promise<Number>} new XP total
      */
     async AddXP(newXP, currentXP) {
 
@@ -133,7 +133,7 @@ module.exports = {
      * @param {Number} newXP The XP to subtract from the total
      * @param {Number} currentXP The User's current XP amount
      * 
-     * @returns {Number} new XP total
+     * @returns {Promise<Number>} new XP total
      */
     async SubtractXP(newXP, currentXP) {
 

@@ -94,7 +94,7 @@ module.exports = {
      * @param {String} confirmType Either "all" or "user"
      * @param {Discord.User} [resetUser] Discord User Object, only required if passing "user" for confirmType
      * 
-     * @returns {String} "confirmed" or "denied"
+     * @returns {Promise<String>} "confirmed" or "denied"
      */
     async Confirm(message, confirmType, resetUser) {
 

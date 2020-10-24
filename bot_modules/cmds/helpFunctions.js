@@ -338,7 +338,7 @@ module.exports = {
      * @param {String} name The name, or aliases, of the Command
      * @param {Array<Object>} commands All the commands in this Bot
      * 
-     * @returns {Object} command object
+     * @returns {Promise<Object>} command object
      */
     async CommandSearch(name, commands) {
 

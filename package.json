@@ -8,7 +8,7 @@
     "canvas": "^2.6.1",
     "chance": "^1.1.7",
     "dblapi.js": "^2.4.1",
-    "discord.js": "^12.4.0",
+    "discord.js": "^12.4.1",
     "erlpack": "^0.1.3",
     "libsodium-wrappers": "^0.7.8",
     "mysql2": "^2.2.5",
