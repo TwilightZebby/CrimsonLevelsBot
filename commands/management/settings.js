@@ -5,14 +5,12 @@ const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
 
 let { PREFIX } = require('../../config.js');
-const { crypto_aead_xchacha20poly1305_ietf_keygen } = require("libsodium-wrappers");
 let validOptions = [
   'guide',
   'broadcast',
   'level-up',
   'level-down',
-  'roulette',
-  'risky'
+  'roulette'
 ]
 
 
