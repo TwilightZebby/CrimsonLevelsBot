@@ -5,27 +5,53 @@ const Tables = require('./tables.js');
 const Errors = require('./onEvents/errors.js');
 let { PREFIX } = require('../config.js');
 
+const prefixCache = new Map();
+
 module.exports = {
 
     // Fetch the Prefix for that Guild
     async Fetch(guildid) {
 
-        let guildData = await Tables.GuildConfig.findOrCreate(
-            {
-                where: {
-                    guildID: guildid
+        // Check Guild isn't already in Cache
+        let cacheTemp = prefixCache.get(guildid);
+        if (!cacheTemp) {
+
+            // Guild is NOT in cache, fetch from DB and add it to cache
+            let guildData = await Tables.GuildConfig.findOrCreate(
+                {
+                    where: {
+                        guildID: guildid
+                    }
                 }
+            ).catch(async err => {
+                await Errors.LogCustom(err, `Unable to fetch Guild_Config DB Table when fetching Prefix`);
+                return String(PREFIX);
+            });
+    
+            if (!guildData) {
+                return String(PREFIX);
             }
-        ).catch(async err => {
-            await Errors.LogCustom(err, `Unable to fetch Guild_Config DB Table when fetching Prefix`);
-            return String(PREFIX);
-        });
+    
+            guildData = guildData[0].dataValues;
+    
+            let prefixValue = String(guildData.prefix);
 
-        guildData = guildData[0].dataValues;
+            let prefixConstruct = {
+                prefix: prefixValue
+            };
 
-        let prefixValue = guildData.prefix;
+            prefixCache.set(guildid, prefixConstruct);
+            return String(prefixValue);
 
-        return String(prefixValue);
+        }
+        else {
+
+            // Guild is in cache, use that instead
+            let cachedPrefix = prefixCache.get(guildid);
+            return String(cachedPrefix.prefix);
+
+        }
+
 
     },
 
@@ -61,7 +87,26 @@ module.exports = {
         .setTitle(`Updated Custom Prefix`)
         .setDescription(`Successfully updated **${message.guild.name}** Prefix to **${newPrefix}**`);
 
-        return await message.channel.send(embed);
+
+
+        // Cache stuff
+        let cacheTemp = prefixCache.get(guildid);
+        if (!cacheTemp) {
+
+            let prefixConstruct = {
+                prefix: newPrefix
+            };
+
+            prefixCache.set(guildid, prefixConstruct); // add to cache
+            return await message.channel.send(embed);
+
+        }
+        else {
+
+            cacheTemp.prefix = newPrefix; // Update cache
+            return await message.channel.send(embed);
+
+        }
     }
 
 };

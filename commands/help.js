@@ -28,7 +28,9 @@ module.exports = {
     //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
     flags: [
       [ `--dev`, `Shows literally every command (can only be used by this Bot\'s Developer!)` ],
-      [ `--owner`, `Shows all commands a Server Owner can use` ]
+      [ `--owner`, `Shows all commands a Server Owner can use` ],
+      [ `--admin`, `Shows all commands a Server Admin can use` ],
+      [ `--mod`, `Shows all commands a Server Mod can use` ]
     ],
 
     async execute(message, args) {
@@ -52,6 +54,28 @@ module.exports = {
         let argument = args[0].toLowerCase();
 
         switch (argument) {
+
+          case `--mod`:
+            let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+            let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
+            let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
+            if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
+              return await message.reply(`Sorry, but you can't use the **${argument}** Flag!`);
+            }
+
+            await help.ListModCommands(embed, message, commands);
+            break;
+
+
+          case `--admin`:
+            let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+            if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck ) {
+              return await message.reply(`Sorry, but you can't use the **${argument}** Flag!`);
+            }
+
+            await help.ListAdminCommands(embed, message, commands);
+            break;
+
 
           case `--dev`:
             if ( message.author.id !== '156482326887530498' ) {

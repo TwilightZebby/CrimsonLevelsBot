@@ -621,7 +621,7 @@ client.on('message', async (message) => {
     }
     else if ( levelChange === "leveldown" ) {
       await broadcastFunctions.Main(message, message.author, message.guild, "down");
-      await ManageRoles.Main(message.member, message.guild, newXPTotal, newLevel, true);
+      await ManageRoles.Main(message.member, message.guild, newXPTotal, newLevel, true, fetched);
     }
 
 
@@ -771,8 +771,42 @@ client.on('message', async (message) => {
         // GUILD OWNER
         case 'owner':
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-            return await message.reply(`Sorry, but this command can only be used by the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`);
+            return await message.reply(`Sorry, but this command can only be used by the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`, {
+              allowedMentions: {
+                users: [message.author.id]
+              }
+            });
           }
+          break;
+
+        // ADMIN PERMISSION
+        case 'admin':
+          let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck ) {
+            return await message.reply(`Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` Permission and the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`, {
+              allowedMentions: {
+                users: [message.author.id]
+              }
+            });
+          }
+          break;
+
+        // MANAGE_GUILD, BAN_MEMBERS PERMISSIONS
+        case 'mod':
+          let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+          let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
+          let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
+          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
+            return await message.reply(`Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permission and the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`, {
+              allowedMentions: {
+                users: [message.author.id]
+              }
+            });
+          }
+          break;
+
+
+        default:
           break;
 
       }

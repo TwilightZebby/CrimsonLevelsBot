@@ -184,6 +184,134 @@ module.exports = {
         return await message.channel.send(embed);
 
     },
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Returns all the Commands Admins can use
+     * 
+     * @param {Discord.MessageEmbed} embed The Discord Message Embed to insert the Commands into
+     * @param {Discord.Message} message The Message Object to return the Embed to
+     * @param {Array<Object>} commands All the Commands the Bot has
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async ListAdminCommands(embed, message, commands) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
+
+        embed.setTitle(`Command List (Server Admin\'s List)`)
+        .setDescription(`__Definitions__
+        < > means that is required.
+        [ ] means that is optional.
+        | means either/or.
+        **Do __NOT__ include these symbols when typing out the commands!**`)
+        .addFields(
+            {
+                name: `General Commands`,
+                value: commands.filter(command => command.commandType === 'general' && command.limitation !== 'dev' && command.limitation !== 'owner').map(command => command.name).join(', ')
+            },
+            {
+                name: `Level Commands`,
+                value: commands.filter(command => command.commandType === 'level' && command.limitation !== 'dev' && command.limitation !== 'owner').map(command => command.name).join(', ')
+            },
+            {
+                name: `Management Commands`,
+                value: commands.filter(command => command.commandType === 'management' && command.limitation !== 'dev' && command.limitation !== 'owner').map(command => command.name).join(', ')
+            },
+            {
+                name: `\u200B`,
+                value: `You can use \`${PREFIX}help [command]\` to get more information on a specific command!`
+            }
+        );
+
+
+
+        return await message.channel.send(embed);
+
+    },
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Returns all the Commands Mods can use
+     * 
+     * @param {Discord.MessageEmbed} embed The Discord Message Embed to insert the Commands into
+     * @param {Discord.Message} message The Message Object to return the Embed to
+     * @param {Array<Object>} commands All the Commands the Bot has
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async ListModCommands(embed, message, commands) {
+
+        // Check for custom Prefix
+        PREFIX = await Prefixs.Fetch(message.guild.id);
+
+        embed.setTitle(`Command List (Server Admin\'s List)`)
+        .setDescription(`__Definitions__
+        < > means that is required.
+        [ ] means that is optional.
+        | means either/or.
+        **Do __NOT__ include these symbols when typing out the commands!**`)
+        .addFields(
+            {
+                name: `General Commands`,
+                value: commands.filter(command => command.commandType === 'general' && command.limitation !== 'dev' && command.limitation !== 'owner' && command.limitation !== 'admin').map(command => command.name).join(', ')
+            },
+            {
+                name: `Level Commands`,
+                value: commands.filter(command => command.commandType === 'level' && command.limitation !== 'dev' && command.limitation !== 'owner' && command.limitation !== 'admin').map(command => command.name).join(', ')
+            },
+            {
+                name: `Management Commands`,
+                value: commands.filter(command => command.commandType === 'management' && command.limitation !== 'dev' && command.limitation !== 'owner' && command.limitation !== 'admin').map(command => command.name).join(', ')
+            },
+            {
+                name: `\u200B`,
+                value: `You can use \`${PREFIX}help [command]\` to get more information on a specific command!`
+            }
+        );
+
+
+
+        return await message.channel.send(embed);
+
+    },
 
 
 
@@ -210,7 +338,7 @@ module.exports = {
      * @param {String} name The name, or aliases, of the Command
      * @param {Array<Object>} commands All the commands in this Bot
      * 
-     * @returns {Object} command object
+     * @returns {Promise<Object>} command object
      */
     async CommandSearch(name, commands) {
 
@@ -285,6 +413,26 @@ module.exports = {
             if ( command.limitation ) {
 
                 switch (command.limitation) {
+
+                    case 'mod':
+                        let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+                        let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
+                        let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
+                        if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
+                            embed.setDescription(`Sorry, but you don\'t have the permissions to use/view this command!`);
+                            return await message.channel.send(embed);
+                        }
+                        break;
+
+                    
+                    case 'admin':
+                        let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+                        if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck ) {
+                            embed.setDescription(`Sorry, but you don\'t have the permissions to use/view this command!`);
+                            return await message.channel.send(embed);
+                        }
+                        break;
+
 
                     case `dev`:
                         if ( message.author.id !== '156482326887530498' ) {
@@ -412,7 +560,7 @@ module.exports = {
                         embed.addFields(
                             {
                                 name: `Limitations`,
-                                value: `\u200B Can only be used by this Server\'s assigned Admins and the Server Owner`
+                                value: `\u200B Can only be used by this Guild's Owner and those with the \`ADMINISTRATOR\` Permission`
                             }
                         )
                         break;
@@ -422,7 +570,7 @@ module.exports = {
                         embed.addFields(
                             {
                                 name: `Limitations`,
-                                value: `\u200B Can only be used by this Server\'s assigned Mods, Admins, and Server Owner`
+                                value: `\u200B Can only be used by this Guild's Owner, and those with either the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permissions`
                             }
                         )
                         break;

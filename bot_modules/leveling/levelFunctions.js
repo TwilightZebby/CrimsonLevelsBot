@@ -12,7 +12,7 @@ module.exports = {
      * 
      * @param {Number} xp An amount of XP to calculate the Level from
      * 
-     * @returns {Number} The calculated Level
+     * @returns {Promise<Number>} The calculated Level
      */
     async FetchLevel(xp) {
 
@@ -62,12 +62,48 @@ module.exports = {
 
 
     /**
+     * Fetch the amount of XP required for a Level
+     * 
+     * @param {Number} level The Level Number to search for
+     * 
+     * @returns {Promise<Number>} The amount of XP that Level requires
+     */
+    async FetchXPForLevel(level) {
+
+        if (level > 200) {
+            return LevelAmounts[`l200`];
+        }
+        else if (level < 0) {
+            return LevelAmounts[`l0`];
+        }
+        else {
+            return LevelAmounts[`l${level}`];
+        }
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
      * Compare two different Levels together to see if there are any changes between them
      * 
      * @param {Number} oldLevel The User's old Level
      * @param {Number} newLevel The User's new Level
      * 
-     * @returns {String} String stating if there was a change or not. EITHER "levelup", "nochange", "leveldown"
+     * @returns {Promise<String>} String stating if there was a change or not. EITHER "levelup", "nochange", "leveldown"
      */
     async CompareLevels(oldLevel, newLevel) {
 

@@ -16,7 +16,7 @@ const Roulettes = require('../../bot_modules/cmds/rouletteFunctions.js');
 module.exports = {
     name: 'roulette',
     description: 'Spin the Roulette Wheel to see if you can increase your level or risk losing XP! (Has a 12-hour cooldown)',
-    usage: '<xpAmount> [--flag]',
+    usage: '<xpAmount>',
     aliases: ['roul', 'r'],
     args: true,
     commandType: 'level',
@@ -25,17 +25,15 @@ module.exports = {
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
     //    'owner' - Limits to Guild Owner and me only
-    //    'admin' - Those set as "Admin" in the Bot, the Guild Owner, and me only
-    //    'mod' - Those set as either "Mod" or "Admin", and the Guild Owner, and me only
+    //    'admin' - Those with the ADMIN Permission, the Guild Owner, and me only
+    //    'mod' - Those with the MANAGE_SERVER/BAN_MEMBERS/ADMIN Permissions, the Guild Owner, and me only
     //     otherwise, comment out for everyone to be able to use
     //limitation: 'owner',
 
     // FLAGS
     //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
     //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
-    flags: [
-      [ '--risk', 'Include the more risky results that could affect other Server Members! *(Toggleable in `settings` command)*' ]
-    ],
+    //flags: [],
 
     async execute(message, args) {
       
@@ -70,7 +68,7 @@ module.exports = {
       // Check the Roulette Command is enabled first
       if ( guildConfig.roulette === "false" ) {
         embed.setTitle(`⛔ Command disabled by Server Owner`)
-        .setDescription(`The \`roulette\` command was disabled by this Server's Owner (\<\@${message.guild.ownerID}\>)!`);
+        .setDescription(`The \`roulette\` command was disabled by this Server's Owner!`);
         return await message.channel.send(embed);
       }
       else {
@@ -111,23 +109,30 @@ module.exports = {
 
 
 
-        // Check args length
-        if ( !args.includes("--risk") ) {
 
-          // No Risky results
-          return await message.channel.send(`[TEST] No risky results`);
+        // For ease when it comes to halving, have a minimum bet of 2
+        if ( bet < 2 ) {
+
+          // Remove command cooldown
+          let timestamps = client.cooldowns.get("roulette");
+
+          if (timestamps.has(message.author.id)) {
+            timestamps.delete(message.author.id);
+          }
+
+          return await Error.LogToUser(message.channel, `Sorry, but the smallest amount of XP you can bet is \`2\` XP.`);
 
         }
-        else if ( args.length > 1 && args.includes("--risk") ) {
 
-          // Include Risky Results
-          return await message.channel.send(`[TEST] Include risky results`);
 
-        }
+
+
+        
+        return await Roulettes.MainStandard(message, bet, authorXP);
 
       }
 
-
+      
       //END OF COMMAND
     },
 };

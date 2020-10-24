@@ -17,8 +17,9 @@ module.exports = {
      * @param {Number} xp User's new XP Total
      * @param {Number} level User's Level based off XP Total
      * @param {Boolean} [isLevelDown] true if the User Leveled DOWN, otherwise ignore
+     * @param {Number} [oldXP] only required if isLevelDown is true, otherwise ignore
      */
-    async Main(member, guild, xp, level, isLevelDown) {
+    async Main(member, guild, xp, level, isLevelDown, oldXP) {
 
         // Fetch all assigned Roles in Guild from DB, if any
         let assignedRoles = await Tables.GuildRoles.findAll(
@@ -51,7 +52,7 @@ module.exports = {
                 if ( isLevelDown ) {
 
                     // User is Leveling DOWN
-                    // TODO - will do once Roulette Command has been re-added
+                    return await this.LevelDown(member, guild, xp, level, assignedRoles, oldXP);
 
                 }
                 else {
@@ -77,6 +78,259 @@ module.exports = {
             }
 
         }
+    },
+        
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Returns the User's Level calculated from the given XP
+     * 
+     * @param {Discord.GuildMember} member Discord Guild Member Object
+     * @param {Discord.Guild} guild Discord Guild Object
+     * @param {Number} xp User's new XP Total
+     * @param {Number} level User's Level based off XP Total
+     * @param {*} assignedRoles The fetched Database containing all this Guild's assigned Roles
+     * @param {Number} oldXP The previous amount of XP the User had
+     */
+    async LevelDown(member, guild, xp, level, assignedRoles, oldXP) {
+
+        // Check if User's Level has a Role assigned to it
+        let currentLevelSearch = assignedRoles.find(element => element.dataValues.level === level);
+        const oldLevel = await Levels.FetchLevel(oldXP);
+
+        if (currentLevelSearch === undefined) {
+            
+            // No Role found for that Level
+            // Loop to see if there's a lower Role to give
+            let wasLowerRoleGiven = false;
+            
+            for ( let i = level; i > 0; i-- ) {
+
+                let lowerLevelSearch = assignedRoles.find(element => element.dataValues.level === i);
+
+                if ( lowerLevelSearch !== undefined ) {
+
+                    // A lower role was found
+                    // First, grant it
+                    let lowerRole = null;
+                    try {
+                        lowerRole = await guild.roles.fetch(lowerLevelSearch.dataValues.roleID);
+                    } catch (err) {
+                        lowerRole = "fail";
+                    }
+
+                    if (lowerRole === null || lowerRole === "fail") {
+                        wasLowerRoleGiven = false;
+                        break;
+                    }
+                    else {
+                        
+                        await member.roles.add(lowerRole, `Fell down to a previous Level Role!`); // Grant Role
+                        wasLowerRoleGiven = true;
+                        break;
+
+                    }
+
+                }
+
+            }
+
+
+
+
+            // Check if a Lower Role was granted
+            if ( wasLowerRoleGiven ) {
+
+                // Lower Role was granted, attempt revoke of previous higher role
+                for ( let i = level; i <= 200; i++ ) {
+
+                    let previousHigherSearch = assignedRoles.find(element => element.dataValues.level === i);
+
+                    if ( previousHigherSearch !== undefined ) {
+
+                        // Level Role found, REVOKE IT
+                        let previousRole = null;
+                        try {
+                            previousRole = await guild.roles.fetch(previousHigherSearch.dataValues.roleID);
+                        } catch (err) {
+                            previousRole = "fail";
+                        }
+
+                        if (previousRole === null || previousRole === "fail") {
+                            // Unable to fetch Role, so break out of loop
+                            break;
+                        }
+                        else {
+                            await member.roles.remove(previousRole, `Fell down to a lower Level Role!`); // Revoke previous role
+                            break;
+                        }
+
+                    }
+
+                }
+
+            }
+            else {
+
+                // No lower role granted, assume previous higher role was the lowest assigned for that Guild
+                for ( let i = level; i <= 200; i++ ) {
+
+                    let previousHigherSearch = assignedRoles.find(element => element.dataValues.level === i);
+
+                    if ( previousHigherSearch !== undefined ) {
+
+                        // Level Role found, REVOKE IT
+                        let previousRole = null;
+                        try {
+                            previousRole = await guild.roles.fetch(previousHigherSearch.dataValues.roleID);
+                        } catch (err) {
+                            previousRole = "fail";
+                        }
+
+                        if (previousRole === null || previousRole === "fail") {
+                            // Unable to fetch Role, so break out of loop
+                            break;
+                        }
+                        else {
+                            await member.roles.remove(previousRole, `Fell down to a lower Level Role!`); // Revoke previous role
+                            break;
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+        else {
+
+            // Role found for that Level, so grant it
+
+            let levelRole = null;
+            try {
+                levelRole = await guild.roles.fetch(currentLevelSearch.dataValues.roleID);
+            } catch (err) {
+                levelRole = "fail";
+            }
+
+
+            if (levelRole === null || levelRole === "fail") {
+                // Unable to fetch Role, so RETURN
+                return;
+            }
+            else {
+
+                // Fetched Role
+                await member.roles.add(levelRole, `Fell down to a previous Level Role!`); // Grant new Role
+
+                // Check for any higher Roles to remove
+                let higherLevelSearch = assignedRoles.filter(element => element.dataValues.level > level);
+
+                if (!higherLevelSearch.length || higherLevelSearch.length < 1) {
+
+                    // No higher Level Roles were found
+                    return;
+
+                }
+                else {
+
+                    // higher Level Roles found, attempt removal of them IF THE MEMBER HAS THEM
+                    let higherLevelRoles = [];
+
+                    for (let i = 0; i < higherLevelSearch.length; i++) {
+
+                        // Fetch Roles
+                        let tempRoleObject = null;
+
+                        try {
+                            tempRoleObject = await guild.roles.fetch(higherLevelSearch[i].dataValues.roleID);
+                        } catch (err) {
+                            tempRoleObject = "fail";
+                        }
+
+                        if ( tempRoleObject === null || tempRoleObject === "fail" ) {
+                            // Unable to fetch Role
+                            continue;
+                        }
+                        else {
+                            // Fetched Role
+                            higherLevelRoles.push(tempRoleObject);
+                            continue;
+                        }
+
+                    }
+
+
+                    if (!higherLevelRoles.length || higherLevelRoles.length < 1) {
+                        // No Roles were fetched
+                        return;
+                    }
+                    else {
+                        
+                        // Check if Member has Role
+                        // If Member DOES, then revoke Role
+                        // Otherwise, continue on
+
+                        let MemberCurrentRoles = member.roles.cache;
+
+                        for ( let i = 0; i < higherLevelRoles.length; i++ ) {
+
+                            // Check for Role
+                            let hasRole = MemberCurrentRoles.has(higherLevelRoles[i].id);
+
+                            if (!hasRole) {
+                                // Does NOT have Role, continue
+                                continue;
+                            }
+                            else {
+                                // DOES have Role
+                                await member.roles.remove(higherLevelRoles[i], `Fell down to previous Level Role, revoking higher ones`); // Revoke Role
+                                continue;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
     },
     
     
