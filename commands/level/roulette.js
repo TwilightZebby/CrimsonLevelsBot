@@ -16,7 +16,7 @@ const Roulettes = require('../../bot_modules/cmds/rouletteFunctions.js');
 module.exports = {
     name: 'roulette',
     description: 'Spin the Roulette Wheel to see if you can increase your level or risk losing XP! (Has a 12-hour cooldown)',
-    usage: '<xpAmount> [--flag]',
+    usage: '<xpAmount>',
     aliases: ['roul', 'r'],
     args: true,
     commandType: 'level',
@@ -33,9 +33,7 @@ module.exports = {
     // FLAGS
     //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
     //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
-    flags: [
-      [ '--risk', 'Include the more risky results that could affect other Server Members! *(Toggleable in `settings` command)*' ]
-    ],
+    //flags: [],
 
     async execute(message, args) {
       
@@ -129,31 +127,12 @@ module.exports = {
 
 
 
-        // Check args length
-        if ( !args.includes("--risk") ) {
-
-          // No Risky results
-          return await Roulettes.MainStandard(message, bet, authorXP);
-
-        }
-        else if ( args.length > 1 && args.includes("--risk") ) {
-
-          // Ensure risky results aren't disabled
-          if (guildConfig.riskyRoulette === "false") {
-            embed.setTitle(`⛔ Risky Results disabled by Server Owner`)
-            .setDescription(`Risky Results for the Roulette have been disabled by this Server's Owner. Sorry!`);
-            return await message.channel.send(embed);
-          }
-
-
-          // Include Risky Results
-          return await message.channel.send(`[TEST] Include risky results`);
-
-        }
+        
+        return await Roulettes.MainStandard(message, bet, authorXP);
 
       }
 
-
+      
       //END OF COMMAND
     },
 };

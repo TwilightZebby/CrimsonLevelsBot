@@ -27,34 +27,6 @@ const standardResults = [
         7, 6, 5, 1.2, 0.5,
     ]
 ];
-const riskyResults = [
-    [
-        "returnBet",
-
-        "loseHalfBet", "loseBet", "loseDoubleBet", "loseTripleBet", "loseALevel", "loseThreeLevels",
-        "loseHalfBet_Plus1Member", "loseBet_Plus1Member", "loseDoubleBet_Plus1Member", "loseTripleBet_Plus1Member", "loseALevel_Plus1Member",
-        "loseHalfBet_Plus4Members", "loseBet_Plus4Members", "loseDoubleBet_Plus4Members", "loseTripleBet_Plus4Members", "loseALevel_Plus4Members",
-        "loseALevel_PlusHalfGuild", "loseALevel_PlusWholeGuild",
-
-        "winBetPlusHalf", "winDoubleBet", "winTripleBet", "winALevel", "winThreeLevels",
-        "winBetPlusHalf_Plus1Member", "winDoubleBet_Plus1Member", "winTripleBet_Plus1Member", "winALevel_Plus1Member",
-        "winBetPlusHalf_Plus4Members", "winDoubleBet_Plus4Members", "winTripleBet_Plus4Members", "winALevel_Plus4Members",
-        "winALevel_PlusHalfGuild", "winALevel_PlusWholeGuild",
-    ],
-    [
-        10,
-
-        7, 8, 6, 5, 1, 0.3,
-        3, 2, 2, 1, 1,
-        2, 1, 1, 0.1, 0.1,
-        0.00001, 0.000000001,
-
-        7, 6, 5, 4, 1,
-        3, 2, 1, 1,
-        2, 1, 1, 0.1,
-        0.00001, 0.000000001
-    ]
-];
 
 let betResult = 0;
 let newXP = 0;
@@ -122,7 +94,7 @@ module.exports = {
 
     
     /**
-     * Starting point for Roulette Command (without risky flag)
+     * Starting point for Roulette Command
      * 
      * @param {Discord.Message} message Discord Message Object
      * @param {Number} bet Integer representing the XP Bet
