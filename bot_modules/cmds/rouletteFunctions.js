@@ -22,9 +22,9 @@ const standardResults = [
         "winBetPlusHalf", "winDoubleBet", "winTripleBet", "winALevel", "winThreeLevels"
     ],
     [
-        10,
-        7, 8, 6, 5, 1, 0.3,
-        7, 6, 5, 1.2, 0.5,
+        1.0,
+        1.0, 0.8, 0.5, 0.1, 0.01, 0.01,
+        0.8, 0.5, 0.1, 0.01, 0.01,
     ]
 ];
 

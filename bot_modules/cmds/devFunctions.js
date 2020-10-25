@@ -17,6 +17,45 @@ module.exports = {
 
 
 
+
+    /**
+     * The main point of entry for the user-sub-commands
+     * 
+     * @param {Number} [exitCode] Custom Exit Code, if wanted
+     */
+    async KillSwitch(exitCode) {
+
+        if (!exitCode) {
+            return process.exit();
+        }
+        else {
+            return process.exit(exitCode);
+        }
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * The main point of entry for the user-sub-commands
      * 
