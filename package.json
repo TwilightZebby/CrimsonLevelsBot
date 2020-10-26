@@ -1,6 +1,6 @@
 {
   "name": "crimsonlevelsbot",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "A free Leveling Bot that stays a free Leveling Bot and nothing more",
   "main": "index.js",
   "dependencies": {
