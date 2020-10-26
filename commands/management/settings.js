@@ -10,7 +10,8 @@ let validOptions = [
   'broadcast',
   'level-up',
   'level-down',
-  'roulette'
+  'roulette',
+  'cooldown'
 ]
 
 
@@ -77,6 +78,26 @@ module.exports = {
 
 
 
+        // Calculate Roulette Cooldown in readable format
+        let readableRouletteCooldown = serverData.rouletteCooldown;
+        if (readableRouletteCooldown > 60 && readableRouletteCooldown < 3600) {
+          readableRouletteCooldown = readableRouletteCooldown / 60;
+          readableRouletteCooldown = `${readableRouletteCooldown.toFixed(1)} mins`;
+        }
+        else if (readableRouletteCooldown > 3600) {
+          readableRouletteCooldown = readableRouletteCooldown / 3600;
+          readableRouletteCooldown = `${readableRouletteCooldown.toFixed(1)} hrs`;
+        }
+        else {
+          readableRouletteCooldown = `${readableRouletteCooldown.toFixed(1)} secs`;
+        }
+
+
+
+
+
+
+
 
         embed.setTitle(`${message.guild.name} Settings`)
         .addFields(
@@ -88,6 +109,11 @@ module.exports = {
           {
             name: `Enable __Roulette__ Commmand`,
             value: `${serverData.roulette}`,
+            inline: true
+          },
+          {
+            name: `Roulette Command __Cooldown__`,
+            value: `${readableRouletteCooldown}`,
             inline: true
           },
           {
@@ -137,6 +163,10 @@ module.exports = {
             {
               name: `Enable Roulette Command`,
               value: `This toggles if the \`roulette\` command is enabled or not on this Server. Use \`true\` to enable, and \`false\` to disable.`
+            },
+            {
+              name: `Roulette Command Cooldown`,
+              value: `This allows you to set (IN SECONDS) a custom cooldown length for the Roulette Command in your Server. [Use this hour-to-seconds convertor if needed](https://www.calculateme.com/time/hours/to-seconds/)\nMINIMUM: 30 seconds, MAXIMUM: 24 hours`
             }
           );
 
@@ -433,10 +463,75 @@ module.exports = {
               return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 
-              embed.setTitle(`Updated Configuration`)
-              .setDescription(`The **${option}** setting has been updated to \`${valueRoulette}\``);
+            embed.setTitle(`Updated Configuration`)
+            .setDescription(`The **${option}** setting has been updated to \`${valueRoulette}\``);
 
-              return await message.channel.send(embed);
+            return await message.channel.send(embed);
+          }
+          else if ( option === 'cooldown' ) {
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Changing the per-Guild Cooldown for the Roulette Command
+            let customCooldown = args[1];
+
+            // Check the inputted value
+            if ( isNaN(customCooldown) ) {
+              return await Error.LogToUser(message.channel, `That wasn't a valid number! You need to input a number of seconds for the **roulette cooldown** setting (also remove any commas ( , ) from the number)`);
+            }
+
+            customCooldown = Number(customCooldown);
+            if ( customCooldown < 30 ) {
+              return await Error.LogToUser(message.channel, `Sorry, but the lowest cooldown accepted for the Roulette Command is 30 seconds. Please try again...`);
+            }
+
+            if ( customCooldown > 86400 ) {
+              return await Error.LogToUser(message.channel, `Sorry, but the largest cooldown accepted for the Roulette Command is 24 hours (86,400 seconds). Please try again...`);
+            }
+
+
+
+
+            await Tables.GuildConfig.update({
+              rouletteCooldown: customCooldown
+              },
+              {
+              where: {
+                guildID: message.guild.id
+              }
+            }).catch(async err => {
+              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
+            });
+
+            embed.setTitle(`Updated Configuration`)
+            .setDescription(`The **${option}** setting has been updated to \`${customCooldown}\` seconds`);
+
+            return await message.channel.send(embed);
+
+
           }
 
         }

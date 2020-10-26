@@ -1,11 +1,12 @@
 {
   "name": "crimsonlevelsbot",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "A free Leveling Bot that stays a free Leveling Bot and nothing more",
   "main": "index.js",
   "dependencies": {
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
+    "canvas-extras": "^1.0.7",
     "chance": "^1.1.7",
     "dblapi.js": "^2.4.1",
     "discord.js": "^12.4.1",

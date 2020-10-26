@@ -54,6 +54,23 @@ module.exports = {
 
 
 
+        case `killswitch`:
+        case `kill`:
+          if (args.length > 0) {
+            return await Devs.KillSwitch(Number(args[0]));
+          }
+          else {
+            return await Devs.KillSwitch();
+          }
+
+
+
+
+        case 'test':
+          return await Devs.Test(message);
+
+
+
         default:
           return await Error.LogToUser(message.channel, `That was not a valid sub-command of the Developer Module! Please check the [GitHub README](https://github.com/TwilightZebby/CrimsonLevelsBot) for more details...`);
 

@@ -12,6 +12,7 @@ const Prefixs = require('../bot_modules/prefixFunctions.js');
 //const Roles = require('../../bot_modules/cmds/roleFunctions.js');
 
 const updateArray = [
+  `[v1.5.2](https://gist.github.com/TwilightZebby/31e8e52ca8b79d4d88b7c2aa1fd7b9c2)`,
   `[v1.5.1](https://gist.github.com/TwilightZebby/2423dfd02a2769d8182f36048bd8ac47)`,
   `[v1.5.0](https://gist.github.com/TwilightZebby/79398fced4f7869fcb97e7e04ff74940)`,
   `v1.4.5b`, `v1.4.5`, `v1.4.4`, `v1.4.3`, `v1.4.2`, `v1.4.1`, `v1.4.0`, `v1.3.1`, `v1.3.0`,
@@ -50,7 +51,7 @@ module.exports = {
       .addFields(
         {
           name: `Latest Version`,
-          value: `[v1.5.2](https://gist.github.com/TwilightZebby/31e8e52ca8b79d4d88b7c2aa1fd7b9c2)`
+          value: `[v1.5.3](https://gist.github.com/TwilightZebby/dfe0a3a0a65e941a4f5d82b23a261b3d)`
         },
         {
           name: `Previous Versions`,

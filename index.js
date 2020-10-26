@@ -20,6 +20,7 @@ const Tables = require('./bot_modules/tables.js');
 client.commands = new Discord.Collection();
 client.cooldowns = new Discord.Collection();
 const xpCooldowns = new Discord.Collection();
+client.rouletteCooldowns = new Discord.Collection();
 
 // General Commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -676,73 +677,178 @@ client.on('message', async (message) => {
 
 
     // *** Command Cooldowns
-    // If a command has 'cooldown: x,' it will enable cooldown IN SECONDS
-    if ( !client.cooldowns.has(command.name) ) {
-      client.cooldowns.set(command.name, new Discord.Collection());
-    }
 
-    const now = Date.now();
-    const timestamps = client.cooldowns.get(command.name);
-    let cooldownAmount = (command.cooldown || 3) * 1000;
+    // NOT ROULETTE COMMAND
+    if (command.name !== "roulette") {
 
-
-    // OVERRIDE COOLDOWN IF THIS IS TRIGGERED
-    // A check for missing parameters
-    // If a cmd has 'args: true,', it will throw the error
-    // Requires the cmd file to have 'usage: '<user> <role>',' or similar
-    if (command.args && !args.length) {
-      let reply = `You didn't provide any arguments, ${message.author}!`;
-      if (command.usage) {
-        reply += `\nThe proper usage would be: \`${PREFIX}${command.name} ${command.usage}\``;
+      // If a command has 'cooldown: x,' it will enable cooldown IN SECONDS
+      if (!client.cooldowns.has(command.name)) {
+        client.cooldowns.set(command.name, new Discord.Collection());
       }
 
-      // Override larger cooldowns
-      if (timestamps.has(message.author.id) === false) {
-        cooldownAmount = 1000;
+      const now = Date.now();
+      const timestamps = client.cooldowns.get(command.name);
+      let cooldownAmount = (command.cooldown || 3) * 1000;
+
+
+      // OVERRIDE COOLDOWN IF THIS IS TRIGGERED
+      // A check for missing parameters
+      // If a cmd has 'args: true,', it will throw the error
+      // Requires the cmd file to have 'usage: '<user> <role>',' or similar
+      if (command.args && !args.length) {
+        let reply = `You didn't provide any arguments, ${message.author}!`;
+        if (command.usage) {
+          reply += `\nThe proper usage would be: \`${PREFIX}${command.name} ${command.usage}\``;
+        }
+
+        // Override larger cooldowns
+        if (timestamps.has(message.author.id) === false) {
+          cooldownAmount = 1000;
+        }
+
+
+        await message.channel.send(reply);
       }
 
 
-      await message.channel.send(reply);
-    }
 
+      if (timestamps.has(message.author.id)) {
 
+        if (message.author.id === "156482326887530498" && message.content.includes("--overridecooldown")) {
+          timestamps.delete(message.author.id);
+        } else {
 
-    if ( timestamps.has(message.author.id) ) {
+          const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 
-      if ( message.author.id === "156482326887530498" && message.content.includes("--overridecooldown") ) {
-        timestamps.delete(message.author.id);
-      }
-      else {
+          if (now < expirationTime) {
+            let timeLeft = (expirationTime - now) / 1000;
 
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+            // If greater than 60 Seconds, convert into Minutes
+            if (timeLeft > 60 && timeLeft < 3600) {
+              timeLeft = timeLeft / 60;
+              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
+            }
+            // If greater than 3600 Seconds, convert into Hours
+            else if (timeLeft > 3600) {
+              timeLeft = timeLeft / 3600;
+              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
+            }
 
-        if (now < expirationTime) {
-          let timeLeft = (expirationTime - now) / 1000;
-
-          // If greater than 60 Seconds, convert into Minutes
-          if (timeLeft > 60 && timeLeft < 3600) {
-            timeLeft = timeLeft / 60;
-            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
+            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
           }
-          // If greater than 3600 Seconds, convert into Hours
-          else if (timeLeft > 3600) {
-            timeLeft = timeLeft / 3600;
-            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
+
+        }
+
+
+      } else if (message.author.id === "156482326887530498" && message.content.includes("--overridecooldown")) {
+        // Developer override of cooldown, so do NOTHING
+      } else {
+        timestamps.set(message.author.id, now);
+        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+      }
+
+    }
+    else {
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      // FOR ROULETTE COMMAND
+      // First, fetch the cooldown Collection for this Guild
+      if (!client.rouletteCooldowns.has(message.guild.id)) {
+        client.rouletteCooldowns.set(message.guild.id, new Discord.Collection());
+      }
+
+
+      // Fetch Guild's Roulette Cooldown from Database
+      let rouletteCustomCooldown = await Tables.GuildConfig.findOrCreate({
+        where: {
+          guildID: message.guild.id
+        }
+      });
+
+      rouletteCustomCooldown = rouletteCustomCooldown[0].dataValues.rouletteCooldown;
+
+      const now = Date.now();
+      const timestamps = client.rouletteCooldowns.get(message.guild.id);
+      let cooldownAmount = rouletteCustomCooldown * 1000;
+
+
+      // OVERRIDES
+      // Missing Arg Check
+      if (command.args && !args.length) {
+
+        let reply = `You didn't provide any arguments, ${message.author}!`;
+        if (command.usage) {
+          reply += `\nThe proper usage would be: \`${PREFIX}${command.name} ${command.usage}\``;
+        }
+
+        // Override cooldown
+        if (timestamps.has(message.author.id) === false) {
+          cooldownAmount = 1000;
+        }
+
+        await message.channel.send(reply);
+
+      }
+
+
+
+      // Cooldown Time
+      if (timestamps.has(message.author.id)) {
+
+        if (message.author.id === "156482326887530498" && message.content.includes("--overridecooldown")) {
+          timestamps.delete(message.author.id);
+        }
+        else {
+
+          const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+          if ( now < expirationTime ) {
+
+            let timeLeft = (expirationTime - now) / 1000;
+
+            // If greater than 60 seconds, convert to minutes
+            if (timeLeft > 60 && timeLeft < 3600) {
+              timeLeft = timeLeft / 60;
+              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
+            }
+            // If greater than 3600 seconds, convert to hours
+            else if (timeLeft > 3600) {
+              timeLeft = timeLeft / 3600;
+              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
+            }
+
+            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+
           }
 
-          return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
         }
 
       }
+      else if ( message.author.id === "156482326887530498" && message.content.includes("--overridecooldown") ) {
+        // Developer override, do NOTHING
+      }
+      else {
+        timestamps.set(message.author.id, now);
+        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+      }
 
-      
-    } 
-    else if ( message.author.id === "156482326887530498" && message.content.includes("--overridecooldown") ) {
-      // Developer override of cooldown, so do NOTHING
-    }
-    else {
-      timestamps.set(message.author.id, now);
-      setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
     }
 
 

@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
+const Sequelize = require('sequelize');
 const fs = require('fs');
 const Canvas = require('canvas');
 const { client } = require('../../bot_modules/constants.js');
+const { sequelize } = require('../../bot_modules/constants.js');
 
 let { PREFIX } = require('../../config.js');
 const XPs = require('../../bot_modules/leveling/xpFunctions.js');
@@ -13,6 +15,80 @@ const Prefixs = require('../../bot_modules/prefixFunctions.js');
 module.exports = {
     name: `dev`,
     description: `All the sub-commands for the developer command`,
+
+
+
+
+
+    /**
+     * Testing grounds
+     * 
+     * @param {Discord.Message} message Discord Message Object
+     */
+    async Test(message) {
+
+        // View all Models
+        //console.log(await sequelize.showAllSchemas());
+        return await Error.LogToUser(message.channel, `No Tests available...`);
+        
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * The main point of entry for the user-sub-commands
+     * 
+     * @param {Number} [exitCode] Custom Exit Code, if wanted
+     */
+    async KillSwitch(exitCode) {
+
+        if (!exitCode) {
+            return process.exit();
+        }
+        else {
+            return process.exit(exitCode);
+        }
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

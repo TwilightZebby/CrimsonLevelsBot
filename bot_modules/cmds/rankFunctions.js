@@ -1,10 +1,12 @@
 const Discord = require("discord.js");
 const fs = require('fs');
 const Canvas = require('canvas');
+const canvasExtras = require("canvas-extras");
 const { client } = require('../../bot_modules/constants.js');
 const ns = require('number-string');
 
 let { PREFIX } = require('../../config.js');
+const BaseLevels = require('../levels.json');
 const XPs = require('../../bot_modules/leveling/xpFunctions.js');
 const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 const Tables = require('../../bot_modules/tables.js');
@@ -118,6 +120,15 @@ module.exports = {
 
 
 
+            // CALCULATE PROGRESS TO NEXT LEVEL
+            let currentXPINT = await XPs.FetchXP(message);
+            let levelDifference = BaseLevels[`l${currentLevel + 1}`] - BaseLevels[`l${currentLevel}`];
+            let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
+            let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
+
+
+
+
 
             // CANVAS
             const canvas = Canvas.createCanvas(700, 250);
@@ -148,68 +159,127 @@ module.exports = {
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, message.member.displayName);
                 ctx.fillStyle = '#000000';
-                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+
+                // PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
 
             } else if (darkenJustUsername.includes(userRankPref)) {
 
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, message.member.displayName);
                 ctx.fillStyle = '#000000';
-                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+
+                // PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
 
             } else if (darkenJustLevels.includes(userRankPref)) {
 
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, message.member.displayName);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+                // PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
 
             } else {
 
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, message.member.displayName);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+                
+                // PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
 
             }
 

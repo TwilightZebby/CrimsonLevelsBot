@@ -15,12 +15,12 @@ const Roulettes = require('../../bot_modules/cmds/rouletteFunctions.js');
 
 module.exports = {
     name: 'roulette',
-    description: 'Spin the Roulette Wheel to see if you can increase your level or risk losing XP! (Has a 12-hour cooldown)',
+    description: 'Spin the Roulette Wheel to see if you can increase your level or risk losing XP!',
     usage: '<xpAmount>',
     aliases: ['roul', 'r'],
     args: true,
     commandType: 'level',
-    cooldown: 43200, // IN SECONDS // This is 12-hours
+    cooldown: 3600, // IN SECONDS // 12 hours = 43200 seconds, 1 hour = 3600
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -77,7 +77,7 @@ module.exports = {
         if (isNaN(args[0])) {
 
           // Remove roulette cooldown due to error
-          let timestamps = client.cooldowns.get("roulette");
+          let timestamps = client.rouletteCooldowns.get(message.guild.id);
 
           if (timestamps.has(message.author.id)) {
             timestamps.delete(message.author.id);
@@ -96,7 +96,7 @@ module.exports = {
         if ( bet > authorXP ) {
 
           // Remove roulette cooldown due to error
-          let timestamps = client.cooldowns.get("roulette");
+          let timestamps = client.rouletteCooldowns.get(message.guild.id);
 
           if (timestamps.has(message.author.id)) {
             timestamps.delete(message.author.id);
@@ -114,7 +114,7 @@ module.exports = {
         if ( bet < 2 ) {
 
           // Remove command cooldown
-          let timestamps = client.cooldowns.get("roulette");
+          let timestamps = client.rouletteCooldowns.get(message.guild.id);
 
           if (timestamps.has(message.author.id)) {
             timestamps.delete(message.author.id);
