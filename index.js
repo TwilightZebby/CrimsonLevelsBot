@@ -655,7 +655,7 @@ client.on('message', async (message) => {
     if (!command) {
 
       // If the @mention was used, show prefix
-      if ( matchedPrefix === `<@!${client.user.id}>` ) {
+      if ( matchedPrefix === `<@!${client.user.id}>` || matchedPrefix === `<@${client.user.id}>` ) {
         const embed = new Discord.MessageEmbed().setColor('#DC143C')
         .setDescription(`My prefix on this Server is \`${PREFIX}\``);
         return await message.channel.send(embed);
