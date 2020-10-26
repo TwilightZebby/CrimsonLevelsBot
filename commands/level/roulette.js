@@ -77,7 +77,7 @@ module.exports = {
         if (isNaN(args[0])) {
 
           // Remove roulette cooldown due to error
-          let timestamps = client.cooldowns.get("roulette");
+          let timestamps = client.rouletteCooldowns.get(message.guild.id);
 
           if (timestamps.has(message.author.id)) {
             timestamps.delete(message.author.id);
@@ -96,7 +96,7 @@ module.exports = {
         if ( bet > authorXP ) {
 
           // Remove roulette cooldown due to error
-          let timestamps = client.cooldowns.get("roulette");
+          let timestamps = client.rouletteCooldowns.get(message.guild.id);
 
           if (timestamps.has(message.author.id)) {
             timestamps.delete(message.author.id);
@@ -114,7 +114,7 @@ module.exports = {
         if ( bet < 2 ) {
 
           // Remove command cooldown
-          let timestamps = client.cooldowns.get("roulette");
+          let timestamps = client.rouletteCooldowns.get(message.guild.id);
 
           if (timestamps.has(message.author.id)) {
             timestamps.delete(message.author.id);
