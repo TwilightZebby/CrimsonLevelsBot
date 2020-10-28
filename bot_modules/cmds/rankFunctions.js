@@ -59,11 +59,9 @@ for (const file of prideBGs) {
 
 
 // CANVAS
-const canvas = Canvas.createCanvas(700, 250);
-const ctx = canvas.getContext('2d');
 
 // Apply Text
-const applyText = (canvas, text) => {
+const applyText = (canvas, text, ctx) => {
 
     // Base Font Size
     let fontSize = 70;
@@ -169,6 +167,8 @@ module.exports = {
 
 
             // CANVAS
+            const canvas = Canvas.createCanvas(700, 250);
+            const ctx = canvas.getContext('2d');
             const canvasBackground = await Canvas.loadImage(backgroundPath);
             ctx.drawImage(canvasBackground, 0, 0, canvas.width, canvas.height);
 
@@ -177,7 +177,7 @@ module.exports = {
             if (darkenAllFont.includes(userRankPref)) {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, message.member.displayName);
+                ctx.font = applyText(canvas, message.member.displayName, ctx);
                 ctx.fillStyle = '#000000';
                 ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -209,7 +209,7 @@ module.exports = {
             } else if (darkenJustUsername.includes(userRankPref)) {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, message.member.displayName);
+                ctx.font = applyText(canvas, message.member.displayName, ctx);
                 ctx.fillStyle = '#000000';
                 ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -241,7 +241,7 @@ module.exports = {
             } else if (darkenJustLevels.includes(userRankPref)) {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, message.member.displayName);
+                ctx.font = applyText(canvas, message.member.displayName, ctx);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -273,7 +273,7 @@ module.exports = {
             } else {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, message.member.displayName);
+                ctx.font = applyText(canvas, message.member.displayName, ctx);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -450,6 +450,8 @@ module.exports = {
 
 
             // CANVAS
+            const canvas = Canvas.createCanvas(700, 250);
+            const ctx = canvas.getContext('2d');
             const canvasBackground = await Canvas.loadImage(backgroundPath);
             ctx.drawImage(canvasBackground, 0, 0, canvas.width, canvas.height);
 
@@ -458,7 +460,7 @@ module.exports = {
             if (darkenAllFont.includes(userRankPref)) {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, userMember.displayName);
+                ctx.font = applyText(canvas, userMember.displayName, ctx);
                 ctx.fillStyle = '#000000';
                 ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -490,7 +492,7 @@ module.exports = {
             } else if (darkenJustUsername.includes(userRankPref)) {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, userMember.displayName);
+                ctx.font = applyText(canvas, userMember.displayName, ctx);
                 ctx.fillStyle = '#000000';
                 ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -522,7 +524,7 @@ module.exports = {
             } else if (darkenJustLevels.includes(userRankPref)) {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, userMember.displayName);
+                ctx.font = applyText(canvas, userMember.displayName, ctx);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
@@ -554,7 +556,7 @@ module.exports = {
             } else {
 
                 // DISPLAY NAME
-                ctx.font = applyText(canvas, userMember.displayName);
+                ctx.font = applyText(canvas, userMember.displayName, ctx);
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
