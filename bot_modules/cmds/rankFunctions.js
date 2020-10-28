@@ -174,7 +174,7 @@ module.exports = {
                 // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
-                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
                 ctx.closePath();
 
                 // LABELS FOR PROGRESS BAR
@@ -206,7 +206,7 @@ module.exports = {
                 // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
-                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
                 ctx.closePath();
 
                 // LABELS FOR PROGRESS BAR
@@ -234,10 +234,11 @@ module.exports = {
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
                 ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+
                 // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
-                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
                 ctx.closePath();
 
                 // LABELS FOR PROGRESS BAR
@@ -269,7 +270,7 @@ module.exports = {
                 // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
-                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202');
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
                 ctx.closePath();
 
                 // LABELS FOR PROGRESS BAR
@@ -488,6 +489,21 @@ module.exports = {
                 ctx.fillStyle = '#000000';
                 ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
 
+		// PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
+
             } else if (darkenJustUsername.includes(userRankPref)) {
 
                 // DISPLAY NAME
@@ -504,6 +520,21 @@ module.exports = {
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+
+		// PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
 
             } else if (darkenJustLevels.includes(userRankPref)) {
 
@@ -522,6 +553,21 @@ module.exports = {
                 ctx.fillStyle = '#000000';
                 ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
 
+		// PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
+
             } else {
 
                 // DISPLAY NAME
@@ -538,6 +584,21 @@ module.exports = {
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+
+		// PROGRESS BAR (thanks to canvas-extras)
+                // https://www.npmjs.com/package/canvas-extras
+                ctx.beginPath();
+                ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
+                ctx.closePath();
+
+                // LABELS FOR PROGRESS BAR
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel}`, canvas.width / 2.8, canvas.height / 1.21);
+
+                ctx.font = '24px sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`L${currentLevel + 1}`, canvas.width / 1.14, canvas.height / 1.21);
 
             }
 

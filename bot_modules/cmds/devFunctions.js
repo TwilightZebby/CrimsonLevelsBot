@@ -27,9 +27,7 @@ module.exports = {
      */
     async Test(message) {
 
-        // View all Models
-        //console.log(await sequelize.showAllSchemas());
-        return await Error.LogToUser(message.channel, `No Tests available...`);
+        //return await Error.LogToUser(message.channel, `No Tests available...`);
         
 
     },
