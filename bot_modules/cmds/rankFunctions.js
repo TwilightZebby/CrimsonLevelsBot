@@ -14,6 +14,72 @@ const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
 const Devs = require('./devFunctions.js');
 
+
+// Arrays so Bot knows if the Text Colour needs changing or not
+// ANY backgrounds not listed in these will use the full default white font colour
+const darkenAllFont = [
+    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon'
+];
+const darkenJustUsername = [
+    'genderfluid', 'nonBinary', 'straightAlly'
+];
+const darkenJustLevels = [
+    'asexual'
+];
+
+
+const standardBackgrounds = [];
+const prideBackgrounds = [];
+
+const standardBGs = fs.readdirSync('./backgrounds/standard').filter(file => file.endsWith('.png'));
+for (const file of standardBGs) {
+
+    // Add to Array
+    let tempSTRING = file.toString();
+    let tempSTRINGLength = tempSTRING.length;
+    tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+    standardBackgrounds.push(tempSTRING);
+
+}
+
+const prideBGs = fs.readdirSync('./backgrounds/pride').filter(file => file.endsWith('.png'));
+for (const file of prideBGs) {
+
+    // Add to Array
+    let tempSTRING = file.toString();
+    let tempSTRINGLength = tempSTRING.length;
+    tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+    prideBackgrounds.push(tempSTRING);
+
+}
+
+
+
+
+// CANVAS
+const canvas = Canvas.createCanvas(700, 250);
+const ctx = canvas.getContext('2d');
+
+// Apply Text
+const applyText = (canvas, text) => {
+
+    // Base Font Size
+    let fontSize = 70;
+
+    do {
+        // Change font size based on String Length
+        ctx.font = `${fontSize -= 10}px sans-serif`;
+    } while (ctx.measureText(text).width > canvas.width - 300);
+
+    // Return new result
+    return ctx.font;
+
+};
+
+
+
 module.exports = {
     name: `rank`,
     description: `All the stuff for the rank command`,
@@ -62,52 +128,24 @@ module.exports = {
 
 
         if (userRankPref === `disable`) {
-            return await message.reply(`\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!`);
+
+            // CALCULATE PROGRESS TO NEXT LEVEL
+            let currentXPINT = await XPs.FetchXP(message);
+            let levelDifference = BaseLevels[`l${currentLevel + 1}`] - BaseLevels[`l${currentLevel}`];
+            let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
+            let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
+
+            return await message.reply(`\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`);
+
         } else {
 
-            let standardBackgrounds = [];
-            let prideBackgrounds = [];
-
-            let standardBGs = fs.readdirSync('./backgrounds/standard').filter(file => file.endsWith('.png'));
-            for (const file of standardBGs) {
-
-                // Add to Array
-                let tempSTRING = file.toString();
-                let tempSTRINGLength = tempSTRING.length;
-                tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
-
-                standardBackgrounds.push(tempSTRING);
-
-            }
-
-            let prideBGs = fs.readdirSync('./backgrounds/pride').filter(file => file.endsWith('.png'));
-            for (const file of prideBGs) {
-
-                // Add to Array
-                let tempSTRING = file.toString();
-                let tempSTRINGLength = tempSTRING.length;
-                tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
-
-                prideBackgrounds.push(tempSTRING);
-
-            }
+            
 
 
 
 
             // Generate Background
-            // Arrays so Bot knows if the Text Colour needs changing or not
-            // ANY backgrounds not listed in these will use the full default white font colour
-            let darkenAllFont = [
-                'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon'
-            ];
-            let darkenJustUsername = [
-                'genderfluid', 'nonBinary', 'straightAlly'
-            ];
-            let darkenJustLevels = [
-                'asexual'
-            ];
-
+            
 
 
             let backgroundPath;
@@ -131,26 +169,8 @@ module.exports = {
 
 
             // CANVAS
-            const canvas = Canvas.createCanvas(700, 250);
-            const ctx = canvas.getContext('2d');
             const canvasBackground = await Canvas.loadImage(backgroundPath);
             ctx.drawImage(canvasBackground, 0, 0, canvas.width, canvas.height);
-
-            // Apply Text
-            const applyText = (canvas, text) => {
-
-                // Base Font Size
-                let fontSize = 70;
-
-                do {
-                    // Change font size based on String Length
-                    ctx.font = `${fontSize -= 10}px sans-serif`;
-                } while (ctx.measureText(text).width > canvas.width - 300);
-
-                // Return new result
-                return ctx.font;
-
-            };
 
 
             // Apply text based on colour needed
@@ -351,6 +371,11 @@ module.exports = {
             return await Error.LogToUser(message.channel, `I do not store XP for other Bots!`);
         }
 
+        // System Message Check
+        if (user.flags.has('SYSTEM')) {
+            return await Error.LogToUser(message.channel, `I cannot store XP for Discord's SYSTEM MESSAGES Account!`)
+        }
+
         // Also get Member object as well
         const userMember = await message.guild.members.fetch(user);
 
@@ -389,53 +414,20 @@ module.exports = {
 
 
         if (userRankPref === `disable`) {
-            return await message.channel.send(`${user.toString()}\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!`);
+
+            // CALCULATE PROGRESS TO NEXT LEVEL
+            let currentXPINT = await XPs.FetchXP(message, userMember);
+            let levelDifference = BaseLevels[`l${currentLevel + 1}`] - BaseLevels[`l${currentLevel}`];
+            let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
+            let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
+
+            return await message.channel.send(`${user.toString()}\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, {
+                allowedMentions: {
+                    parse: []
+                }
+            });
+
         } else {
-
-            let standardBackgrounds = [];
-            let prideBackgrounds = [];
-
-            let standardBGs = fs.readdirSync('./backgrounds/standard').filter(file => file.endsWith('.png'));
-            for (const file of standardBGs) {
-
-                // Add to Array
-                let tempSTRING = file.toString();
-                let tempSTRINGLength = tempSTRING.length;
-                tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
-
-                standardBackgrounds.push(tempSTRING);
-
-            }
-
-            let prideBGs = fs.readdirSync('./backgrounds/pride').filter(file => file.endsWith('.png'));
-            for (const file of prideBGs) {
-
-                // Add to Array
-                let tempSTRING = file.toString();
-                let tempSTRINGLength = tempSTRING.length;
-                tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
-
-                prideBackgrounds.push(tempSTRING);
-
-            }
-
-
-
-
-            // Generate Background
-            // Arrays so Bot knows if the Text Colour needs changing or not
-            // ANY backgrounds not listed in these will use the full default white font colour
-            let darkenAllFont = [
-                'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon'
-            ];
-            let darkenJustUsername = [
-                'genderfluid', 'nonBinary', 'straightAlly'
-            ];
-            let darkenJustLevels = [
-                'asexual'
-            ];
-
-
 
             let backgroundPath;
             if (standardBackgrounds.includes(userRankPref)) {
@@ -447,28 +439,19 @@ module.exports = {
 
 
 
+            // CALCULATE PROGRESS TO NEXT LEVEL
+            let currentXPINT = await XPs.FetchXP(message, userMember);
+            let levelDifference = BaseLevels[`l${currentLevel + 1}`] - BaseLevels[`l${currentLevel}`];
+            let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
+            let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
+
+
+
+
 
             // CANVAS
-            const canvas = Canvas.createCanvas(700, 250);
-            const ctx = canvas.getContext('2d');
             const canvasBackground = await Canvas.loadImage(backgroundPath);
             ctx.drawImage(canvasBackground, 0, 0, canvas.width, canvas.height);
-
-            // Apply Text
-            const applyText = (canvas, text) => {
-
-                // Base Font Size
-                let fontSize = 70;
-
-                do {
-                    // Change font size based on String Length
-                    ctx.font = `${fontSize -= 10}px sans-serif`;
-                } while (ctx.measureText(text).width > canvas.width - 300);
-
-                // Return new result
-                return ctx.font;
-
-            };
 
 
             // Apply text based on colour needed
@@ -477,19 +460,19 @@ module.exports = {
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, userMember.displayName);
                 ctx.fillStyle = '#000000';
-                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
 
-		// PROGRESS BAR (thanks to canvas-extras)
+		        // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
                 ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
@@ -509,19 +492,19 @@ module.exports = {
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, userMember.displayName);
                 ctx.fillStyle = '#000000';
-                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
 
-		// PROGRESS BAR (thanks to canvas-extras)
+		        // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
                 ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
@@ -541,19 +524,19 @@ module.exports = {
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, userMember.displayName);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#000000';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
 
-		// PROGRESS BAR (thanks to canvas-extras)
+		        // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
                 ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
@@ -573,19 +556,19 @@ module.exports = {
                 // DISPLAY NAME
                 ctx.font = applyText(canvas, userMember.displayName);
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 2.6);
+                ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
 
                 // XPs
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.3);
+                ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
 
                 // LEVELS
                 ctx.font = '28px sans-serif';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 1.6);
+                ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
 
-		// PROGRESS BAR (thanks to canvas-extras)
+		        // PROGRESS BAR (thanks to canvas-extras)
                 // https://www.npmjs.com/package/canvas-extras
                 ctx.beginPath();
                 ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
