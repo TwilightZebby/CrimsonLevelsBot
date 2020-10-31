@@ -15,7 +15,7 @@ module.exports = {
     name: 'top',
     description: 'Brings up a list of the top 10 Members in this Server!',
     usage: ' ',
-    //aliases: [' '],
+    aliases: ['leaderboard'],
     //args: true,
     commandType: 'level',
     //cooldown: 3, // IN SECONDS
@@ -67,9 +67,8 @@ module.exports = {
         for ( let i = 0; i < guildXP.length; i++ ) {
 
           let tempData = guildXP[i].dataValues;
-          let tempMember = await message.guild.members.fetch(tempData.userID);
 
-          let tempString = `**${i + 1})** ${tempMember} (${tempMember.user.username}#${tempMember.user.discriminator})  |  **${tempData.xp} XP**`;
+          let tempString = `**${i + 1})** ${tempData.userName}  |  **${tempData.xp} XP**`;
           smallGuildTop.push(tempString);
 
         }
@@ -96,9 +95,8 @@ module.exports = {
         for ( let i = 0; i < 10; i++ ) {
 
           let tempData = guildXP[i].dataValues;
-          let tempMember = await message.guild.members.fetch(tempData.userID);
 
-          let tempString = `**${i + 1})** ${tempMember} (${tempMember.user.username}#${tempMember.user.discriminator})  |  **${tempData.xp} XP**`;
+          let tempString = `**${i + 1})** ${tempData.userName}  |  **${tempData.xp} XP**`;
           guildTop.push(tempString);
 
         }

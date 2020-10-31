@@ -27,10 +27,58 @@ module.exports = {
      */
     async Test(message) {
 
-        //return await Error.LogToUser(message.channel, `No Tests available...`);
+        // Auto-fill "userName" in "userxp" DB
+        let tempDB = await Tables.UserXP.findAll();
+        let i = 0;
+
+
+        let milliseconds = tempDB.length * 5000;
+        let seconds = milliseconds / 1000;
+        let minutes = 0;
+        let hours = 0;
+        if (seconds > 60 && seconds < 3600) {
+            minutes = Math.floor(seconds / 60);
+        }
+        else if (seconds > 3600) {
+            hours = Math.floor(seconds / 3600);
+        }
+
+        const progressMessage = await message.channel.send(`Filling out \`userName\` fields, this will take ${seconds} seconds (${minutes} minutes, ${hours} hours)`);
+
         
+        let intervalTemp = setInterval(async () => {
+
+            console.log(`TEST 1, i = ${i}`);
+
+            let userOBJ = await client.users.fetch(tempDB[i].dataValues.userID);
+            await Tables.UserXP.update({
+                userName: `${userOBJ.username}#${userOBJ.discriminator}`
+            }, {
+                where: {
+                    userID: userOBJ.id
+                }
+            })
+            .catch(async err => {
+                await Error.LogCustom(err, `DEV TESTING THING`);
+            });
+
+            i++;
+
+            //console.log(`TEST 2 - Did ${userOBJ.username}#${userOBJ.discriminator}`);
+
+            if ( i > tempDB.length - 1 ) {
+                await progressMessage.edit(`Filled out all the \`userName\` fields!`);
+                clearInterval(intervalTemp);
+            }
+
+        }, 5000);
+
+        return;
+
+        //return await Error.LogToUser(message.channel, `No Tests available...`);
 
     },
+    
 
 
 

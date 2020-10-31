@@ -50,6 +50,9 @@ Upon inviting the Bot to your Server, you will be asked to grant the Bot some Pe
 	* Use `roles guide` for more info
 * reset <@user|all>
 	* Used to reset XP back to zero (0) either for a specified @user or for all Members in that Server
+* roulette <XPBet>
+    * Gamble your XP away and either gain a boost, or risk losing some!
+	* Roulette Command and it's cooldown are configurable via `settings` command
 
 ---
 This bot is still in active development, so feel free to report any bugs or suggest new things via [our support server!](https://discord.gg/YuxSF39)
