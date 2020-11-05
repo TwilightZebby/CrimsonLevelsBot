@@ -41,7 +41,7 @@ module.exports = {
                 ]
             }
         ).catch(async (err) => {
-            await Error.LogCustom(err, `Attempted GuildRoles data fetch for ${message.guild.name}`);
+            await Error.LogCustom(err, `(**roleFunctions.js**) Attempted GuildRoles data fetch for ${message.guild.name}`);
             return await Error.LogToUser(message.channel, `I was unable to fetch the Roles data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
         });
 
@@ -291,7 +291,7 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted to search for a Role in Guild ${message.guild.name}`);
+                await Error.LogCustom(err, `(**roleFunctions.js**) Attempted to search for a Role in Guild ${message.guild.name}`);
             });
 
 
@@ -307,7 +307,7 @@ module.exports = {
                         level: levelNumber
                     }
                 ).catch(async (err) => {
-                    await Error.LogCustom(err, `Attempted GuildRoles data creation for ${message.guild.name}`);
+                    await Error.LogCustom(err, `(**roleFunctions.js**) Attempted GuildRoles data creation for ${message.guild.name}`);
                     return await Error.LogToUser(message.channel, `I was unable to assign the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
                 });
 
@@ -335,7 +335,7 @@ module.exports = {
                         }
                     }
                 ).catch(async (err) => {
-                    await Error.LogCustom(err, `Attempted GuildRoles data update for ${message.guild.name}`);
+                    await Error.LogCustom(err, `(**roleFunctions.js**) Attempted GuildRoles data update for ${message.guild.name}`);
                     return await Error.LogToUser(message.channel, `I was unable to update the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
                 });
 
@@ -415,7 +415,7 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted GuildRoles data removal for ${message.guild.name}`);
+                await Error.LogCustom(err, `(**roleFunctions.js**) Attempted GuildRoles data removal for ${message.guild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to remove the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 
@@ -434,7 +434,7 @@ module.exports = {
                         }
                     }
                 ).catch(async (err) => {
-                    await Error.LogCustom(err, `Attempted GuildRoles data removal for ${message.guild.name}`);
+                    await Error.LogCustom(err, `(**roleFunctions.js**) Attempted GuildRoles data removal for ${message.guild.name}`);
                     return await Error.LogToUser(message.channel, `I was unable to remove the Role data for Guild **${message.guild.name}**\nIf this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
                 });
 
@@ -489,7 +489,7 @@ module.exports = {
 
         const confirmationMessage = await message.channel.send(embed);
         await confirmationMessage.react('✅').catch(async (err) => {
-            await Error.Log(err);
+            await Error.LogCustom(err, `(**roleFunctions.js**)`);
         });
 
 
@@ -522,7 +522,7 @@ module.exports = {
                     }
                 ).catch(async (err) => {
                     
-                    await Error.LogCustom(err, `Attempted GuildRoles data removal for ${message.guild.name}`);
+                    await Error.LogCustom(err, `(**roleFunctions.js**) Attempted GuildRoles data removal for ${message.guild.name}`);
 
                     embed.setColor('#9c0000')
                     .setTitle(`⚠️ An error has occurred!`)

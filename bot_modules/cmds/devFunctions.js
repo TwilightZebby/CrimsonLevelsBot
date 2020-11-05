@@ -28,7 +28,7 @@ module.exports = {
     async Test(message) {
 
         // Auto-fill "userName" in "userxp" DB
-        let tempDB = await Tables.UserXP.findAll();
+        /*let tempDB = await Tables.UserXP.findAll();
         let i = 0;
 
 
@@ -73,9 +73,9 @@ module.exports = {
 
         }, 5000);
 
-        return;
+        return;*/
 
-        //return await Error.LogToUser(message.channel, `No Tests available...`);
+        return await Error.LogToUser(message.channel, `No Tests available...`);
 
     },
     
@@ -252,7 +252,7 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted UserXP data update for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
+                await Error.LogCustom(err, `(**devFunctions.js**) Attempted UserXP data update for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to update the XP data for **${selectedUser.username}#${selectedUser.discriminator}** in Guild **${fetchedGuild.name}**`);
             });
 
@@ -307,7 +307,7 @@ module.exports = {
                 }
             }
         ).catch(async (err) => {
-            await Error.LogCustom(err, `Attempted UserPrefs data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
+            await Error.LogCustom(err, `(**devFunctions.js**) Attempted UserPrefs data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
             return await Error.LogToUser(message.channel, `I was unable to fetch the Prefs data for **${selectedUser.username}#${selectedUser.discriminator}**`);
         });
 
@@ -372,7 +372,7 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
+                await Error.LogCustom(err, `(**devFunctions.js**) Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to fetch the XP data for **${selectedUser.username}#${selectedUser.discriminator}** in Guild **${fetchedGuild.name}**`);
             });
 

@@ -57,7 +57,7 @@ module.exports = {
           }
         })
         .catch(async err => {
-          await Error.Log(err);
+          await Error.LogCustom(err, `(**prefs.js**)`);
           return await Error.LogToUser(message.channel, `I was unable to fetch the preferences for \`${message.author.username}\`, please try again later.`)
         });
 
@@ -533,7 +533,7 @@ module.exports = {
                     }
                   )
                   .catch(async err => {
-                    await Error.LogCustom(err, `Attempted UserPrefs DB Update`);
+                    await Error.LogCustom(err, `(**prefs.js**) Attempted UserPrefs DB Update`);
                     return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the updated User Preference value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
                   });
 
@@ -576,7 +576,7 @@ module.exports = {
                     }
                   )
                   .catch(async err => {
-                    await Error.LogCustom(err, `Attempted UserPrefs DB Update`);
+                    await Error.LogCustom(err, `(**prefs.js**) Attempted UserPrefs DB Update`);
                     return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the updated User Preference value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
                   });
 
@@ -640,7 +640,7 @@ module.exports = {
               }
             )
             .catch(async err => {
-              await Error.LogCustom(err, `Attempted UserPrefs DB Update`);
+              await Error.LogCustom(err, `(**prefs.js**) Attempted UserPrefs DB Update`);
               return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the updated User Preference value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 

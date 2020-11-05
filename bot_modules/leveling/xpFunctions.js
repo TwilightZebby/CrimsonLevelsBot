@@ -26,7 +26,7 @@ module.exports = {
                 }
             })
             .catch(async err => {
-                return await Errors.Log(err);
+                return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
             })
     
             let authorCurrent = authorData[0].dataValues;
@@ -43,7 +43,7 @@ module.exports = {
                 }
             })
             .catch(async err => {
-                return await Errors.Log(err);
+                return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
             });
 
             let memberCurrent = memberData[0].dataValues;
@@ -182,7 +182,7 @@ module.exports = {
             }
         })
         .catch(async err => {
-            return await Errors.Log(err);
+            return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
         })
 
         return;

@@ -34,7 +34,7 @@ module.exports = {
             try {
                 broadChannel = guild.channels.resolve(serverData.broadcastChannel);
             } catch (err) {
-                await Errors.Log(err);
+                await Errors.LogCustom(err, `(**broadcastFunctions.js**)`);
             }
 
             if (broadChannel !== null) {

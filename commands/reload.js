@@ -51,12 +51,16 @@ module.exports = {
 
         // Fetch updated command
         try {
+
           let newCommand = require(`./level/${command.name}.js`);
           client.commands.set(newCommand.name, newCommand);
           return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+
         } catch (err) {
+
           await Error.LogCustom(err, `Error while reloading ${commandName} command:`);
           return Error.LogToUser(message.channel, `I was unable to reload the **${commandName}** command - please check the Console Logs for more details...`);
+
         }
 
       }
@@ -67,12 +71,16 @@ module.exports = {
 
         // Fetch updated command
         try {
+
           let newCommand = require(`./management/${command.name}.js`);
           client.commands.set(newCommand.name, newCommand);
           return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+
         } catch (err) {
+
           await Error.LogCustom(err, `Error while reloading ${commandName} command:`);
           return Error.LogToUser(message.channel, `I was unable to reload the **${commandName}** command - please check the Console Logs for more details...`);
+
         }
 
       }
@@ -83,12 +91,16 @@ module.exports = {
 
         // Fetch updated command
         try {
+
           let newCommand = require(`./${command.name}.js`);
           client.commands.set(newCommand.name, newCommand);
           return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+
         } catch (err) {
+
           await Error.LogCustom(err, `Error while reloading ${commandName} command:`);
           return Error.LogToUser(message.channel, `I was unable to reload the **${commandName}** command - please check the Console Logs for more details...`);
+          
         }
 
       }

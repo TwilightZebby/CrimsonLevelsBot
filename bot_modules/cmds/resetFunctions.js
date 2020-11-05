@@ -116,7 +116,7 @@ module.exports = {
 
         const confirmationMessage = await message.channel.send(embed);
         await confirmationMessage.react('✅').catch(async (err) => {
-            await Error.Log(err);
+            await Error.LogCustom(err, `(**resetFunctions.js**)`);
         });
 
 
@@ -158,7 +158,7 @@ module.exports = {
                         }
                     ).catch(async (err) => {
                     
-                        await Error.LogCustom(err, `Attempted UserXP data reset for ${message.guild.name}`);
+                        await Error.LogCustom(err, `(**resetFunctions.js**) Attempted UserXP data reset for ${message.guild.name}`);
     
                         embed.setColor('#9c0000')
                         .setTitle(`⚠️ An error has occurred!`)
@@ -190,7 +190,7 @@ module.exports = {
                         }
                     ).catch(async (err) => {
                     
-                        await Error.LogCustom(err, `Attempted UserXP data reset for ${message.guild.name}`);
+                        await Error.LogCustom(err, `(**resetFunctions.js**) Attempted UserXP data reset for ${message.guild.name}`);
     
                         embed.setColor('#9c0000')
                         .setTitle(`⚠️ An error has occurred!`)

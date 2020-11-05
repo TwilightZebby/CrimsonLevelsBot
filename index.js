@@ -252,7 +252,7 @@ client.on('guildCreate', async (guild) => {
       }
     }
   ).catch(async err => {
-    return await Errors.LogCustom(err, `Attempted Guild Config DB Addition for ${guild.name} (ID: ${guild.id})`);
+    return await Errors.LogCustom(err, `(**BOT_JOIN_GUILD**) Attempted Guild Config DB Addition for ${guild.name} (ID: ${guild.id})`);
   });
 
 
@@ -271,18 +271,19 @@ client.on('guildCreate', async (guild) => {
         }
       }
     ).catch(async err => {
-      return await Errors.LogCustom(err, `Attempted User Prefs DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} (ID: ${guildMembers[i].user.id})`);
+      return await Errors.LogCustom(err, `(**BOT_JOIN_GUILD**) Attempted User Prefs DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} (ID: ${guildMembers[i].user.id})`);
     });
 
     await Tables.UserXP.findOrCreate(
       {
         where: {
           userID: guildMembers[i].id,
-          guildID: guild.id
+          guildID: guild.id,
+          userName: `${guildMembers[i].user.username}#${guildMembers[i].user.discriminator}`
         }
       }
     ).catch(async err => {
-      return await Errors.LogCustom(err, `Attempted User XP DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} (ID: ${guildMembers[i].user.id}) in Guild ${guild.name} (ID: ${guild.id})`);
+      return await Errors.LogCustom(err, `(**BOT_GUILD_JOIN**) Attempted User XP DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} (ID: ${guildMembers[i].user.id}) in Guild ${guild.name} (ID: ${guild.id})`);
     });
 
   }
@@ -336,7 +337,7 @@ client.on('guildDelete', async (guild) => {
       }      
     }
   ).catch(async err => {
-    return await Errors.LogCustom(err, `Attempted Guild Config DB Removal for ${guild.name} (ID: ${guild.id})`);
+    return await Errors.LogCustom(err, `(**BOT_LEAVE_GUILD**) Attempted Guild Config DB Removal for ${guild.name} (ID: ${guild.id})`);
   });
 
 
@@ -351,7 +352,7 @@ client.on('guildDelete', async (guild) => {
       }
     }
   ).catch(async err => {
-    return await Errors.LogCustom(err, `Attempted User XP DB Removal for Guild ${guild.name} (ID: ${guild.id})`);
+    return await Errors.LogCustom(err, `(**BOT_LEAVE_GUILD**) Attempted User XP DB Removal for Guild ${guild.name} (ID: ${guild.id})`);
   });
 
 
@@ -399,11 +400,12 @@ client.on('guildMemberAdd', async (member) => {
       {
         where: {
           userID: member.id,
-          guildID: member.guild.id
+          guildID: member.guild.id,
+          userName: `${member.user.username}#${member.user.discriminator}`
         }
       }
     ).catch(async err => {
-      return await Errors.LogCustom(err, `Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+      return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
     });
 
     await Tables.UserPrefs.findOrCreate(
@@ -413,7 +415,7 @@ client.on('guildMemberAdd', async (member) => {
         }
       }
     ).catch(async err => {
-      return await Errors.LogCustom(err, `Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+      return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
     });
 
     return;
@@ -460,7 +462,7 @@ client.on('guildMemberRemove', async (member) => {
       }
     }
   ).catch(async err => {
-    return await Errors.LogCustom(err, `Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+    return await Errors.LogCustom(err, `(**USER_LEAVE_GUILD**) Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
   });
 
   return;
@@ -511,7 +513,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
         }
       }
     ).catch(async err => {
-      return await Errors.LogCustom(err, `Attempted userxp DB update for ${newMember.user.username}#${newMember.user.discriminator} (ID: ${newMember.user.id})`);
+      return await Errors.LogCustom(err, `(**GUILD_MEMBER_UPDATE**) Attempted userxp DB update for ${newMember.user.username}#${newMember.user.discriminator} (ID: ${newMember.user.id})`);
     });
 
   }
@@ -528,7 +530,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
         }
       }
     ).catch(async err => {
-      return await Errors.LogCustom(err, `Attempted userxp DB update for ${newMember.user.username}#${newMember.user.discriminator} (ID: ${newMember.user.id})`);
+      return await Errors.LogCustom(err, `(**GUILD_MEMBER_UPDATE**) Attempted userxp DB update for ${newMember.user.username}#${newMember.user.discriminator} (ID: ${newMember.user.id})`);
     });
 
   }
@@ -658,7 +660,7 @@ client.on('message', async (message) => {
 
     const now = Date.now();
     const timestamps = xpCooldowns.get(message.author.id);
-    const cooldownLength = 30500;
+    const cooldownLength = 59500; // 59.5 seconds
 
     if ( timestamps.has(message.author.id) ) {
 
@@ -1046,7 +1048,7 @@ client.on('message', async (message) => {
     try {
       command.execute(message, args);
     } catch (error) {
-      await Errors.Log(error);
+      await Errors.LogCustom(error, `(**index.js** - EXECUTE COMMAND FAIL)`);
       return await message.reply(`There was an error trying to run that command!`);
     }
 

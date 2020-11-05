@@ -24,7 +24,7 @@ module.exports = {
                     }
                 }
             ).catch(async err => {
-                await Errors.LogCustom(err, `Unable to fetch Guild_Config DB Table when fetching Prefix`);
+                await Errors.LogCustom(err, `(**prefixFunctions.js**) Unable to fetch Guild_Config DB Table when fetching Prefix`);
                 return String(PREFIX);
             });
     
@@ -78,7 +78,7 @@ module.exports = {
                 }
             }
         ).catch(async err => {
-            await Error.LogCustom(err, `Attempted GuildConfig DB Update`);
+            await Error.LogCustom(err, `(**prefixFunctions.js**) Attempted GuildConfig DB Update`);
             return await Error.LogToUser(message.channel, `Sorry ${message.author.username} - I was unable to save the new Prefix. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
         });
 

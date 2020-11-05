@@ -2,10 +2,11 @@ const Discord = require("discord.js");
 //const fs = require('fs');
 //const Canvas = require('canvas');
 //const { client } = require('../../bot_modules/constants.js');
+const ns = require('number-string');
 
 //let { PREFIX } = require('../../config.js');
 //const XPs = require('../../bot_modules/leveling/xpFunctions.js');
-//const Levels = require('../../bot_modules/leveling/levelFunctions.js');
+const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
@@ -67,8 +68,12 @@ module.exports = {
         for ( let i = 0; i < guildXP.length; i++ ) {
 
           let tempData = guildXP[i].dataValues;
+          let tempLevel = await Levels.FetchLevel(tempData.xp);
+          let tempXP = ns.toClean(tempData.xp, {
+            thousandSeperator: ",",
+          });
 
-          let tempString = `**${i + 1})** ${tempData.userName}  |  **${tempData.xp} XP**`;
+          let tempString = `**${i + 1})** ${tempData.userName}   >   Level ${tempLevel}   >   **${tempXP} XP**`;
           smallGuildTop.push(tempString);
 
         }
@@ -95,8 +100,12 @@ module.exports = {
         for ( let i = 0; i < 10; i++ ) {
 
           let tempData = guildXP[i].dataValues;
+          let tempLevel = await Levels.FetchLevel(tempData.xp);
+          let tempXP = ns.toClean(tempData.xp, {
+            thousandSeperator: ",",
+          });
 
-          let tempString = `**${i + 1})** ${tempData.userName}  |  **${tempData.xp} XP**`;
+          let tempString = `**${i + 1})** ${tempData.userName}   >   Level ${tempLevel}   >   **${tempXP} XP**`;
           guildTop.push(tempString);
 
         }

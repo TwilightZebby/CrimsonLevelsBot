@@ -50,7 +50,7 @@ module.exports = {
           }
         }
       ).catch(async err => {
-        await Error.LogCustom(err, `Attempted data fetch for GUILDCONFIG in Guild ${message.guild.name}`);
+        await Error.LogCustom(err, `(**roulette.js**) Attempted data fetch for GUILDCONFIG in Guild ${message.guild.name}`);
         return await Error.LogToUser(message.channel, `Failed to fetch the set configuration settings for this Guild. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
       });
 
