@@ -19,7 +19,7 @@ module.exports = {
 
         if (!member) {
 
-            let authorData = await Tables.UserXP.findOrCreate({
+            let authorData = await Tables.UserXP.findOne({
                 where: {
                     guildID: message.guild.id,
                     userID: message.author.id
@@ -28,15 +28,28 @@ module.exports = {
             .catch(async err => {
                 return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
             })
-    
-            let authorCurrent = authorData[0].dataValues;
+
+            if (!authorData) {
+
+                authorData = await Tables.UserXP.create(
+                    {
+                        guildID: message.guild.id,
+                        userID: message.author.id,
+                        userName: `${message.author.username}#${message.author.discriminator}`
+                    }
+                ).catch(async err => {
+                    return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
+                })
+            }
+
+            let authorCurrent = authorData.dataValues;
             
             return authorCurrent.xp;
 
         }
         else {
 
-            let memberData = await Tables.UserXP.findOrCreate({
+            let memberData = await Tables.UserXP.findOne({
                 where: {
                     guildID: message.guild.id,
                     userID: member.user.id
@@ -46,7 +59,22 @@ module.exports = {
                 return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
             });
 
-            let memberCurrent = memberData[0].dataValues;
+            if (!memberData) {
+
+                memberData = await Tables.UserXP.create(
+                    {
+                        where: {
+                            guildID: message.guild.id,
+                            userID: member.user.id,
+                            userName: `${member.user.username}#${member.user.discriminator}`
+                        }
+                    }
+                ).catch(async err => {
+                    return await Errors.LogCustom(err, `(**xpFunctions.js**)`);
+                });
+            }
+
+            let memberCurrent = memberData.dataValues;
 
             return memberCurrent.xp;
 

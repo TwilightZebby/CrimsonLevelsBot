@@ -60,6 +60,28 @@ module.exports = {
 
 
     /**
+     * For throwing a custom error WITHOUT an error object
+     * 
+     * @param {String} eMessage 
+     * 
+     * @returns {Promise<Discord.Message>} wrapped Message
+     */
+    async LogMessage(eMessage) {
+
+        // Log to Console
+        console.log(`${eMessage}`);
+
+        // Log to Channel
+        let errorLogChannel = await client.guilds.fetch('681805468749922308');
+        errorLogChannel = errorLogChannel.channels.resolve('726336306497454081');
+
+        return await errorLogChannel.send(`${eMessage}`);
+
+    },
+
+
+
+    /**
      * Send a custom Error message to the Discord User
      * 
      * @param {Discord.Channel} messageTarget Where to send the Message (NEEDS .send() FUNCTION)

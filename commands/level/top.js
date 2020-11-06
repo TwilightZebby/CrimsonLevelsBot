@@ -59,7 +59,13 @@ module.exports = {
 
       const embed = new Discord.MessageEmbed().setColor('#DC143C');
 
-      if ( guildXP.length < 10 ) {
+      if ( !guildXP.length || !guildXP || guildXP.length === 0 ) {
+
+        // Error catching for when no one is in the DB for some reason
+        return await Error.LogToUser(message.channel, `Unable to find any stored XP data for this Server... :/`);
+
+      }
+      else if ( guildXP.length < 10 ) {
 
         // WHEN THERE ARE LESS THAN 10 MEMBERS STORED FOR THAT GUILD
 
