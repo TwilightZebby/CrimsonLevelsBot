@@ -10,7 +10,7 @@ const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
-const Ranks = require('../../bot_modules/cmds/rankFunctions.js');
+const Backgrounds = require('../../bot_modules/leveling/backgroundFunctions.js');
 
 
 module.exports = {
@@ -42,10 +42,10 @@ module.exports = {
 
 
       if (!args.length) {
-        return await Ranks.Author(message, PREFIX);
+        return await Backgrounds.GenerateAuthorCard(message);
       }
       else {
-        return await Ranks.MentionedUser(message, PREFIX, args);
+        return await Backgrounds.GenerateCardMentioned(message, args);
       }
 
 

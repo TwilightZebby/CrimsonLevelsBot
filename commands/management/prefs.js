@@ -6,6 +6,7 @@ const { client } = require('../../bot_modules/constants.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
+const Backgrounds = require('../../bot_modules/leveling/backgroundFunctions.js');
 
 let { PREFIX } = require('../../config.js');
 let validOptions = [
@@ -164,6 +165,7 @@ module.exports = {
             let backgrounds = [];
             let standardBackgrounds = [];
             let prideBackgrounds = [];
+            let gradientBackgrounds = [];
             let rankValues = [ 'guide', 'list', 'preview', 'disable' ];
 
             // Fetch all Backgrounds
@@ -192,6 +194,19 @@ module.exports = {
               backgrounds.push(tempSTRING);
               prideBackgrounds.push(tempSTRING);
               rankValues.push(tempSTRING);
+
+            }
+
+            let gradientBGs = fs.readdirSync('./backgrounds/gradient').filter(file => file.endsWith('.png'));
+            for (const file of gradientBGs) {
+
+              // Add to Array
+              let tempSTRING = file.toString();
+              let tempSTRINGLength = tempSTRING.length;
+              tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+              gradientBackgrounds.push(tempSTRING);
+              backgrounds.push(tempSTRING)
 
             }
 
@@ -267,6 +282,10 @@ module.exports = {
                       value: standardBackgrounds.join(', ')
                     },
                     {
+                      name: `Gradient Backgrounds`,
+                      value: gradientBackgrounds.join(', ')
+                    },
+                    {
                       name: `Pride Backgrounds`,
                       value: prideBackgrounds.join(', ')
                     },
@@ -296,214 +315,7 @@ module.exports = {
                 // PREVIEW BGs
                 case 'preview':
 
-                  // First check for a BG name
-                  if ( !args[2] ) {
-                    return await Error.LogToUser(message.channel, `I couldn't find any given Background Names! Please try again, making sure you use the format: \`${PREFIX}prefs rank preview backgroundName\``);
-                  }
-
-                  // Now look for the background
-                  let backgroundValue = args[2];
-
-                  if ( !backgrounds.includes(backgroundValue) ) {
-                    return await Error.LogToUser(message.channel, `That background doesn't exist! Please try again, making sure you have typed the background's name exactly as it appears in \`${PREFIX}prefs rank list\``);
-                  }
-
-                  // Generate Background preview
-
-                  // Arrays so Bot knows if the Text Colour needs changing or not
-                  // ANY backgrounds not listed in these will use the full default white font colour
-                  let darkenAllFont = [
-                    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon'
-                  ];
-                  let darkenJustUsername = [
-                    'genderfluid', 'nonBinary', 'straightAlly'
-                  ];
-                  let darkenJustLevels = [
-                    'asexual'
-                  ];
-
-                  let backgroundPath;
-                  if ( standardBackgrounds.includes(backgroundValue) ) {
-                    backgroundPath = `./backgrounds/standard/${backgroundValue}.png`;
-                  }
-                  else if ( prideBackgrounds.includes(backgroundValue) ) {
-                    backgroundPath = `./backgrounds/pride/${backgroundValue}.png`;
-                  }
-
-
-                  // CANVAS
-                  const canvas = Canvas.createCanvas(700, 250);
-                  const ctx = canvas.getContext('2d');
-                  const canvasBackground = await Canvas.loadImage(backgroundPath);
-                  ctx.drawImage(canvasBackground, 0, 0, canvas.width, canvas.height);
-
-                  // Apply Text
-                  const applyText = (canvas, text) => {
-
-                    // Base Font Size
-                    let fontSize = 70;
-
-                    do {
-                      // Change font size based on String Length
-                      ctx.font = `${fontSize -= 10}px sans-serif`;
-                    } while ( ctx.measureText(text).width > canvas.width - 300 );
-
-                    // Return new result
-                    return ctx.font;
-
-                  };
-
-
-                  // Apply text based on colour needed
-                  if ( darkenAllFont.includes(backgroundValue) ) {
-
-                    // DISPLAY NAME
-                    ctx.font = applyText(canvas, message.member.displayName);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
-
-                    // XPs
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.6);
-
-                    // LEVELS
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 2.0);
-
-                    // PROGRESS BAR (thanks to canvas-extras)
-                    // https://www.npmjs.com/package/canvas-extras
-                    ctx.beginPath();
-                    ctx.progressBar(25, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
-                    ctx.closePath();
-
-                    // LABELS FOR PROGRESS BAR
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`L0`, canvas.width / 2.8, canvas.height / 1.21);
-
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`L1`, canvas.width / 1.14, canvas.height / 1.21);
-
-                  }
-                  else if ( darkenJustUsername.includes(backgroundValue) ) {
-
-                    // DISPLAY NAME
-                    ctx.font = applyText(canvas, message.member.displayName);
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
-
-                    // XPs
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.6);
-
-                    // LEVELS
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 2.0);
-
-                    // PROGRESS BAR (thanks to canvas-extras)
-                    // https://www.npmjs.com/package/canvas-extras
-                    ctx.beginPath();
-                    ctx.progressBar(25, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
-                    ctx.closePath();
-
-                    // LABELS FOR PROGRESS BAR
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`L0`, canvas.width / 2.8, canvas.height / 1.21);
-
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`L1`, canvas.width / 1.14, canvas.height / 1.21);
-
-                  }
-                  else if ( darkenJustLevels.includes(backgroundValue) ) {
-
-                    // DISPLAY NAME
-                    ctx.font = applyText(canvas, message.member.displayName);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
-
-                    // XPs
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.6);
-
-                    // LEVELS
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 2.0);
-
-                    // PROGRESS BAR (thanks to canvas-extras)
-                    // https://www.npmjs.com/package/canvas-extras
-                    ctx.beginPath();
-                    ctx.progressBar(25, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#000000');
-                    ctx.closePath();
-
-                    // LABELS FOR PROGRESS BAR
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`L0`, canvas.width / 2.8, canvas.height / 1.21);
-
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#000000';
-                    ctx.fillText(`L1`, canvas.width / 1.14, canvas.height / 1.21);
-
-                  }
-                  else {
-
-                    // DISPLAY NAME
-                    ctx.font = applyText(canvas, message.member.displayName);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
-
-                    // XPs
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.6);
-
-                    // LEVELS
-                    ctx.font = '28px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 2.0);
-
-                    // PROGRESS BAR (thanks to canvas-extras)
-                    // https://www.npmjs.com/package/canvas-extras
-                    ctx.beginPath();
-                    ctx.progressBar(25, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, '#ab0202', '#ffffff');
-                    ctx.closePath();
-
-                    // LABELS FOR PROGRESS BAR
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`L0`, canvas.width / 2.8, canvas.height / 1.21);
-
-                    ctx.font = '24px sans-serif';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillText(`L1`, canvas.width / 1.14, canvas.height / 1.21);
-
-                  }
-
-
-                  // User Profile Picture
-                  ctx.strokeStyle = '#74037b';
-                  ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
-                  ctx.beginPath();
-                  ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
-                  ctx.closePath();
-                  ctx.clip();
-
-                  const avatar = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
-                  ctx.drawImage(avatar, 25, 25, 200, 200);
-
-                  // Output!
-                  const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `background_${backgroundValue}_preview.png`);
-                  return await message.channel.send(`Here's your preview of the **${backgroundValue}** Rank Background!`, attachment);
+                  return await Backgrounds.GenerateCardPreview(message, args);
                                   
                 
                 
