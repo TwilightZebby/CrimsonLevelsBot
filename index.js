@@ -202,6 +202,7 @@ client.once('ready', async () => {
     await Tables.UserPrefs.sync();
     await Tables.GuildConfig.sync();
     await Tables.GuildRoles.sync();
+    await Tables.BlockList.sync();
     
     
     console.log(`I am ready!`);
@@ -563,11 +564,19 @@ client.on('guildMemberRemove', async (member) => {
       }
     }
   ).catch(async err => {
-    return await Errors.LogCustom(err, `(**USER_LEAVE_GUILD**) Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+    
+    // Temp-hide all errors from DBL Guild because of all the stuff I did to their DB
+    if (member.guild.id !== "264445053596991498") {
+      return await Errors.LogCustom(err, `(**USER_LEAVE_GUILD**) Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+    }
+
   });
 
   if (!memberDelete || memberDelete === 0) {
-    await Errors.LogMessage(`(**USER_LEAVE_GUILD**) No rows were deleted when User ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) left the Guild ${member.guild.name} (ID: ${member.guild.id})`);
+
+    if (member.guild.id !== "264445053596991498") {
+      await Errors.LogMessage(`(**USER_LEAVE_GUILD**) No rows were deleted when User ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) left the Guild ${member.guild.name} (ID: ${member.guild.id})`);
+    }
   }
 
   // Remove them from cache just in case
@@ -672,8 +681,8 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 // ********** MESSAGE EVENT
 client.on('message', async (message) => {
 
-  // Prevent use in DMs
-  if ( message.channel.type === "dm" ) {
+  // Prevent use in DMs, VCs, Announcement Channels, Store Channels, Category Channels, etc
+  if ( !(message.channel instanceof Discord.TextChannel()) ) {
     return;
   }
 
