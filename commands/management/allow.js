@@ -13,8 +13,8 @@ const BlockList = require('../../bot_modules/cmds/blockListFunctions.js');
 
 
 module.exports = {
-    name: 'block',
-    description: 'Used to prevent Users, Roles, and/or Channels from gaining XP in this Server',
+    name: 'allow',
+    description: 'Used to remove Users, Channels and Roles from the Server\'s BlockList',
     usage: '<mentionOrID>',
     //aliases: [''],
     args: true,
@@ -39,7 +39,7 @@ module.exports = {
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
 
-      return await BlockList.Block(message, args);
+      return await BlockList.Allow(message, args);
 
 
 

@@ -682,7 +682,12 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 client.on('message', async (message) => {
 
   // Prevent use in DMs, VCs, Announcement Channels, Store Channels, Category Channels, etc
-  if ( !(message.channel instanceof Discord.TextChannel()) ) {
+  if ( !(message.channel instanceof Discord.TextChannel) ) {
+    return;
+  }
+
+  // Catch other text-based Channel types
+  if ( message.channel instanceof Discord.NewsChannel || message.channel instanceof Discord.DMChannel ) {
     return;
   }
 
