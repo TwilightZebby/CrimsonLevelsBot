@@ -9,6 +9,7 @@ let { PREFIX } = require('../../config.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
+const BlockList = require('../../bot_modules/cmds/blockListFunctions.js');
 
 
 module.exports = {
@@ -38,7 +39,7 @@ module.exports = {
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
 
-      //.
+      return await BlockList.Block(message, args);
 
 
 

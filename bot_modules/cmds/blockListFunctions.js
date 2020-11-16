@@ -14,7 +14,52 @@ module.exports = {
      */
     async Block(message, args) {
 
-        //.
+        // Check Input
+        const inputObj = await this.CheckType(args[0], message);
+
+        if (inputObj === "invalid") {
+            return;
+        }
+        else {
+
+            // So I know what is being blocked
+            let blockedType = null;
+
+            if ( inputObj instanceof Discord.User() ) {
+                blockedType = "user";
+            }
+            else if ( inputObj instanceof Discord.Role() ) {
+                blockedType = "role";
+            }
+            else if ( inputObj instanceof Discord.TextChannel() ) {
+                blockedType = "channel";
+            }
+
+            // Save to DB
+            try {
+
+                await Tables.BlockList.create({
+                    guildID: message.guild.id,
+                    blockedID: inputObj.id,
+                    blockType: blockedType
+                });
+
+                return await message.reply(`Successfully blocked the ${blockedType} **${inputObj instanceof Discord.User() ? inputObj.username : inputObj.name}** from XP gains.`);
+
+            } catch (err) {
+
+                if (err.name === "SequelizeUniqueConstraintError") {
+                    await Errors.LogCustom(err, `(**blockListFunctions.js**) Attempted addition to BlockList DB, but ${blockedType} ${inputObj.id} already exists for Guild ${message.guild.name} (ID: ${message.guild.id})`);
+                    return Errors.LogToUser(message.channel, `That ${blockedType} already exists in this Server's Database!`);
+                }
+                else {
+                    await Errors.LogMessage(err, `(**blockListFunctions.js**) Attempted addition of ${blockedType} ${inputObj.id} to BlockList DB for Guild ${message.guild.name} (ID: ${message.guild.id})`);
+                    return Errors.LogToUser(message.channel, `I was unable to add that ${blockedType} to this Server's Database! If this error continues, please ask for help on my [support server](https://discord.gg/YuxSF39)`);
+                }
+
+            }
+
+        }
 
     },
     
@@ -39,7 +84,7 @@ module.exports = {
      * @param {String} arg The Argument which holds the User, Role, or Channel
      * @param {Discord.Message} message Discord Message
      * 
-     * @returns {(Promise<Discord.User>|Promise<Discord.Role>|Promise<Discord.TextChannel>|Promise<String>)} The Discord object, or "invalid"
+     * @returns {(Promise<Discord.User>|Promise<Discord.Role>|Promise<Discord.TextChannel>|Promise<"invalid">)} The Discord object, or "invalid"
      */
     async CheckType(arg, message) {
 
