@@ -7,17 +7,17 @@ let { PREFIX } = require('../../config.js');
 //const XPs = require('../../bot_modules/leveling/xpFunctions.js');
 //const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 //const Tables = require('../../bot_modules/tables.js');
-//const Error = require('../../bot_modules/onEvents/errors.js');
+const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
 const BlockList = require('../../bot_modules/cmds/blockListFunctions.js');
 
 
 module.exports = {
-    name: 'block',
-    description: 'Used to prevent Users, Roles, and/or Channels from gaining XP in this Server',
-    usage: '<mentionOrID>',
-    //aliases: [''],
-    args: true,
+    name: 'blocklist',
+    description: 'Brings up the Server\'s Block List',
+    usage: ' ',
+    aliases: ['bl'],
+    //args: true,
     commandType: 'management',
     cooldown: 5, // IN SECONDS
 
@@ -32,14 +32,16 @@ module.exports = {
     // FLAGS
     //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
     //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
-    //flags: [],
+    flags: [
+      ['--dump', `Dumps the Server's full Blocklist as a .txt file`]
+    ],
 
     async execute(message, args) {
 
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
 
-      return await BlockList.Block(message, args);
+      return await BlockList.ViewBlockList(message);
 
 
 

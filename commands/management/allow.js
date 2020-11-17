@@ -6,8 +6,8 @@ const { client } = require('../../bot_modules/constants.js');
 let { PREFIX } = require('../../config.js');
 //const XPs = require('../../bot_modules/leveling/xpFunctions.js');
 //const Levels = require('../../bot_modules/leveling/levelFunctions.js');
-const Tables = require('../../bot_modules/tables.js');
-const Error = require('../../bot_modules/onEvents/errors.js');
+//const Tables = require('../../bot_modules/tables.js');
+//const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
 const BlockList = require('../../bot_modules/cmds/blockListFunctions.js');
 

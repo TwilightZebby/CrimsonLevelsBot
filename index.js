@@ -414,7 +414,9 @@ client.on('guildMemberAdd', async (member) => {
           }
         }
       ).catch(async err => {
-        return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP fetch for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP fetch for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+        }
       });
 
       if (userCheck) {
@@ -431,7 +433,9 @@ client.on('guildMemberAdd', async (member) => {
             }
           }
         ).catch(async err => {
-          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP update for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+          if (member.guild.id !== "264445053596991498") {
+            return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP update for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+          }
         });
 
       }
@@ -444,7 +448,9 @@ client.on('guildMemberAdd', async (member) => {
             userName: `${member.user.username}#${member.user.discriminator}`
           }
         ).catch(async err => {
-          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP create for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+          if (member.guild.id !== "264445053596991498") {
+            return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP create for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+          }
         });
 
       }
@@ -458,7 +464,9 @@ client.on('guildMemberAdd', async (member) => {
           }
         }
       ).catch(async err => {
-        return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User prefs fetch for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User prefs fetch for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+        }
       });
 
       if (!userCheckTwo || userCheckTwo === null) {
@@ -468,7 +476,9 @@ client.on('guildMemberAdd', async (member) => {
             userID: member.id
           }
         ).catch(async err => {
-          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User Prefs create for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+          if (member.guild.id !== "264445053596991498") {
+            return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User Prefs create for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+          }
         });
 
       }
@@ -493,7 +503,9 @@ client.on('guildMemberAdd', async (member) => {
           }
         }
       ).catch(async err => {
-        return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+        }
       });
   
       await Tables.UserPrefs.findOrCreate(
@@ -503,7 +515,9 @@ client.on('guildMemberAdd', async (member) => {
           }
         }
       ).catch(async err => {
-        return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+        }
       });
 
     }

@@ -128,6 +128,161 @@ module.exports = {
         }
 
     },
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Bring up the Server's BlockList
+     * 
+     * @param {Discord.Message} message Discord Message
+     * 
+     * @returns {Promise<Discord.Message>} The BlockList
+     */
+    async ViewBlockList(message){
+
+        // Create Embed
+        const embed = new Discord.MessageEmbed().setColor('#DC143C');
+
+        // Fetch Table
+        const userBlockList = await Tables.BlockList.findAll({
+            where: {
+                guildID: message.guild.id,
+                blockType: "user"
+            },
+            attributes: ['blockedID']
+        });
+        const roleBlockList = await Tables.BlockList.findAll({
+            where: {
+                guildID: message.guild.id,
+                blockType: "role"
+            },
+            attributes: ['blockedID']
+        });
+        const channelBlockList = await Tables.BlockList.findAll({
+            where: {
+                guildID: message.guild.id,
+                blockType: "channel"
+            },
+            attributes: ['blockedID']
+        });
+
+        // Strings!
+        const userBLStrings = [];
+        const roleBLStrings = [];
+        const channelBLStrings = [];
+
+        // Format Strings
+        // USER
+        if (!userBlockList || userBlockList.length === 0 || userBlockList === null || userBlockList === undefined) {
+            userBLStrings.push(`*No blocked Users found*`);
+        }
+        else {
+
+            for (let i = 0; i < userBlockList.length; i++) {
+
+                let memberTemp = await message.guild.members.fetch({
+                    user: userBlockList[i].dataValues.blockedID,
+                    cache: true
+                });
+    
+                let stringTemp = userBLStrings.join(`\n`);
+                if (stringTemp.length <= 963) {
+                    // There is still space
+                    userBLStrings.push(`${memberTemp.user.username}#${memberTemp.user.discriminator}`);
+                    continue;
+                }
+                else {
+                    // There is no space left
+                    userBLStrings.push(`*...and ${userBlockList.length - i} others...*`);
+                    break;
+                }
+    
+            }
+
+        }
+
+        
+
+        // ROLES
+        if (!roleBlockList || roleBlockList.length === 0 || roleBlockList === null || roleBlockList === undefined) {
+            roleBLStrings.push(`*No blocked Roles found*`);
+        }
+        else if (roleBlockList.length >= 6) {
+
+            for (let i = 0; i < 5; i++) {
+                let roleTemp = await message.guild.roles.fetch(roleBlockList[i].dataValues.blockedID, true);
+                roleBLStrings.push(`@${roleTemp.name}`);
+            }
+            roleBLStrings.push(`*...and ${roleBlockList.length - 5} others...*`);
+
+        }
+        else {
+
+            for (let i = 0; i < roleBlockList.length; i++) {
+                let roleTemp = await message.guild.roles.fetch(roleBlockList[i].dataValues.blockedID, true);
+                roleBLStrings.push(`${roleTemp.name}`);
+            }
+
+        }
+
+
+
+        // CHANNELS
+        if (!channelBlockList || channelBlockList.length === 0 || channelBlockList === null || channelBlockList === undefined) {
+            channelBLStrings.push(`*No blocked Text Channels found*`);
+        }
+        else if (channelBlockList.length >= 6) {
+
+            for (let i = 0; i < 5; i++) {
+                let channelTemp = message.guild.channels.resolve(channelBlockList[i].dataValues.blockedID);
+                channelBLStrings.push(`#${channelTemp.name}`);
+            }
+            channelBLStrings.push(`*...and ${channelBlockList.length - 5} others...*`);
+
+        }
+        else {
+
+            for (let i = 0; i < channelBlockList.length; i++) {
+                let channelTemp = message.guild.channels.resolve(channelBlockList[i].dataValues.blockedID);
+                channelBLStrings.push(`#${channelTemp.name}`);
+            }
+
+        }
+
+
+
+        // SEND EMBED
+        embed.setTitle(`${message.guild.name} BlockList`)
+        .addFields(
+            {
+                name: `Blocked Users`,
+                value: userBLStrings.join(`\n`)
+            },
+            {
+                name: `Blocked Roles`,
+                value: roleBLStrings.join(`\n`)
+            },
+            {
+                name: `Blocked Channels`,
+                value: channelBLStrings.join(`\n`)
+            }
+        );
+        return await message.channel.send(embed);
+
+    },
     
 
 
@@ -198,7 +353,7 @@ module.exports = {
                 }
                 let userObj = await message.guild.members.fetch({
                     user: userID,
-                    force: true
+                    cache: true
                 });
 
                 if (userObj === null || userObj === undefined) {
@@ -210,6 +365,10 @@ module.exports = {
                     // Check Member
                     if ( userObj.user.id === "156482326887530498" || userObj.user.id === message.guild.ownerID ) {
                         await Errors.LogToUser(message.channel, `Sorry, but you cannot add/remove the Bot's Developer or this Server's Owner to/from the BlockList!`);
+                        return "invalid";
+                    }
+                    else if ( userObj.user.bot || userObj.user.flags.has('SYSTEM') ) {
+                        await Errors.LogToUser(message.channel, `Sorry, but you cannot add/remove Bots or Discord's System Accounts to/from the BlockList! (I ignore them anyways...)`);
                         return "invalid";
                     }
                     else {
@@ -248,7 +407,7 @@ module.exports = {
 
                 argUser = await message.guild.members.fetch({
                     user: arg,
-                    force: true
+                    cache: true
                 });
 
             } catch (err) {
@@ -310,6 +469,10 @@ module.exports = {
                 // Check Member
                 if ( argUser.user.id === "156482326887530498" || argUser.user.id === message.guild.ownerID ) {
                     await Errors.LogToUser(message.channel, `Sorry, but you cannot add/remove the Bot's Developer or this Server's Owner to/from the BlockList!`);
+                    return "invalid";
+                }
+                else if ( argUser.user.bot || argUser.user.flags.has('SYSTEM') ) {
+                    await Errors.LogToUser(message.channel, `Sorry, but you cannot add/remove Bots or Discord's System Accounts to/from the BlockList! (I ignore them anyways...)`);
                     return "invalid";
                 }
                 else {
