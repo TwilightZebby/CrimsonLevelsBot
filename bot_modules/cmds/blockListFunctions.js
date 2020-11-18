@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Discord = require('discord.js');
 const { client } = require('../constants.js');
 const { sequelize } = require('../constants.js');
@@ -283,7 +284,228 @@ module.exports = {
         return await message.channel.send(embed);
 
     },
-    
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Return the Server's full BlockList as a JSON file
+     * 
+     * @param {Discord.Message} message Discord Message
+     * 
+     * @returns {Promise<Discord.Message>} Message Object with an Attachment
+     */
+    async DumpBlockList(message) {
+
+        // Arrays
+        const userBLArray = [];
+        const roleBLArray = [];
+        const channelBLArray = [];
+
+        // Fetch Database
+        const guildBlockList = await Tables.BlockList.findAll({
+            where: {
+                guildID: message.guild.id,
+            },
+            attributes: ['blockedID', 'blockType']
+        });
+
+        // Fliter and add to Arrays
+        for (let i = 0; i < guildBlockList.length; i++) {
+
+            let tempData = guildBlockList[i].dataValues;
+
+            // Check Type
+            if (tempData.blockType === "user") {
+
+                // USERS
+                // Fetch User
+                let tempMember = null;
+                try {
+                    tempMember = await message.guild.members.fetch({
+                        user: tempData.blockedID,
+                        cache: true
+                    });
+                } catch (err) {
+                    tempMember = undefined;
+                }
+
+                // Add to Array
+                if (tempMember === null || tempMember === undefined) {
+                    let memberNotFoundConstruct = {
+                        "invalidID": `User with ID of ${tempData.blockedID} could not be found on this Server`
+                    };
+                    userBLArray.push(memberNotFoundConstruct);
+                }
+                else {
+                    let memberConstruct = {
+                        "userID": `${tempMember.user.id}`,
+                        "userName": `${tempMember.user.id}`,
+                        "discrim": `#${tempMember.user.discriminator}`,
+                        "nickname": `${tempMember.displayName !== tempMember.user.username ? tempMember.nickname : " "}`
+                    };
+                    userBLArray.push(memberConstruct);
+                }
+
+            }
+            else if (tempData.blockedType === "role") {
+
+                // ROLES
+                // Fetch Role
+                let tempRole = null;
+                try {
+                    tempRole = await message.guild.roles.fetch(tempData.blockedID, true);
+                } catch (err) {
+                    tempRole = undefined;
+                }
+
+                // Add to Array
+                if (tempRole === null || tempRole === undefined) {
+                    let roleNotFoundConstruct = {
+                        "invalidID": `Role with ID of ${tempData.blockedID} could not be found on this Server`
+                    };
+                    roleBLArray.push(roleNotFoundConstruct);
+                }
+                else {
+                    let roleConstruct = {
+                        "roleID": `${tempRole.id}`,
+                        "roleName": `${tempRole.name}`
+                    };
+                    roleBLArray.push(roleConstruct);
+                }
+
+            }
+            else if (tempData.blockedType === "channel") {
+
+                // CHANNELS
+                // Fetch Channel
+                let tempChannel = null;
+                try {
+                    tempChannel = message.guild.channels.resolve(tempData.blockedID);
+                } catch (err) {
+                    tempChannel = undefined;
+                }
+
+                // Add to Array
+                if (tempChannel === null || tempChannel === undefined) {
+                    let channelNotFoundConstruct = {
+                        "invalidID": `Channel with ID of ${tempData.blockedID} could not be found on this Server`
+                    };
+                    channelBLArray.push(channelNotFoundConstruct);
+                }
+                else {
+                    let channelConstruct = {
+                        "channelID": `${tempChannel.id}`,
+                        "channelName": `${tempChannel.name}`,
+                        "channelType": `${tempChannel.type}`,
+                        "parentCategoryID": `${tempChannel.parent !== null ? tempChannel.parent.id : " "}`,
+                        "parentCategoryName": `${tempChannel.parent !== null ? tempChannel.parent.name : " "}`
+                    };
+                    channelBLArray.push(channelConstruct);
+                }
+
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Test Array sizes
+        if (!userBLArray || userBLArray.length < 1) {
+            let noUsersConstruct = {
+                "noneFound": `No Users were found in this Server's BlockList`
+            };
+            userBLArray.push(noUsersConstruct);
+        }
+
+        if (!roleBLArray || roleBLArray.length < 1) {
+            let noRolesConstruct = {
+                "noneFound": `No Roles were found in this Server's BlockList`
+            };
+            roleBLArray.push(noRolesConstruct);
+        }
+
+        if (!channelBLArray || channelBLArray.length < 1) {
+            let noChannelsConstruct = {
+                "noneFound": `No Channels were found in this Server's BlockList`
+            };
+            channelBLArray.push(noChannelsConstruct);
+        }
+
+
+        // Create main Map that will be stored in text file
+        const blockListArray = [];
+
+        let guildConstruct = {
+            "serverID": `${message.guild.id}`,
+            "serverName": `${message.guild.name}`,
+            "serverIsPartnered": `${message.guild.partnered}`,
+            "serverIsVerified": `${message.guild.verified}`
+        };
+
+        // Add everything to main Array
+        blockListArray.push(guildConstruct);
+        blockListArray.push(userBLArray);
+        blockListArray.push(roleBLArray);
+        blockListArray.push(channelBLArray);
+
+
+
+        // Now write to a NEW file
+        fs.writeFile(`./blockListTempStore/${message.guild.id}_blocklist.json`, JSON.stringify(blockListArray, null, 4), async (err) => {
+            if (err) {
+                await Errors.LogCustom(err, `(**blockListFunctions.js** - writeFile) Attempted to write BlockList data to JSON File for Guild ${message.guild.name} (ID: ${message.guild.id})`);
+            }
+        });
+
+
+        // send file as an attachment
+        try {
+            const guildBLAttachment = new Discord.MessageAttachment(`./blockListTempStore/${message.guild.id}_blocklist.json`, `${message.guild.id}_blocklist.json`);
+            await message.channel.send(`> Here is this Server's full BlockList as a JSON file!`, guildBLAttachment);
+
+            // Now delete file for storage reasons
+            fs.unlink(`./blockListTempStore/${message.guild.id}_blocklist.json`, async (err) => {
+                if (err) {
+                    await Errors.LogCustom(err, `(**blockListFunctions.js** - unlink) Attempted removal of temp BlockList data store from Guild ${message.guild.name} (ID: ${message.guild.id})`);
+                }
+            });
+
+            return;
+
+        } catch (err) {
+            await Errors.LogCustom(err, `(**blockListFunctions.js** - existsSync) Could not find temp BlockList data store for Guild ${message.guild.name} (ID: ${message.guild.id})`);
+            return await Errors.LogToUser(message.channel, `I could not process this Server's BlockList data for some reason... If this error continues, please ask for assistance on my [support server](https://discord.gg/YuxSF39)`);
+        }
+
+    },
 
 
 
@@ -317,15 +539,20 @@ module.exports = {
 
                 // Remove said characters
                 let channelID = arg.slice(2, arg.length - 1);
-                let channelObj = message.guild.channels.resolve(channelID);
+                let channelObj = null;
+                try {
+                    channelObj = message.guild.channels.resolve(channelID);
+                } catch (err) {
+                    channelObj = undefined;
+                }
 
                 // Check Channel Type
-                if ( !(channelObj instanceof Discord.TextChannel) ) {
-                    await Errors.LogToUser(message.channel, `That was a(n) **${channelObj.type}** Channel, not a **Text** Channel. I can only work in Text Channels!`);
+                if (channelObj === null || channelObj === undefined) {
+                    await Errors.LogToUser(message.channel, `I couldn't find a Text Channel in this Server with that ID or Mention, please try again...`);
                     return "invalid";
                 }
-                else if (channelObj === null || channelObj === undefined) {
-                    await Errors.LogToUser(message.channel, `I couldn't find a Text Channel in this Server with that ID or Mention, please try again...`);
+                else if ( !(channelObj instanceof Discord.TextChannel) ) {
+                    await Errors.LogToUser(message.channel, `That was a(n) **${channelObj.type}** Channel, not a **Text** Channel. I can only work in Text Channels!`);
                     return "invalid";
                 }
                 else {
@@ -351,10 +578,16 @@ module.exports = {
                 else {
                     userID = arg.slice(3, arg.length - 1);
                 }
-                let userObj = await message.guild.members.fetch({
-                    user: userID,
-                    cache: true
-                });
+                
+                let userObj = null;
+                try {
+                    userObj = await message.guild.members.fetch({
+                        user: userID,
+                        cache: true
+                    });
+                } catch (err) {
+                    userObj = undefined;
+                }
 
                 if (userObj === null || userObj === undefined) {
                     await Errors.LogToUser(message.channel, `I couldn't find a User in this Server with that ID or Mention, please try again...`);
@@ -382,7 +615,12 @@ module.exports = {
                 // Checked if arg has "@&" (for Roles)
                 // remove said characters
                 let roleID = arg.slice(3, arg.length - 1);
-                let roleObj = await message.guild.roles.fetch(roleID, true);
+                let roleObj = null;
+                try {
+                    roleObj = await message.guild.roles.fetch(roleID, true);
+                } catch (err) {
+                    roleObj = undefined;
+                }
 
                 if (roleObj === null || roleObj === undefined) {
                     await Errors.LogToUser(message.channel, `I couldn't find a Role in this Server with that ID or Mention, please try again...`);

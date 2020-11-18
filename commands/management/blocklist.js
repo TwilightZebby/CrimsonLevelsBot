@@ -41,7 +41,12 @@ module.exports = {
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
 
-      return await BlockList.ViewBlockList(message);
+      if (!args || !args.includes("--dump")) {
+        return await BlockList.ViewBlockList(message);
+      }
+      else if (args.includes("--dump")) {
+        return await BlockList.DumpBlockList(message);
+      }
 
 
 

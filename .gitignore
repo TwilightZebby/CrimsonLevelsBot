@@ -6,3 +6,4 @@ config.js
 /stuff
 /.vscode
 changelog.md
+/blockListTempStore
