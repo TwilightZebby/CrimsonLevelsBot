@@ -33,7 +33,7 @@ module.exports = {
     //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
     //    [ [ '--flag', `description of what flag does` ], [ '--flagTwo', `description of what flagTwo does` ], ... ]
     flags: [
-      ['--dump', `Dumps the Server's full Blocklist as a .txt file`]
+      ['--dump', `Dumps the Server's full Blocklist as a .json file`]
     ],
 
     async execute(message, args) {
