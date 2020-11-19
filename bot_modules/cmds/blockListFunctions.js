@@ -569,6 +569,21 @@ module.exports = {
             }
             else if ( ( arg.includes(`@`) || arg.includes(`@!`) ) && !arg.includes(`@&`) ) {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 // Checked if arg has either "@" or "@!" (for Users)
                 // Remove said characters
                 let userID;
@@ -612,6 +627,20 @@ module.exports = {
             }
             else if ( arg.includes(`@&`) ) {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 // Checked if arg has "@&" (for Roles)
                 // remove said characters
                 let roleID = arg.slice(3, arg.length - 1);
@@ -626,6 +655,10 @@ module.exports = {
                     await Errors.LogToUser(message.channel, `I couldn't find a Role in this Server with that ID or Mention, please try again...`);
                     return "invalid";
                 }
+                else if (roleObj.name === "@everyone") {
+                    await Errors.LogToUser(message.channel, `I can't add the \`@everyone\` Role to my BlockList!`);
+                    return "invalid";
+                }
                 else {
                     return roleObj;
                 }
@@ -634,6 +667,17 @@ module.exports = {
 
         }
         else {
+
+
+
+
+
+
+
+
+
+
+
 
             // Not a Mention, go based of ID
             let argUser = null;
@@ -654,6 +698,19 @@ module.exports = {
             
             if ( argUser === null || argUser === undefined ) {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                 // Attempt Channel
                 try {
                     argChannel = message.guild.channels.resolve(arg);
@@ -663,6 +720,19 @@ module.exports = {
 
                 if ( argChannel === null || argChannel === undefined ) {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                     // Attempt Role
                     try {
                         argRole = await message.guild.roles.fetch(arg, true);
@@ -671,10 +741,12 @@ module.exports = {
                     }
 
                     if ( argRole === null || argRole === undefined ) {
-
                         await Errors.LogToUser(message.channel, `I couldn't find a User, Role, or Text Channel from that ID or Mention - please try again...`);
                         return "invalid";
-
+                    }
+                    else if ( argRole.name === "@everyone" ) {
+                        await Errors.LogToUser(message.channel, `I can't add the \`@everyone\` Role to my BlockList!`);
+                        return "invalid";
                     }
                     else {
                         return argRole;
@@ -682,6 +754,16 @@ module.exports = {
 
                 }
                 else {
+
+
+
+
+
+
+
+
+
+
 
                     // Check Channel type
                     if ( !(argChannel instanceof Discord.TextChannel) ) {
@@ -704,6 +786,17 @@ module.exports = {
             }
             else {
 
+
+
+
+
+
+
+
+
+
+
+                
                 // Check Member
                 if ( argUser.user.id === "156482326887530498" || argUser.user.id === message.guild.ownerID ) {
                     await Errors.LogToUser(message.channel, `Sorry, but you cannot add/remove the Bot's Developer or this Server's Owner to/from the BlockList!`);

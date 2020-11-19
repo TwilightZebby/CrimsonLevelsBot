@@ -793,6 +793,101 @@ client.on('message', async (message) => {
   // ***** NO PREFIX
   if ( !prefixRegex.test(message.content) ) {
 
+    // ***** CHECK BLOCK LIST
+    // Check User first
+    const memberInBlockList = await Tables.BlockList.findOne({
+      where: {
+        guildID: message.guild.id,
+        blockedID: message.author.id
+      }
+    })
+    .catch(async err => {
+      await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne User ${message.author.username} (ID: ${message.author.id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+    });
+
+    if (memberInBlockList) {
+
+      // User IS in Blocklist, so IGNORE
+      return;
+
+    }
+    else {
+
+      // User NOT in Blocklist, check their Roles next
+      const memberRoles = Array.from(message.member.roles.cache.values());
+      memberRoles.pop(); // Removes the @everyone Role
+      let doesMemberHaveRoleBlockList = false;
+
+      if ( memberRoles.length >= 1 ) {
+
+        // Just to make sure there are still Roles and it wasn't only @everyone in there
+        for ( let i = 0; i < memberRoles.length; i++ ) {
+
+          let tempData = await Tables.BlockList.findOne({
+            where: {
+              guildID: message.guild.id,
+              blockedID: memberRoles[i].id
+            }
+          })
+          .catch(async err => {
+            await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne Role ${memberRoles[i].name} (ID: ${memberRoles[i].id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+          });
+
+          if (tempData) {
+            doesMemberHaveRoleBlockList = true;
+            break;
+          }
+
+        }
+
+      }
+
+
+      if (doesMemberHaveRoleBlockList) {
+
+        // Member DOES have a Role in the BlockList - ignore
+        return;
+
+      }
+      else {
+
+        // Member does NOT have Role in BlockList, check Channel
+        const messageChannel = await Tables.BlockList.findOne({
+          where: {
+            guildID: message.guild.id,
+            blockedID: message.channel.id
+          }
+        })
+        .catch(async err => {
+          await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne Channel ${message.channel.name} (ID: ${message.channel.id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+        });
+
+        if (messageChannel) {
+          // Channel IS in blocklist - IGNORE
+          return;
+        }
+
+      }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Levelling Cooldowns
     if ( !xpCooldowns.has(message.author.id) ) {
       xpCooldowns.set(message.author.id, new Discord.Collection());
