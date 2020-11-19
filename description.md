@@ -53,6 +53,13 @@ Upon inviting the Bot to your Server, you will be asked to grant the Bot some Pe
 * roulette <XPBet>
     * Gamble your XP away and either gain a boost, or risk losing some!
 	* Roulette Command and it's cooldown are configurable via `settings` command
+* block <@user|@role|#channel>
+	* Used to add that User, Role or Text Channel to the Bot's BlockList so they can't earn XP in that Guild
+* allow <@user|@role|#channel>
+	* Removes that User, Role or Text Channel from the BlockList
+* blocklist
+	* View the Server's BlockList
+	* Use `--dump` flag to have the Bot dump the Server's *full* BlockList as a `.json` file
 
 ---
 This bot is still in active development, so feel free to report any bugs or suggest new things via [our support server!](https://discord.gg/YuxSF39)
