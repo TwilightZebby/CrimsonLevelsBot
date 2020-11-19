@@ -29,7 +29,7 @@ module.exports = {
                 }
             }
         ).catch(async (err) => {
-            return await Errors.LogCustom(err, `Attempted GuildRole data fetch for ${guild.name}`);
+            return await Errors.LogCustom(err, `(**roleManageFunctions.js**) Attempted GuildRole data fetch for ${guild.name}`);
         });
 
 

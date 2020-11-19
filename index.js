@@ -202,6 +202,7 @@ client.once('ready', async () => {
     await Tables.UserPrefs.sync();
     await Tables.GuildConfig.sync();
     await Tables.GuildRoles.sync();
+    await Tables.BlockList.sync();
     
     
     console.log(`I am ready!`);
@@ -245,12 +246,14 @@ client.on('guildCreate', async (guild) => {
   // ***** Add to Databases
 
   // First, add to GuildConfig
-  await Tables.GuildConfig.create(
-    {
-      guildID: guild.id
+  await Tables.GuildConfig.findOrCreate(
+    { 
+      where: {
+        guildID: guild.id
+      }
     }
   ).catch(async err => {
-    return await Error.LogCustom(err, `Attempted Guild Config DB Addition for ${message.guild.name}`);
+    return await Errors.LogCustom(err, `(**BOT_JOIN_GUILD**) Attempted Guild Config DB Addition for ${guild.name} (ID: ${guild.id})`);
   });
 
 
@@ -269,16 +272,19 @@ client.on('guildCreate', async (guild) => {
         }
       }
     ).catch(async err => {
-      return await Error.LogCustom(err, `Attempted User Prefs DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator}`);
+      return await Errors.LogCustom(err, `(**BOT_JOIN_GUILD**) Attempted User Prefs DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} (ID: ${guildMembers[i].user.id})`);
     });
 
     await Tables.UserXP.create(
       {
-        userID: guildMembers[i].id,
-        guildID: guild.id
+        where: {
+          userID: guildMembers[i].id,
+          guildID: guild.id,
+          userName: `${guildMembers[i].user.username}#${guildMembers[i].user.discriminator}`
+        }
       }
     ).catch(async err => {
-      return await Error.LogCustom(err, `Attempted User XP DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} in Guild ${guild.name}`);
+      return await Errors.LogCustom(err, `(**BOT_GUILD_JOIN**) Attempted User XP DB Addition for ${guildMembers[i].user.username}#${guildMembers[i].user.discriminator} (ID: ${guildMembers[i].user.id}) in Guild ${guild.name} (ID: ${guild.id})`);
     });
 
   }
@@ -332,7 +338,7 @@ client.on('guildDelete', async (guild) => {
       }      
     }
   ).catch(async err => {
-    return await Error.LogCustom(err, `Attempted Guild Config DB Removal for ${message.guild.name}`);
+    return await Errors.LogCustom(err, `(**BOT_LEAVE_GUILD**) Attempted Guild Config DB Removal for ${guild.name} (ID: ${guild.id})`);
   });
 
 
@@ -347,7 +353,7 @@ client.on('guildDelete', async (guild) => {
       }
     }
   ).catch(async err => {
-    return await Error.LogCustom(err, `Attempted User XP DB Removal for Guild ${guild.name}`);
+    return await Errors.LogCustom(err, `(**BOT_LEAVE_GUILD**) Attempted User XP DB Removal for Guild ${guild.name} (ID: ${guild.id})`);
   });
 
 
@@ -385,30 +391,138 @@ client.on('guildDelete', async (guild) => {
 // ********** USER_JOIN_GUILD EVENT
 client.on('guildMemberAdd', async (member) => {
 
+  // If self, ignore
+  if (member.user.id === client.user.id) {
+    return;
+  }
+
   // If Bot, do NOTHING
   if ( member.user.bot ) {
     return;
   }
   else {
 
-    await Tables.UserXP.create(
-      {
-        userID: member.id,
-        guildID: member.guild.id
-      }
-    ).catch(async err => {
-      return await Error.LogCustom(err, `Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} in Guild ${member.guild.name}`);
-    });
+    // Cache stuff, just in case
+    if (client.users.cache.has(member.user.id)) {
 
-    await Tables.UserPrefs.findOrCreate(
-      {
-        where: {
-          userID: member.id
+      // Already in Bot Cache, check DB
+      let userCheck = await Tables.UserXP.findOne(
+        {
+          where: {
+            userID: member.id,
+            guildID: member.guild.id
+          }
         }
+      ).catch(async err => {
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP fetch for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+        }
+      });
+
+      if (userCheck) {
+
+        await Tables.UserXP.update(
+          {
+            userName: `${member.user.username}#${member.user.discriminator}`,
+            xp: 0
+          },
+          {
+            where: {
+              userID: member.id,
+              guildID: member.guild.id
+            }
+          }
+        ).catch(async err => {
+          if (member.guild.id !== "264445053596991498") {
+            return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP update for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+          }
+        });
+
       }
-    ).catch(async err => {
-      return await Error.LogCustom(err, `Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator}`);
-    });
+      else {
+
+        await Tables.UserXP.create(
+          {
+            userID: member.id,
+            guildID: member.guild.id,
+            userName: `${member.user.username}#${member.user.discriminator}`
+          }
+        ).catch(async err => {
+          if (member.guild.id !== "264445053596991498") {
+            return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User XP create for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+          }
+        });
+
+      }
+
+
+
+      let userCheckTwo = await Tables.UserPrefs.findOne(
+        {
+          where: {
+            userID: member.id
+          }
+        }
+      ).catch(async err => {
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User prefs fetch for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+        }
+      });
+
+      if (!userCheckTwo || userCheckTwo === null) {
+
+        await Tables.UserPrefs.create(
+          {
+            userID: member.id
+          }
+        ).catch(async err => {
+          if (member.guild.id !== "264445053596991498") {
+            return await Errors.LogCustom(err, `(**USER_JOIN_GUILD** - already in cache) Attempted User Prefs create for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+          }
+        });
+
+      }
+
+
+
+
+
+
+
+
+
+    }
+    else {
+
+      await Tables.UserXP.findOrCreate(
+        {
+          where: {
+            userID: member.id,
+            guildID: member.guild.id,
+            userName: `${member.user.username}#${member.user.discriminator}`
+          }
+        }
+      ).catch(async err => {
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User XP DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+        }
+      });
+  
+      await Tables.UserPrefs.findOrCreate(
+        {
+          where: {
+            userID: member.id
+          }
+        }
+      ).catch(async err => {
+        if (member.guild.id !== "264445053596991498") {
+          return await Errors.LogCustom(err, `(**USER_JOIN_GUILD**) Attempted User Prefs DB Addition for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id})`);
+        }
+      });
+
+    }
+
+    
 
     return;
 
@@ -446,7 +560,17 @@ client.on('guildMemberAdd', async (member) => {
 // ********** USER_LEAVE_GUILD EVENT
 client.on('guildMemberRemove', async (member) => {
 
-  await Tables.UserXP.destroy(
+  // Stop from catching self
+  if (member.user.id === client.user.id) {
+    return;
+  }
+
+  // Stop from catching Bots
+  if (member.user.bot) {
+    return;
+  }
+
+  let memberDelete = await Tables.UserXP.destroy(
     {
       where: {
         userID: member.id,
@@ -454,8 +578,93 @@ client.on('guildMemberRemove', async (member) => {
       }
     }
   ).catch(async err => {
-    return await Error.LogCustom(err, `Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} in Guild ${member.guild.name}`);
+    
+    // Temp-hide all errors from DBL Guild because of all the stuff I did to their DB
+    if (member.guild.id !== "264445053596991498") {
+      return await Errors.LogCustom(err, `(**USER_LEAVE_GUILD**) Attempted User XP DB Removal for ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) in Guild ${member.guild.name} (ID: ${member.guild.id})`);
+    }
+
   });
+
+  if (!memberDelete || memberDelete === 0) {
+
+    if (member.guild.id !== "264445053596991498") {
+      await Errors.LogMessage(`(**USER_LEAVE_GUILD**) No rows were deleted when User ${member.user.username}#${member.user.discriminator} (ID: ${member.user.id}) left the Guild ${member.guild.name} (ID: ${member.guild.id})`);
+    }
+  }
+
+  // Remove them from cache just in case
+  client.users.cache.delete(member.user.id);
+
+  return;
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ********** USER_UPDATE EVENT
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+
+  // For auto-updating Usernames/Discrims in the userxp DB
+  // Check usernames
+  if (oldMember.user.username !== newMember.user.username) {
+
+    await Tables.UserXP.update(
+      {
+        userName: `${newMember.user.username}#${newMember.user.discriminator}`
+      },
+      {
+        where: {
+          userID: newMember.user.id
+        }
+      }
+    ).catch(async err => {
+      return await Errors.LogCustom(err, `(**GUILD_MEMBER_UPDATE**) Attempted userxp DB update for ${newMember.user.username}#${newMember.user.discriminator} (ID: ${newMember.user.id})`);
+    });
+
+  }
+  else if (oldMember.user.discriminator !== newMember.user.discriminator) {
+
+    // Checked Discrim
+    await Tables.UserXP.update(
+      {
+        userName: `${newMember.user.username}#${newMember.user.discriminator}`
+      },
+      {
+        where: {
+          userID: newMember.user.id
+        }
+      }
+    ).catch(async err => {
+      return await Errors.LogCustom(err, `(**GUILD_MEMBER_UPDATE**) Attempted userxp DB update for ${newMember.user.username}#${newMember.user.discriminator} (ID: ${newMember.user.id})`);
+    });
+
+  }
 
   return;
 
@@ -486,13 +695,27 @@ client.on('guildMemberRemove', async (member) => {
 // ********** MESSAGE EVENT
 client.on('message', async (message) => {
 
-  // Prevent use in DMs
-  if ( message.channel.type === "dm" ) {
+  // Prevent use in DMs, VCs, Announcement Channels, Store Channels, Category Channels, etc
+  if ( !(message.channel instanceof Discord.TextChannel) ) {
+    return;
+  }
+
+  // Catch other text-based Channel types
+  if ( message.channel instanceof Discord.NewsChannel || message.channel instanceof Discord.DMChannel ) {
     return;
   }
 
   // Prevent other Bots from triggering this Bot
   if ( message.author.bot ) {
+    return;
+  }
+
+  // Prevent SYSTEM MESSAGES being caught
+  if ( message.author.flags.has('SYSTEM') ) {
+    return;
+  }
+
+  if ( message.system ) {
     return;
   }
 
@@ -570,6 +793,101 @@ client.on('message', async (message) => {
   // ***** NO PREFIX
   if ( !prefixRegex.test(message.content) ) {
 
+    // ***** CHECK BLOCK LIST
+    // Check User first
+    const memberInBlockList = await Tables.BlockList.findOne({
+      where: {
+        guildID: message.guild.id,
+        blockedID: message.author.id
+      }
+    })
+    .catch(async err => {
+      await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne User ${message.author.username} (ID: ${message.author.id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+    });
+
+    if (memberInBlockList) {
+
+      // User IS in Blocklist, so IGNORE
+      return;
+
+    }
+    else {
+
+      // User NOT in Blocklist, check their Roles next
+      const memberRoles = Array.from(message.member.roles.cache.values());
+      memberRoles.pop(); // Removes the @everyone Role
+      let doesMemberHaveRoleBlockList = false;
+
+      if ( memberRoles.length >= 1 ) {
+
+        // Just to make sure there are still Roles and it wasn't only @everyone in there
+        for ( let i = 0; i < memberRoles.length; i++ ) {
+
+          let tempData = await Tables.BlockList.findOne({
+            where: {
+              guildID: message.guild.id,
+              blockedID: memberRoles[i].id
+            }
+          })
+          .catch(async err => {
+            await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne Role ${memberRoles[i].name} (ID: ${memberRoles[i].id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+          });
+
+          if (tempData) {
+            doesMemberHaveRoleBlockList = true;
+            break;
+          }
+
+        }
+
+      }
+
+
+      if (doesMemberHaveRoleBlockList) {
+
+        // Member DOES have a Role in the BlockList - ignore
+        return;
+
+      }
+      else {
+
+        // Member does NOT have Role in BlockList, check Channel
+        const messageChannel = await Tables.BlockList.findOne({
+          where: {
+            guildID: message.guild.id,
+            blockedID: message.channel.id
+          }
+        })
+        .catch(async err => {
+          await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne Channel ${message.channel.name} (ID: ${message.channel.id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+        });
+
+        if (messageChannel) {
+          // Channel IS in blocklist - IGNORE
+          return;
+        }
+
+      }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Levelling Cooldowns
     if ( !xpCooldowns.has(message.author.id) ) {
       xpCooldowns.set(message.author.id, new Discord.Collection());
@@ -577,7 +895,7 @@ client.on('message', async (message) => {
 
     const now = Date.now();
     const timestamps = xpCooldowns.get(message.author.id);
-    const cooldownLength = 30500;
+    const cooldownLength = 59500; // 59.5 seconds
 
     if ( timestamps.has(message.author.id) ) {
 
@@ -655,7 +973,7 @@ client.on('message', async (message) => {
     if (!command) {
 
       // If the @mention was used, show prefix
-      if ( matchedPrefix === `<@!${client.user.id}>` ) {
+      if ( matchedPrefix === `<@!${client.user.id}>` || matchedPrefix === `<@${client.user.id}>` ) {
         const embed = new Discord.MessageEmbed().setColor('#DC143C')
         .setDescription(`My prefix on this Server is \`${PREFIX}\``);
         return await message.channel.send(embed);
@@ -965,7 +1283,7 @@ client.on('message', async (message) => {
     try {
       command.execute(message, args);
     } catch (error) {
-      await Errors.Log(error);
+      await Errors.LogCustom(error, `(**index.js** - EXECUTE COMMAND FAIL)`);
       return await message.reply(`There was an error trying to run that command!`);
     }
 

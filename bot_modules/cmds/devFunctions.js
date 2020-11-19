@@ -27,12 +27,58 @@ module.exports = {
      */
     async Test(message) {
 
-        // View all Models
-        //console.log(await sequelize.showAllSchemas());
-        return await Error.LogToUser(message.channel, `No Tests available...`);
+        // Auto-fill "userName" in "userxp" DB
+        /*let tempDB = await Tables.UserXP.findAll();
+        let i = 0;
+
+
+        let milliseconds = tempDB.length * 5000;
+        let seconds = milliseconds / 1000;
+        let minutes = 0;
+        let hours = 0;
+        if (seconds > 60 && seconds < 3600) {
+            minutes = Math.floor(seconds / 60);
+        }
+        else if (seconds > 3600) {
+            hours = Math.floor(seconds / 3600);
+        }
+
+        const progressMessage = await message.channel.send(`Filling out \`userName\` fields, this will take ${seconds} seconds (${minutes} minutes, ${hours} hours)`);
+
         
+        let intervalTemp = setInterval(async () => {
+
+            console.log(`TEST 1, i = ${i}`);
+
+            let userOBJ = await client.users.fetch(tempDB[i].dataValues.userID);
+            await Tables.UserXP.update({
+                userName: `${userOBJ.username}#${userOBJ.discriminator}`
+            }, {
+                where: {
+                    userID: userOBJ.id
+                }
+            })
+            .catch(async err => {
+                await Error.LogCustom(err, `DEV TESTING THING`);
+            });
+
+            i++;
+
+            //console.log(`TEST 2 - Did ${userOBJ.username}#${userOBJ.discriminator}`);
+
+            if ( i > tempDB.length - 1 ) {
+                await progressMessage.edit(`Filled out all the \`userName\` fields!`);
+                clearInterval(intervalTemp);
+            }
+
+        }, 5000);
+
+        return;*/
+
+        return await Error.LogToUser(message.channel, `No Tests available...`);
 
     },
+    
 
 
 
@@ -206,7 +252,7 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted UserXP data update for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
+                await Error.LogCustom(err, `(**devFunctions.js**) Attempted UserXP data update for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to update the XP data for **${selectedUser.username}#${selectedUser.discriminator}** in Guild **${fetchedGuild.name}**`);
             });
 
@@ -261,7 +307,7 @@ module.exports = {
                 }
             }
         ).catch(async (err) => {
-            await Error.LogCustom(err, `Attempted UserPrefs data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
+            await Error.LogCustom(err, `(**devFunctions.js**) Attempted UserPrefs data fetch for ${selectedUser.username}#${selectedUser.discriminator}`);
             return await Error.LogToUser(message.channel, `I was unable to fetch the Prefs data for **${selectedUser.username}#${selectedUser.discriminator}**`);
         });
 
@@ -326,7 +372,7 @@ module.exports = {
                     }
                 }
             ).catch(async (err) => {
-                await Error.LogCustom(err, `Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
+                await Error.LogCustom(err, `(**devFunctions.js**) Attempted UserXP data fetch for ${selectedUser.username}#${selectedUser.discriminator} in ${fetchedGuild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to fetch the XP data for **${selectedUser.username}#${selectedUser.discriminator}** in Guild **${fetchedGuild.name}**`);
             });
 

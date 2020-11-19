@@ -68,7 +68,7 @@ module.exports = {
           try {
             temp = message.guild.channels.resolve(serverData.broadcastChannel);
           } catch (err) {
-            await Error.Log(err);
+            await Error.LogCustom(err, `(**settings.js**)`);
           }
 
           if ( temp !== null ) {
@@ -220,7 +220,7 @@ module.exports = {
                   }
                 }
               ).catch(async err => {
-                await Error.LogCustom(err, `Attempted Guild DB Update for ${message.guild.name}`);
+                await Error.LogCustom(err, `(**settings.js**) Attempted Guild DB Update for ${message.guild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
               });
 
@@ -282,7 +282,7 @@ module.exports = {
                   }
                 }
               ).catch(async err => {
-                await Error.LogCustom(err, `Attempted Guild DB Update for ${message.guild.name}`);
+                await Error.LogCustom(err, `(**settings.js**) Attempted Guild DB Update for ${message.guild.name}`);
                 return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
               });
 
@@ -345,7 +345,7 @@ module.exports = {
                 }
               }
             ).catch(async err => {
-              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              await Error.LogCustom(err, `(**settings.js**) Attempted Guild Config DB Update for ${message.guild.name}`);
               return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 
@@ -407,7 +407,7 @@ module.exports = {
                 }
               }
             ).catch(async err => {
-              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              await Error.LogCustom(err, `(**settings.js**) Attempted Guild Config DB Update for ${message.guild.name}`);
               return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 
@@ -459,7 +459,7 @@ module.exports = {
                 guildID: message.guild.id
               }
             }).catch(async err => {
-              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              await Error.LogCustom(err, `(**settings.js**) Attempted Guild Config DB Update for ${message.guild.name}`);
               return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 
@@ -522,7 +522,7 @@ module.exports = {
                 guildID: message.guild.id
               }
             }).catch(async err => {
-              await Error.LogCustom(err, `Attempted Guild Config DB Update for ${message.guild.name}`);
+              await Error.LogCustom(err, `(**settings.js**) Attempted Guild Config DB Update for ${message.guild.name}`);
               return await Error.LogToUser(message.channel, `I was unable to save the updated Server Configuration value. If this issue continues, please contact TwilightZebby on [my Support Server](https://discord.gg/YuxSF39)`);
             });
 

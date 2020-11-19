@@ -2,10 +2,11 @@ const Discord = require("discord.js");
 //const fs = require('fs');
 //const Canvas = require('canvas');
 //const { client } = require('../../bot_modules/constants.js');
+const ns = require('number-string');
 
 //let { PREFIX } = require('../../config.js');
 //const XPs = require('../../bot_modules/leveling/xpFunctions.js');
-//const Levels = require('../../bot_modules/leveling/levelFunctions.js');
+const Levels = require('../../bot_modules/leveling/levelFunctions.js');
 const Tables = require('../../bot_modules/tables.js');
 const Error = require('../../bot_modules/onEvents/errors.js');
 const Prefixs = require('../../bot_modules/prefixFunctions.js');
@@ -15,7 +16,7 @@ module.exports = {
     name: 'top',
     description: 'Brings up a list of the top 10 Members in this Server!',
     usage: ' ',
-    //aliases: [' '],
+    aliases: ['leaderboard'],
     //args: true,
     commandType: 'level',
     //cooldown: 3, // IN SECONDS
@@ -58,7 +59,13 @@ module.exports = {
 
       const embed = new Discord.MessageEmbed().setColor('#DC143C');
 
-      if ( guildXP.length < 10 ) {
+      if ( !guildXP.length || !guildXP || guildXP.length === 0 ) {
+
+        // Error catching for when no one is in the DB for some reason
+        return await Error.LogToUser(message.channel, `Unable to find any stored XP data for this Server... :/`);
+
+      }
+      else if ( guildXP.length < 10 ) {
 
         // WHEN THERE ARE LESS THAN 10 MEMBERS STORED FOR THAT GUILD
 
@@ -67,9 +74,12 @@ module.exports = {
         for ( let i = 0; i < guildXP.length; i++ ) {
 
           let tempData = guildXP[i].dataValues;
-          let tempMember = await message.guild.members.fetch(tempData.userID);
+          let tempLevel = await Levels.FetchLevel(tempData.xp);
+          let tempXP = ns.toClean(tempData.xp, {
+            thousandSeperator: ",",
+          });
 
-          let tempString = `**${i + 1})** ${tempMember} (${tempMember.user.username}#${tempMember.user.discriminator})  |  **${tempData.xp} XP**`;
+          let tempString = `**${i + 1})** ${tempData.userName}   >   Level ${tempLevel}   >   **${tempXP} XP**`;
           smallGuildTop.push(tempString);
 
         }
@@ -96,9 +106,12 @@ module.exports = {
         for ( let i = 0; i < 10; i++ ) {
 
           let tempData = guildXP[i].dataValues;
-          let tempMember = await message.guild.members.fetch(tempData.userID);
+          let tempLevel = await Levels.FetchLevel(tempData.xp);
+          let tempXP = ns.toClean(tempData.xp, {
+            thousandSeperator: ",",
+          });
 
-          let tempString = `**${i + 1})** ${tempMember} (${tempMember.user.username}#${tempMember.user.discriminator})  |  **${tempData.xp} XP**`;
+          let tempString = `**${i + 1})** ${tempData.userName}   >   Level ${tempLevel}   >   **${tempXP} XP**`;
           guildTop.push(tempString);
 
         }
