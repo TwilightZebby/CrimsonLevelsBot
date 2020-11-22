@@ -104,7 +104,8 @@ module.exports = {
 
         const resultEmbed = await this.RollStandard(bet, authorXP, message.member, message);
 
-        return await message.channel.send(resultEmbed);
+        //return await message.channel.send(resultEmbed);
+        return await client.throttleCheck(message.channel, resultEmbed, message.author.id);
 
     },
     

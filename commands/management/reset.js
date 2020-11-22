@@ -20,7 +20,7 @@ module.exports = {
     //aliases: [''],
     args: true,
     commandType: 'management',
-    cooldown: 5, // IN SECONDS
+    cooldown: 20, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -51,7 +51,8 @@ module.exports = {
         let fetchedUser = await Resets.UserCheck(option);
 
         if (fetchedUser === "fail") {
-          return message.reply(`That wasn't a valid User or "all" - please try again!`);
+          //return message.channel.send();
+          return await client.throttleCheck(message.channel, `That wasn't a valid User or "all" - please try again!`, message.author.id);
         }
         else {
           return await Resets.Confirm(message, "user", fetchedUser);

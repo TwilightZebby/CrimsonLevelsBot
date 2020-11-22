@@ -147,7 +147,7 @@ module.exports = {
             let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
             let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
 
-            return await message.reply(`\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`);
+            return await message.channel.send(`\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`);
 
         } else {
 

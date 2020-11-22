@@ -53,7 +53,8 @@ module.exports = {
 
 
 
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
 
@@ -117,7 +118,8 @@ module.exports = {
 
 
 
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
     
@@ -181,7 +183,8 @@ module.exports = {
 
 
 
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
         
@@ -245,7 +248,8 @@ module.exports = {
 
 
 
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
             
@@ -309,7 +313,8 @@ module.exports = {
 
 
 
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
 
@@ -406,7 +411,8 @@ module.exports = {
 
         if (!command) {
             embed.setDescription(`Sorry, but that isn\'t a valid command.\nUse \`${PREFIX}help\` to bring up a list of all my commands!`);
-            return await message.channel.send(embed);
+            //return await message.channel.send(embed);
+            return await client.throttleCheck(message.channel, embed, message.author.id);
         } else {
 
             // Prevent Help if User doesn't have correct Permissions for that Command
@@ -420,7 +426,8 @@ module.exports = {
                         let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
                         if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
                             embed.setDescription(`Sorry, but you don\'t have the permissions to use/view this command!`);
-                            return await message.channel.send(embed);
+                            //return await message.channel.send(embed);
+                            return await client.throttleCheck(message.channel, embed, message.author.id);
                         }
                         break;
 
@@ -429,7 +436,8 @@ module.exports = {
                         let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
                         if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck ) {
                             embed.setDescription(`Sorry, but you don\'t have the permissions to use/view this command!`);
-                            return await message.channel.send(embed);
+                            //return await message.channel.send(embed);
+                            return await client.throttleCheck(message.channel, embed, message.author.id);
                         }
                         break;
 
@@ -437,7 +445,8 @@ module.exports = {
                     case `dev`:
                         if ( message.author.id !== '156482326887530498' ) {
                             embed.setDescription(`Sorry, but you don\'t have the permissions to use/view this command!`);
-                            return await message.channel.send(embed);
+                            //return await message.channel.send(embed);
+                            return await client.throttleCheck(message.channel, embed, message.author.id);
                         }
                         break;
 
@@ -445,7 +454,8 @@ module.exports = {
                     case `owner`:
                         if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
                             embed.setDescription(`Sorry, but you don't have the permissions to use/view this command!`);
-                            return await message.channel.send(embed);
+                            //return await message.channel.send(embed);
+                            return await client.throttleCheck(message.channel, embed, message.author.id);
                         }
                         break;
 
@@ -585,7 +595,8 @@ module.exports = {
 
 
             // Send Embed
-            return await message.channel.send(embed);
+            //return await message.channel.send(embed);
+            return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
 

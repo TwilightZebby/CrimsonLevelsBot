@@ -11,7 +11,7 @@ module.exports = {
     //aliases: [''],
     //args: true,
     commandType: 'general',
-    //cooldown: 3, // IN SECONDS
+    cooldown: 5, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -28,7 +28,8 @@ module.exports = {
 
     async execute(message) {
       
-      return await message.reply(`Pong! \n Your ping is ${message.client.ws.ping.toFixed(2)}ms`);
+      //return await message.channel.send();
+      return await client.throttleCheck(message.channel, `Pong! \n Your ping is ${message.client.ws.ping.toFixed(2)}ms`, message.author.id);
 
       //END OF COMMAND
     },

@@ -24,7 +24,7 @@ module.exports = {
     aliases: ['preference', 'pref'],
     //args: true,
     commandType: 'management',
-    cooldown: 5, // IN SECONDS
+    cooldown: 6, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -85,7 +85,8 @@ module.exports = {
           }
         );
 
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
       else if( validOptions.includes(args[0]) ) {
@@ -119,7 +120,8 @@ module.exports = {
             }
           );
 
-          return await message.channel.send(embed);
+          //return await message.channel.send(embed);
+          return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
         else {
@@ -256,7 +258,8 @@ module.exports = {
                     }
                   );
 
-                  return await message.channel.send(embed);
+                  //return await message.channel.send(embed);
+                  return await client.throttleCheck(message.channel, embed, message.author.id);
 
                 
                 
@@ -295,7 +298,8 @@ module.exports = {
                     }
                   );
 
-                  return await message.channel.send(embed);
+                  //return await message.channel.send(embed);
+                  return await client.throttleCheck(message.channel, embed, message.author.id);
                 
                 
                 
@@ -352,7 +356,8 @@ module.exports = {
                   embed.setTitle(`Updated Preferences`)
                   .setDescription(`Your preferences for **${option}** background have been updated to **${value}**`);
 
-                  return await message.channel.send(embed);
+                  //return await message.channel.send(embed);
+                  return await client.throttleCheck(message.channel, embed, message.author.id);
                                                     
                 
                 
@@ -395,7 +400,8 @@ module.exports = {
                   embed.setTitle(`Updated Preferences`)
                   .setDescription(`Your preferences for **${option}** background have been updated to **${value}**`);
 
-                  return await message.channel.send(embed);
+                  //return await message.channel.send(embed);
+                  return await client.throttleCheck(message.channel, embed, message.author.id);
 
               }
 
@@ -460,7 +466,8 @@ module.exports = {
             embed.setTitle(`Updated Preferences`)
             .setDescription(`Your preferences for **${option}** have been updated to **${value}**`);
 
-            return await message.channel.send(embed);
+            //return await message.channel.send(embed);
+            return await client.throttleCheck(message.channel, embed, message.author.id);
 
           }
 

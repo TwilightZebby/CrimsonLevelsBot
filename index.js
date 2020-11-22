@@ -17,10 +17,12 @@ const Tables = require('./bot_modules/tables.js');
 //const dbl = new DBL(DBLTOKEN, client);
 
 // Maps / Collections
-client.commands = new Discord.Collection();
-client.cooldowns = new Discord.Collection();
-const xpCooldowns = new Discord.Collection();
-client.rouletteCooldowns = new Discord.Collection();
+client.commands = new Discord.Collection(); // Store of all commands within .\commands\
+client.cooldowns = new Discord.Collection(); // Command Cooldowns to prevent spam
+const xpCooldowns = new Discord.Collection(); // XP cooldowns to prevent those annoying Users that attempt to spam to gain XP
+client.rouletteCooldowns = new Discord.Collection(); // Special command cooldown for the Roulette Command, it's configurable per-Guild
+
+client.throttle = new Discord.Collection(); // Used for keeping the Bot within the Message Send Ratelimit
 
 // General Commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -50,6 +52,62 @@ const Levels = require('./bot_modules/leveling/levelFunctions.js');
 const broadcastFunctions = require('./bot_modules/leveling/broadcastFunctions.js');
 const Prefixs = require('./bot_modules/prefixFunctions.js');
 const ManageRoles = require('./bot_modules/leveling/roleManageFunctions.js');
+
+/**
+ * Throttle Responses to prevent hitting the API Ratelimit
+ * 
+ * @param {Discord.TextChannel} channel 
+ * @param {Discord.Message} message 
+ * @param {String} userID 
+ */
+client.throttleCheck = async (channel, message, userID) => {
+
+  if (!client.throttle.has(userID)) {
+          
+    let throttleTimeout = setTimeout(() => {
+      client.throttle.delete(userID);
+    }, 300000);
+  
+    let userThrottle = {
+      "messageCount": 1,
+      "timeout": throttleTimeout
+    };
+  
+    client.throttle.set(userID, userThrottle);
+    await channel.send(message);
+    
+  }
+  else {
+  
+    let userThrottleMap = client.throttle.get(userID);
+    
+    if (userThrottleMap["messageCount"] < 4) {
+      userThrottleMap["messageCount"] += 1;
+      await channel.send(message);
+    }
+    else if (userThrottleMap["messageCount"] === 4) {
+  
+      userThrottleMap["messageCount"] += 1;
+      
+      setTimeout(async () => {
+        await channel.send(`> \<\@${userID}\> you have been throttled for using my commands too quickly - to prevent hitting Discord's Ratelimits, I will no longer repond to you for up to the next five (5) minutes...`);
+        channel.stopTyping();
+      }, 6000);
+  
+      await channel.startTyping();
+  
+    }
+    else if (userThrottleMap["messageCount"] >= 5) {
+      // No responses, the User was throttled.            
+  
+      userThrottleMap["messageCount"] += 1;
+    }
+  
+  }
+
+  return;
+
+};
 
 
 
@@ -745,7 +803,7 @@ client.on('message', async (message) => {
     try {
 
       let ownerDMs = await guildOwner.createDM();
-      await ownerDMs.send(`Buzz! I don't seem to have the \`VIEW_CHANNELS\`, \`READ_MESSAGES\`, or \`SEND_MESSAGES\` permission(s) in **${message.guild.name}**!
+      await ownerDMs.send(`Buzz! I don't seem to have the \`VIEW_CHANNELS\`, \`READ_MESSAGES\`, or \`SEND_MESSAGES\` permission(s) in the Server **${message.guild.name}**!
       I need these permissions to respond to my commands and be a useful Leveling Bot!`);
 
     } catch(err) {
@@ -814,33 +872,39 @@ client.on('message', async (message) => {
     else {
 
       // User NOT in Blocklist, check their Roles next
-      const memberRoles = Array.from(message.member.roles.cache.values());
-      memberRoles.pop(); // Removes the @everyone Role
+      const memberRoles = Array.from(message.member.roles.cache.values()) || null;
       let doesMemberHaveRoleBlockList = false;
+      
+      if (memberRoles !== null) {
 
-      if ( memberRoles.length >= 1 ) {
+        memberRoles.pop(); // Removes the @everyone Role
 
-        // Just to make sure there are still Roles and it wasn't only @everyone in there
-        for ( let i = 0; i < memberRoles.length; i++ ) {
+        if ( memberRoles.length >= 1 ) {
 
-          let tempData = await Tables.BlockList.findOne({
-            where: {
-              guildID: message.guild.id,
-              blockedID: memberRoles[i].id
+          // Just to make sure there are still Roles and it wasn't only @everyone in there
+          for ( let i = 0; i < memberRoles.length; i++ ) {
+
+            let tempData = await Tables.BlockList.findOne({
+              where: {
+                guildID: message.guild.id,
+                blockedID: memberRoles[i].id
+              }
+            })
+            .catch(async err => {
+              await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne Role ${memberRoles[i].name} (ID: ${memberRoles[i].id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
+            });
+
+            if (tempData) {
+              doesMemberHaveRoleBlockList = true;
+              break;
             }
-          })
-          .catch(async err => {
-            await Errors.LogCustom(err, `(**index.js** - blocklist) Attempted to findOne Role ${memberRoles[i].name} (ID: ${memberRoles[i].id}) in Guild ${message.guild.name} (ID: ${message.guild.id})`);
-          });
 
-          if (tempData) {
-            doesMemberHaveRoleBlockList = true;
-            break;
           }
 
         }
 
       }
+      
 
 
       if (doesMemberHaveRoleBlockList) {
@@ -976,7 +1040,10 @@ client.on('message', async (message) => {
       if ( matchedPrefix === `<@!${client.user.id}>` || matchedPrefix === `<@${client.user.id}>` ) {
         const embed = new Discord.MessageEmbed().setColor('#DC143C')
         .setDescription(`My prefix on this Server is \`${PREFIX}\``);
-        return await message.channel.send(embed);
+
+        // THROTTLING
+        await client.throttleCheck(message.channel, embed, message.author.id);
+
       }
       
       return;
@@ -1025,7 +1092,9 @@ client.on('message', async (message) => {
         }
 
 
-        await message.channel.send(reply);
+        //await message.channel.send(reply);
+        // THROTTLING
+        await client.throttleCheck(message.channel, reply, message.author.id);
       }
 
 
@@ -1044,15 +1113,18 @@ client.on('message', async (message) => {
             // If greater than 60 Seconds, convert into Minutes
             if (timeLeft > 60 && timeLeft < 3600) {
               timeLeft = timeLeft / 60;
-              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
             // If greater than 3600 Seconds, convert into Hours
             else if (timeLeft > 3600) {
               timeLeft = timeLeft / 3600;
-              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
 
-            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+            //return await message.channel.send();
+            return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, message.author.id);
           }
 
         }
@@ -1120,7 +1192,8 @@ client.on('message', async (message) => {
           cooldownAmount = 1000;
         }
 
-        await message.channel.send(reply);
+        //await message.channel.send(reply);
+        await client.throttleCheck(message.channel, reply, message.author.id);
 
       }
 
@@ -1143,15 +1216,18 @@ client.on('message', async (message) => {
             // If greater than 60 seconds, convert to minutes
             if (timeLeft > 60 && timeLeft < 3600) {
               timeLeft = timeLeft / 60;
-              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
             // If greater than 3600 seconds, convert to hours
             else if (timeLeft > 3600) {
               timeLeft = timeLeft / 3600;
-              return await message.reply(`Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
 
-            return await message.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+            //return await message.channel.send();
+            return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, message.author.id);
 
           }
 
@@ -1188,18 +1264,20 @@ client.on('message', async (message) => {
         // BOT DEV ONLY
         case 'dev':
           if ( message.author.id !== '156482326887530498' ) {
-            return await message.reply(`Sorry, but this command can only be used by the Bot's developer.`);
+            //return await message.channel.send();
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Bot's developer.`, message.author.id);
           }
           break;
 
         // GUILD OWNER
         case 'owner':
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-            return await message.reply(`Sorry, but this command can only be used by the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`, {
+            /*return await message.channel.send(, {
               allowedMentions: {
                 users: [message.author.id]
               }
-            });
+            });*/
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Owner of this Guild.`, message.author.id);
           }
           break;
 
@@ -1207,11 +1285,12 @@ client.on('message', async (message) => {
         case 'admin':
           let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck ) {
-            return await message.reply(`Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` Permission and the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`, {
+            /*return await message.channel.send(, {
               allowedMentions: {
                 users: [message.author.id]
               }
-            });
+            });*/
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` Permission and the Owner of this Guild.`, message.author.id);
           }
           break;
 
@@ -1221,11 +1300,12 @@ client.on('message', async (message) => {
           let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
           let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
-            return await message.reply(`Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permission and the Owner of this Guild (**\<\@${message.guild.ownerID}\>**).`, {
+            /*return await message.channel.send(, {
               allowedMentions: {
                 users: [message.author.id]
               }
-            });
+            });*/
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permission and the Owner of this Guild.`, message.author.id);
           }
           break;
 
@@ -1262,12 +1342,14 @@ client.on('message', async (message) => {
 
     // Embed Links Permission
     if ( !embedLinksPerm && command.name !== 'ping' ) {
-      return await message.channel.send(`Sorry ${message.author}, but I seem to be missing the \`EMBED_LINKS\` permission.`);
+      //return await message.channel.send();
+      return await client.throttleCheck(message.channel, `Sorry ${message.author}, but I seem to be missing the \`EMBED_LINKS\` permission.`, message.author.id);
     }
 
     // Attach Files Permission
     if ( !attachFilesPerm && command.name === 'rank' ) {
-      return await message.channel.send(`Sorry ${message.author}, but I seem to be missing the \`ATTACH_FILES\` permission, which I need for this command!`);
+      //return await message.channel.send();
+      return await client.throttleCheck(message.channel, `Sorry ${message.author}, but I seem to be missing the \`ATTACH_FILES\` permission, which I need for this command!`, message.author.id);
     }
 
 
@@ -1284,7 +1366,8 @@ client.on('message', async (message) => {
       command.execute(message, args);
     } catch (error) {
       await Errors.LogCustom(error, `(**index.js** - EXECUTE COMMAND FAIL)`);
-      return await message.reply(`There was an error trying to run that command!`);
+      //return await message.channel.send();
+      return await client.throttleCheck(message.channel, `There was an error trying to run that command!`, message.author.id);
     }
 
   }

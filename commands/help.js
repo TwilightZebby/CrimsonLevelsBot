@@ -13,7 +13,7 @@ module.exports = {
     //aliases: [''],
     //args: true,
     commandType: 'general',
-    //cooldown: 3, // IN SECONDS
+    cooldown: 4, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -60,7 +60,8 @@ module.exports = {
             let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
             let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
             if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
-              return await message.reply(`Sorry, but you can't use the **${argument}** Flag!`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Sorry, but you can't use the **${argument}** Flag!`, message.author.id);
             }
 
             await help.ListModCommands(embed, message, commands);
@@ -70,7 +71,8 @@ module.exports = {
           case `--admin`:
             let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
             if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck ) {
-              return await message.reply(`Sorry, but you can't use the **${argument}** Flag!`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Sorry, but you can't use the **${argument}** Flag!`, message.author.id);
             }
 
             await help.ListAdminCommands(embed, message, commands);
@@ -79,7 +81,8 @@ module.exports = {
 
           case `--dev`:
             if ( message.author.id !== '156482326887530498' ) {
-              return await message.reply(`Sorry, but you can't use the **${argument}** Flag!`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Sorry, but you can't use the **${argument}** Flag!`, message.author.id);
             }
 
             await help.ListDevCommands(embed, message, commands);
@@ -88,7 +91,8 @@ module.exports = {
 
           case `--owner`:
             if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-              return await message.reply(`Sorry, but you can't use the **${argument}** Flag!`);
+              //return await message.channel.send();
+              return await client.throttleCheck(message.channel, `Sorry, but you can't use the **${argument}** Flag!`, message.author.id);
             }
 
             await help.ListOwnerCommands(embed, message, commands);

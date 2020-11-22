@@ -44,7 +44,8 @@ module.exports = {
       
       *Please remember that you need to either be the Owner of, or have the \`MANAGE_SERVER\` or \`ADMIN\` Permission in the Server you want to invite me to*`);
 
-      return await message.channel.send(embed);
+      //return await message.channel.send(embed);
+      return await client.throttleCheck(message.channel, embed, message.author.id);
 
       //END OF COMMAND
     },

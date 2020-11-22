@@ -45,7 +45,7 @@ module.exports = {
                     blockType: blockedType
                 });
 
-                return await message.reply(`Successfully added the ${blockedType} **${inputObj instanceof Discord.GuildMember ? inputObj.user.username : inputObj.name}** to the XP BlockList for this Server.`);
+                return await message.channel.send(`Successfully added the ${blockedType} **${inputObj instanceof Discord.GuildMember ? inputObj.user.username : inputObj.name}** to the XP BlockList for this Server.`);
 
             } catch (err) {
 
@@ -124,7 +124,7 @@ module.exports = {
                 return await Errors.LogToUser(message.channel, `I could not delete that ${allowType} since it does not exist in this Server's BlockList...`);
             }
             else {
-                return await message.reply(`Successfully removed the ${allowType} **${allowObj instanceof Discord.GuildMember ? allowObj.user.username : allowObj.name}** from the XP BlockList for this Server.`)
+                return await message.channel.send(`Successfully removed the ${allowType} **${allowObj instanceof Discord.GuildMember ? allowObj.user.username : allowObj.name}** from the XP BlockList for this Server.`)
             }
         }
 
@@ -281,7 +281,8 @@ module.exports = {
                 value: channelBLStrings.join(`\n`)
             }
         );
-        return await message.channel.send(embed);
+        //return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
         
@@ -360,7 +361,7 @@ module.exports = {
                 }
 
             }
-            else if (tempData.blockedType === "role") {
+            else if (tempData.blockType === "role") {
 
                 // ROLES
                 // Fetch Role
@@ -387,7 +388,7 @@ module.exports = {
                 }
 
             }
-            else if (tempData.blockedType === "channel") {
+            else if (tempData.blockType === "channel") {
 
                 // CHANNELS
                 // Fetch Channel

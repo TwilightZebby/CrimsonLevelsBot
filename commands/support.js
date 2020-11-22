@@ -44,7 +44,8 @@ module.exports = {
       
       *You can also suggest new things or report issues with the Bot on the support Server too!*`);
 
-      return await message.channel.send(embed);
+      //return await message.channel.send(embed);
+      return await client.throttleCheck(message.channel, embed, message.author.id);
 
       //END OF COMMAND
     },

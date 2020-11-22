@@ -98,13 +98,15 @@ module.exports = {
             };
 
             prefixCache.set(guildid, prefixConstruct); // add to cache
-            return await message.channel.send(embed);
+            //return await message.channel.send(embed);
+            return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
         else {
 
             cacheTemp.prefix = newPrefix; // Update cache
-            return await message.channel.send(embed);
+            //return await message.channel.send(embed);
+            return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
     }

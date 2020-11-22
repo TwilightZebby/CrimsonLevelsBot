@@ -13,7 +13,7 @@ module.exports = {
     aliases: ['about'],
     //args: true,
     commandType: 'general',
-    //cooldown: 3, // IN SECONDS
+    cooldown: 3, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -80,7 +80,8 @@ module.exports = {
         inline: true
       });
 
-      return await message.channel.send(embed);
+      //return await message.channel.send(embed);
+      return await client.throttleCheck(message.channel, embed, message.author.id);
 
 
       //END OF COMMAND
