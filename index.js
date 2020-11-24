@@ -1061,6 +1061,92 @@ client.on('message', async (message) => {
 
 
 
+
+
+
+
+
+
+
+
+    // Check limitation
+    if ( command.limitation ) {
+
+      switch (command.limitation) {
+
+        // BOT DEV ONLY
+        case 'dev':
+          if ( message.author.id !== '156482326887530498' ) {
+            //return await message.channel.send();
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Bot's developer.`, message.author.id);
+          }
+          break;
+
+        // GUILD OWNER
+        case 'owner':
+          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
+            /*return await message.channel.send(, {
+              allowedMentions: {
+                users: [message.author.id]
+              }
+            });*/
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Owner of this Guild.`, message.author.id);
+          }
+          break;
+
+        // ADMIN PERMISSION
+        case 'admin':
+          let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck ) {
+            /*return await message.channel.send(, {
+              allowedMentions: {
+                users: [message.author.id]
+              }
+            });*/
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` Permission and the Owner of this Guild.`, message.author.id);
+          }
+          break;
+
+        // MANAGE_GUILD, BAN_MEMBERS PERMISSIONS
+        case 'mod':
+          let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
+          let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
+          let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
+          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
+            /*return await message.channel.send(, {
+              allowedMentions: {
+                users: [message.author.id]
+              }
+            });*/
+            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permission and the Owner of this Guild.`, message.author.id);
+          }
+          break;
+
+
+        default:
+          break;
+
+      }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // *** Command Cooldowns
 
     // NOT ROULETTE COMMAND
@@ -1094,7 +1180,7 @@ client.on('message', async (message) => {
 
         //await message.channel.send(reply);
         // THROTTLING
-        await client.throttleCheck(message.channel, reply, message.author.id);
+        return await client.throttleCheck(message.channel, reply, message.author.id);
       }
 
 
@@ -1193,7 +1279,7 @@ client.on('message', async (message) => {
         }
 
         //await message.channel.send(reply);
-        await client.throttleCheck(message.channel, reply, message.author.id);
+        return await client.throttleCheck(message.channel, reply, message.author.id);
 
       }
 
@@ -1254,68 +1340,7 @@ client.on('message', async (message) => {
 
 
 
-    // *** Extra Checks
-
-    // Check limitation
-    if ( command.limitation ) {
-
-      switch (command.limitation) {
-
-        // BOT DEV ONLY
-        case 'dev':
-          if ( message.author.id !== '156482326887530498' ) {
-            //return await message.channel.send();
-            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Bot's developer.`, message.author.id);
-          }
-          break;
-
-        // GUILD OWNER
-        case 'owner':
-          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-            /*return await message.channel.send(, {
-              allowedMentions: {
-                users: [message.author.id]
-              }
-            });*/
-            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Owner of this Guild.`, message.author.id);
-          }
-          break;
-
-        // ADMIN PERMISSION
-        case 'admin':
-          let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
-          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck ) {
-            /*return await message.channel.send(, {
-              allowedMentions: {
-                users: [message.author.id]
-              }
-            });*/
-            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` Permission and the Owner of this Guild.`, message.author.id);
-          }
-          break;
-
-        // MANAGE_GUILD, BAN_MEMBERS PERMISSIONS
-        case 'mod':
-          let adminPermCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
-          let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
-          let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
-          if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
-            /*return await message.channel.send(, {
-              allowedMentions: {
-                users: [message.author.id]
-              }
-            });*/
-            return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permission and the Owner of this Guild.`, message.author.id);
-          }
-          break;
-
-
-        default:
-          break;
-
-      }
-
-    }
+    
 
     // A check for missing parameters
     // TO catch from above
