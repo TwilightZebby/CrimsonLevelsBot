@@ -5,6 +5,8 @@ const { sequelize } = require('../constants.js');
 const Tables = require('../tables.js');
 const Errors = require('../onEvents/errors.js');
 
+const string = new String();
+
 module.exports = {
 
     /**
@@ -61,6 +63,169 @@ module.exports = {
             }
 
         }
+
+    },
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Main point for the block command WHEN THERE ARE MULITPLE ARGUMENTS
+     * 
+     * @param {Discord.Message} message Discord Message
+     * @param {Array<String>} args Command Arguments
+     */
+    async BulkBlock(message, args) {
+
+        if ( args.length > 11 ) {
+            return await Errors.LogToUser(message.channel, `Sorry, but currently I can only bulk-handle up to 10 arguments.\nYou entered ${args.length} arguments instead...`);
+        }
+
+        // Check Inputs
+        const blockArray = [];
+        const successArray = [];
+        const finalSuccessArray = [];
+        const failedArray = [];
+
+
+        for ( const argument of args ) {
+            blockArray.push( [ await this.BulkCheckType(argument, message), argument ] );
+        }
+
+
+        for ( const checkedArg of blockArray ) {
+            
+            let checkedObject = checkedArg[0];
+            let checkedID = checkedArg[1];
+
+
+            if (typeof checkedObject === "string") {
+
+                // For all those "invalid" strings
+                switch ( checkedObject ) {
+
+                    case checkedObject.match("invalid_not_found"):
+                        failedArray.push(`**${checkedID}** - Invalid User/Role/Channel Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_user_not_found"):
+                        failedArray.push(`**${checkedID}** - Couldn't find User with this Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_user_is_protected"):
+                        failedArray.push(`**${checkedID}** - This User is protected! (They are the Server Owner or Bot Developer)`);
+                        break;
+
+                    case checkedObject.match("invalid_user_is_bot"):
+                        failedArray.push(`**${checkedID}** - This User is a Bot!`);
+                        break;
+
+                    case checkedObject.match("invalid_role_not_found"):
+                        failedArray.push(`**${checkedID}** - Couldn't find Role with this Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_role_everyone"):
+                        failedArray.push(`**${checkedID}** - That Role is protected! (Cannot handle [at]Everyone Role)`);
+                        break;
+
+                    case checkedObject.match("invalid_channel_not_found"):
+                        failedArray.push(`**${checkedID}** - Couldn't find Text Channel with this Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_channel_not_text"):
+                        failedArray.push(`**${checkedID}** - This Channel is not a Text Channel!`);
+                        break;
+
+                    default:
+                        failedArray.push(`**${checkedID}** - unknown error`);
+                        break;
+
+                }
+
+            }
+            else {
+                let blockType = null;
+
+                // For checking the block object type
+                if ( checkedObject instanceof Discord.User || checkedObject instanceof Discord.GuildMember ) {
+                    blockType = "user";
+                }
+                else if ( checkedObject instanceof Discord.Role ) {
+                    blockType = "role";
+                }
+                else if ( checkedObject instanceof Discord.TextChannel ) {
+                    blockType = "channel";
+                }
+
+                successArray.push( [checkedObject, blockType] );
+            }
+
+        }
+
+
+
+
+
+
+
+
+        // Attempt addition to DB
+        for ( const discordObjects of successArray ) {
+            let loopCatch = 0;
+
+            let blockID = await Tables.BlockList.create({
+                guildID: message.guild.id,
+                blockedID: discordObjects[0].id,
+                blockType: discordObjects[1]
+            })
+            .catch (err => {
+                failedArray.push(`**${discordObjects[0].id}** - Unable to add to Server BlockList`);
+                loopCatch = 1;
+            });
+
+            if (loopCatch === 1) {
+                continue;
+            }
+            else if (!blockID) {
+                failedArray.push(`**${discordObjects[0].id}** - Doesn't exist in this Server's BlockList`);
+                continue;
+            }
+            else {
+                finalSuccessArray.push(`${discordObjects[1]} ID: **${discordObjects[0].id}**`);
+            }
+
+        }
+
+
+        
+        // Output message
+        const embed = new Discord.MessageEmbed().setColor('#DC143C')
+        .setTitle(`${message.guild.name} - BlockList Management`)
+        .setDescription(`__Bulk-addition__`)
+        .addFields(
+            {
+                name: `Successful Additions`,
+                value: finalSuccessArray.join(`\n`) || `*No successful additions...*`
+            },
+            {
+                name: `Failed Additions`,
+                value: failedArray.join(`\n`) || `*No failed additions...*`
+            }
+        );
+
+        return await message.channel.send(embed);
 
     },
         
@@ -127,6 +292,170 @@ module.exports = {
                 return await message.channel.send(`Successfully removed the ${allowType} **${allowObj instanceof Discord.GuildMember ? allowObj.user.username : allowObj.name}** from the XP BlockList for this Server.`)
             }
         }
+
+    },
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Main point for the allow command WHEN THERE ARE MULITPLE ARGUMENTS
+     * 
+     * @param {Discord.Message} message Discord Message
+     * @param {Array<String>} args Command Arguments
+     */
+    async BulkAllow(message, args) {
+
+        if ( args.length > 11 ) {
+            return await Errors.LogToUser(message.channel, `Sorry, but currently I can only bulk-handle up to 10 arguments.\nYou entered ${args.length} arguments instead...`);
+        }
+
+        // Check Inputs
+        const allowArray = [];
+        const successArray = [];
+        const finalSuccessArray = [];
+        const failedArray = [];
+
+
+        for ( const argument of args ) {
+            allowArray.push( [ await this.BulkCheckType(argument, message), argument ] );
+        }
+
+
+        for ( const checkedArg of allowArray ) {
+            
+            let checkedObject = checkedArg[0];
+            let checkedID = checkedArg[1];
+
+
+            if (typeof checkedObject === "string") {
+
+                // For all those "invalid" strings
+                switch ( checkedObject ) {
+
+                    case checkedObject.match("invalid_not_found"):
+                        failedArray.push(`**${checkedID}** - Invalid User/Role/Channel Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_user_not_found"):
+                        failedArray.push(`**${checkedID}** - Couldn't find User with this Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_user_is_protected"):
+                        failedArray.push(`**${checkedID}** - This User is protected! (They are the Server Owner or Bot Developer)`);
+                        break;
+
+                    case checkedObject.match("invalid_user_is_bot"):
+                        failedArray.push(`**${checkedID}** - This User is a Bot!`);
+                        break;
+
+                    case checkedObject.match("invalid_role_not_found"):
+                        failedArray.push(`**${checkedID}** - Couldn't find Role with this Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_role_everyone"):
+                        failedArray.push(`**${checkedID}** - That Role is protected! (Cannot handle [at]Everyone Role)`);
+                        break;
+
+                    case checkedObject.match("invalid_channel_not_found"):
+                        failedArray.push(`**${checkedID}** - Couldn't find Text Channel with this Mention/ID`);
+                        break;
+
+                    case checkedObject.match("invalid_channel_not_text"):
+                        failedArray.push(`**${checkedID}** - This Channel is not a Text Channel!`);
+                        break;
+
+                    default:
+                        failedArray.push(`**${checkedID}** - unknown error`);
+                        break;
+
+                }
+
+            }
+            else {
+                let allowType = null;
+
+                // For checking the allowed object type
+                if ( checkedObject instanceof Discord.User || checkedObject instanceof Discord.GuildMember ) {
+                    allowType = "user";
+                }
+                else if ( checkedObject instanceof Discord.Role ) {
+                    allowType = "role";
+                }
+                else if ( checkedObject instanceof Discord.TextChannel ) {
+                    allowType = "channel";
+                }
+
+                successArray.push( [checkedObject, allowType] );
+            }
+
+        }
+
+
+
+
+
+
+
+
+        // Attempt removal from DB
+        for ( const discordObjects of successArray ) {
+            let loopCatch = 0;
+
+            let allowID = await Tables.BlockList.destroy({
+                where: {
+                    guildID: message.guild.id,
+                    blockedID: discordObjects[0].id
+                }
+            })
+            .catch (err => {
+                failedArray.push(`**${discordObjects[0].id}** - Unable to remove from Server BlockList`);
+                loopCatch = 1;
+            });
+
+            if (loopCatch === 1) {
+                continue;
+            }
+            else if (!allowID) {
+                failedArray.push(`**${discordObjects[0].id}** - Doesn't exist in this Server's BlockList`);
+                continue;
+            }
+            else {
+                finalSuccessArray.push(`${discordObjects[1]} ID: **${discordObjects[0].id}**`);
+            }
+
+        }
+
+
+        
+        // Output message
+        const embed = new Discord.MessageEmbed().setColor('#DC143C')
+        .setTitle(`${message.guild.name} - BlockList Management`)
+        .setDescription(`__Bulk-removal__`)
+        .addFields(
+            {
+                name: `Successful Removals`,
+                value: finalSuccessArray.join(`\n`) || `*No successful removals...*`
+            },
+            {
+                name: `Failed Removals`,
+                value: failedArray.join(`\n`) || `*No failed removals...*`
+            }
+        );
+
+        return await message.channel.send(embed);
 
     },
         
@@ -806,6 +1135,301 @@ module.exports = {
                 else if ( argUser.user.bot || argUser.user.flags.has('SYSTEM') ) {
                     await Errors.LogToUser(message.channel, `Sorry, but you cannot add/remove Bots or Discord's System Accounts to/from the BlockList! (I ignore them anyways...)`);
                     return "invalid";
+                }
+                else {
+                    return argUser;
+                }
+            }
+
+
+        }
+
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Bulk Check Type
+     * 
+     * @param {String} arg The Argument which holds the User, Role, or Channel
+     * @param {Discord.Message} message Discord Message
+     * 
+     * @returns {(Promise<Discord.GuildMember>|Promise<Discord.Role>|Promise<Discord.TextChannel>|Promise<String>)} The Discord object, or `invalid_${objectType}`
+     */
+    async BulkCheckType(arg, message) {
+
+        // Check if arg has "<" ">"
+        if (arg.includes(`<`) && arg.includes(`>`)) {
+
+            // Check if arg has "#" (for channels)
+            if (arg.includes(`#`)) {
+
+                // Remove said characters
+                let channelID = arg.slice(2, arg.length - 1);
+                let channelObj = null;
+                try {
+                    channelObj = message.guild.channels.resolve(channelID);
+                } catch (err) {
+                    channelObj = undefined;
+                }
+
+                // Check Channel Type
+                if (channelObj === null || channelObj === undefined) {
+                    return "invalid_channel_not_found";
+                }
+                else if ( !(channelObj instanceof Discord.TextChannel) ) {
+                    return "invalid_channel_not_text";
+                }
+                else {
+
+                    // Catch other text-based channel types
+                    if ( channelObj instanceof Discord.NewsChannel || channelObj instanceof Discord.DMChannel ) {
+                        return "invalid_channel_not_text";
+                    }
+                    
+                    return channelObj;
+                }
+
+            }
+            else if ( ( arg.includes(`@`) || arg.includes(`@!`) ) && !arg.includes(`@&`) ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // Checked if arg has either "@" or "@!" (for Users)
+                // Remove said characters
+                let userID;
+                if (!arg.includes(`@!`)) {
+                    userID = arg.slice(2, arg.length - 1);
+                }
+                else {
+                    userID = arg.slice(3, arg.length - 1);
+                }
+                
+                let userObj = null;
+                try {
+                    userObj = await message.guild.members.fetch({
+                        user: userID,
+                        cache: true
+                    });
+                } catch (err) {
+                    userObj = undefined;
+                }
+
+                if (userObj === null || userObj === undefined) {
+                    return "invalid_user_not_found";
+                }
+                else {
+
+                    // Check Member
+                    if ( userObj.user.id === "156482326887530498" || userObj.user.id === message.guild.ownerID ) {
+                        return "invalid_user_is_protected";
+                    }
+                    else if ( userObj.user.bot || userObj.user.flags.has('SYSTEM') ) {
+                        return "invalid_user_is_bot";
+                    }
+                    else {
+                        return userObj;
+                    }
+                }
+
+            }
+            else if ( arg.includes(`@&`) ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // Checked if arg has "@&" (for Roles)
+                // remove said characters
+                let roleID = arg.slice(3, arg.length - 1);
+                let roleObj = null;
+                try {
+                    roleObj = await message.guild.roles.fetch(roleID, true);
+                } catch (err) {
+                    roleObj = undefined;
+                }
+
+                if (roleObj === null || roleObj === undefined) {
+                    return "invalid_role_not_found";
+                }
+                else if (roleObj.name === "@everyone") {
+                    return "invalid_role_everyone";
+                }
+                else {
+                    return roleObj;
+                }
+
+            }
+
+        }
+        else {
+
+
+
+
+
+
+
+
+
+
+
+
+            // Not a Mention, go based of ID
+            let argUser = null;
+            let argChannel = null;
+            let argRole = null;
+
+            // Attempt User
+            try {
+
+                argUser = await message.guild.members.fetch({
+                    user: arg,
+                    cache: true
+                });
+
+            } catch (err) {
+                argUser = null;
+            }
+            
+            if ( argUser === null || argUser === undefined ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // Attempt Channel
+                try {
+                    argChannel = message.guild.channels.resolve(arg);
+                } catch (err) {
+                    argChannel = null;
+                }
+
+                if ( argChannel === null || argChannel === undefined ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    // Attempt Role
+                    try {
+                        argRole = await message.guild.roles.fetch(arg, true);
+                    } catch (err) {
+                        argRole = null;
+                    }
+
+                    if ( argRole === null || argRole === undefined ) {
+                        return "invalid_not_found";
+                    }
+                    else if ( argRole.name === "@everyone" ) {
+                        return "invalid_role_everyone";
+                    }
+                    else {
+                        return argRole;
+                    }
+
+                }
+                else {
+
+
+
+
+
+
+
+
+
+
+
+                    // Check Channel type
+                    if ( !(argChannel instanceof Discord.TextChannel) ) {
+                        return "invalid_channel_not_text";
+                    }
+                    else {
+
+                        // Catch other Text-based channel typed
+                        if ( argChannel instanceof Discord.NewsChannel || argChannel instanceof Discord.DMChannel ) {
+                            return "invalid_channel_not_text";
+                        }
+
+                        return argChannel;
+                    }
+
+                }
+
+            }
+            else {
+
+
+
+
+
+
+
+
+
+
+
+                
+                // Check Member
+                if ( argUser.user.id === "156482326887530498" || argUser.user.id === message.guild.ownerID ) {
+                    return "invalid_user_is_protected";
+                }
+                else if ( argUser.user.bot || argUser.user.flags.has('SYSTEM') ) {
+                    return "invalid_user_is_bot";
                 }
                 else {
                     return argUser;
