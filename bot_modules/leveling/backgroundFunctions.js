@@ -32,6 +32,7 @@ const allBackgrounds = [];
 const standardBackgrounds = [];
 const prideBackgrounds = [];
 const gradientBackgrounds = [];
+const themedBackgrounds = [];
 
 const standardBGs = fs.readdirSync('./backgrounds/standard').filter(file => file.endsWith('.png'));
 for (const file of standardBGs) {
@@ -69,6 +70,19 @@ for (const file of gradientBGs) {
 
     gradientBackgrounds.push(tempSTRING);
     allBackgrounds.push(tempSTRING)
+
+}
+
+const themedBGs = fs.readdirSync('./backgrounds/themed').filter(file => file.endsWith('.png'));
+for (const file of themedBGs) {
+
+    // Add to Array
+    let tempSTRING = file.toString();
+    let tempSTRINGLength = tempSTRING.length;
+    tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+    themedBackgrounds.push(tempSTRING);
+    allBackgrounds.push(tempSTRING);
 
 }
 
@@ -167,6 +181,8 @@ module.exports = {
                 backgroundPath = `./backgrounds/pride/${userRankPref}.png`;
             } else if (gradientBackgrounds.includes(userRankPref)) {
                 backgroundPath = `./backgrounds/gradient/${userRankPref}.png`;
+            } else if (themedBackgrounds.includes(userRankPref)) {
+                backgroundPath = `./backgrounds/themed/${userRankPref}.png`;
             }
 
 
@@ -452,6 +468,8 @@ module.exports = {
                 backgroundPath = `./backgrounds/pride/${userRankPref}.png`;
             } else if (gradientBackgrounds.includes(userRankPref)) {
                 backgroundPath = `./backgrounds/gradient/${userRankPref}.png`;
+            } else if (themedBackgrounds.includes(userRankPref)) {
+                backgroundPath = `./backgrounds/themed/${userRankPref}.png`;
             }
 
 
@@ -681,8 +699,11 @@ module.exports = {
           else if ( prideBackgrounds.includes(backgroundValue) ) {
             backgroundPath = `./backgrounds/pride/${backgroundValue}.png`;
           }
-          else if ( gradientBackgrounds.includes(userRankPref) ) {
+          else if ( gradientBackgrounds.includes(backgroundValue) ) {
             backgroundPath = `./backgrounds/gradient/${backgroundValue}.png`;
+          }
+          else if ( themedBackgrounds.includes(backgroundValue) ) {
+            backgroundPath = `./backgrounds/themed/${backgroundValue}.png`;
           }
 
 

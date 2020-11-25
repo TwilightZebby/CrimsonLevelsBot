@@ -168,6 +168,7 @@ module.exports = {
             let standardBackgrounds = [];
             let prideBackgrounds = [];
             let gradientBackgrounds = [];
+            let themedBackgrounds = [];
             let rankValues = [ 'guide', 'list', 'preview', 'disable' ];
 
             // Fetch all Backgrounds
@@ -209,6 +210,19 @@ module.exports = {
 
               gradientBackgrounds.push(tempSTRING);
               backgrounds.push(tempSTRING)
+
+            }
+
+            let themedBGs = fs.readdirSync('./backgrounds/themed').filter(file => file.endsWith('.png'));
+            for (const file of themedBGs) {
+
+                // Add to Array
+                let tempSTRING = file.toString();
+                let tempSTRINGLength = tempSTRING.length;
+                tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+                themedBackgrounds.push(tempSTRING);
+                backgrounds.push(tempSTRING);
 
             }
 
@@ -291,6 +305,10 @@ module.exports = {
                     {
                       name: `Pride Backgrounds`,
                       value: prideBackgrounds.join(', ')
+                    },
+                    {
+                      name: `Themed Backgrounds`,
+                      value: themedBackgrounds.join(', ')
                     },
                     {
                       name: `\u200B`,
