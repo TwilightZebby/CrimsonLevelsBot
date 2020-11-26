@@ -18,7 +18,7 @@ const Devs = require('../cmds/devFunctions.js');
 // Arrays so Bot knows if the Text Colour needs changing or not
 // ANY backgrounds not listed in these will use the full default white font colour
 const darkenAllFont = [
-    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon'
+    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon', 'wolves'
 ];
 const darkenJustUsername = [
     'genderfluid', 'nonBinary', 'straightAlly'
@@ -171,7 +171,7 @@ module.exports = {
 
 
             // Generate Background
-            
+
 
 
             let backgroundPath;
@@ -688,6 +688,11 @@ module.exports = {
 
           if ( !allBackgrounds.includes(backgroundValue) ) {
             return await Error.LogToUser(message.channel, `That background doesn't exist! Please try again, making sure you have typed the background's name exactly as it appears in \`${PREFIX}prefs rank list\``);
+          }
+
+          // TEMP
+          if ( backgroundValue === "tardis" && message.author.id !== "156482326887530498" ) {
+            return await Error.LogToUser(message.channel, `The TARDIS background is currently locked, sorry!`);
           }
 
           // Generate Background preview

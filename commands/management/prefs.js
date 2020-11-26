@@ -399,6 +399,11 @@ module.exports = {
                   if ( !backgrounds.includes(value) ) {
                     return await Error.LogToUser(message.channel, `That background/value doesn't exist! Please try again`);
                   }
+                  
+                  // TEMP
+                  if ( value === "tardis" && message.author.id !== "156482326887530498" ) {
+                    return await Error.LogToUser(message.channel, `The TARDIS background is currently locked, sorry!`);
+                  }
 
                   await Tables.UserPrefs.update(
                     {
