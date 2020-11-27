@@ -45,14 +45,12 @@ module.exports = {
         embed.setDescription(`The current Prefix for this Server is **${PREFIX}**
         (You can use \<\@${client.user.id}\> as a prefix too!)`);
 
-        //return await message.channel.send(embed);
         return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
       else {
 
         if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-          //return await message.channel.send();
           return await client.throttleCheck(message.channel, `Sorry, but only the Owner of this Server can change the Bot's Prefix!`, message.author.id);
         }
         else {

@@ -610,7 +610,6 @@ module.exports = {
                 value: channelBLStrings.join(`\n`)
             }
         );
-        //return await message.channel.send(embed);
         return await client.throttleCheck(message.channel, embed, message.author.id);
 
     },
@@ -819,7 +818,7 @@ module.exports = {
         // send file as an attachment
         try {
             const guildBLAttachment = new Discord.MessageAttachment(`./blockListTempStore/${message.guild.id}_blocklist.json`, `${message.guild.id}_blocklist.json`);
-            await message.channel.send(`> Here is this Server's full BlockList as a JSON file!`, guildBLAttachment);
+            await client.throttleCheck(message.channel, `> Here is this Server's full BlockList as a JSON file!`, message.author.id, guildBLAttachment);
 
             // Now delete file for storage reasons
             fs.unlink(`./blockListTempStore/${message.guild.id}_blocklist.json`, async (err) => {

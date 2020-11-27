@@ -69,7 +69,7 @@ module.exports = {
       if ( guildConfig.roulette === "false" ) {
         embed.setTitle(`⛔ Command disabled by Server Owner`)
         .setDescription(`The \`roulette\` command was disabled by this Server's Owner!`);
-        //return await message.channel.send(embed);
+        
         return await client.throttleCheck(message.channel, embed, message.author.id);
       }
       else {

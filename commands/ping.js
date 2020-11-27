@@ -28,7 +28,6 @@ module.exports = {
 
     async execute(message) {
       
-      //return await message.channel.send();
       return await client.throttleCheck(message.channel, `Pong! \n Your ping is ${message.client.ws.ping.toFixed(2)}ms`, message.author.id);
 
       //END OF COMMAND

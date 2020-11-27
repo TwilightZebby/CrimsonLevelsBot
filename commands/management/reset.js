@@ -51,7 +51,6 @@ module.exports = {
         let fetchedUser = await Resets.UserCheck(option);
 
         if (fetchedUser === "fail") {
-          //return message.channel.send();
           return await client.throttleCheck(message.channel, `That wasn't a valid User or "all" - please try again!`, message.author.id);
         }
         else {

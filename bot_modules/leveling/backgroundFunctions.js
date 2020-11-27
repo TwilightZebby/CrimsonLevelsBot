@@ -161,7 +161,7 @@ module.exports = {
             let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
             let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
 
-            return await message.channel.send(`\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`);
+            return await client.throttleCheck(message.channel, `\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, message.author.id);
 
         } else {
 
@@ -353,7 +353,7 @@ module.exports = {
 
             // Output!
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `rank.png`);
-            return await message.channel.send(``, attachment);
+            return await client.throttleCheck(message.channel, ``, message.author.id, attachment);
 
         }
 
@@ -453,11 +453,7 @@ module.exports = {
             let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
             let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
 
-            return await message.channel.send(`${user.toString()}\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, {
-                allowedMentions: {
-                    parse: []
-                }
-            });
+            return await client.throttleCheck(message.channel, `> ${user.username}#${user.discriminator} currently has **${currentXP}** XP, and is Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, message.author.id);
 
         } else {
 
@@ -640,7 +636,7 @@ module.exports = {
 
             // Output!
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `rank.png`);
-            return await message.channel.send(``, attachment);
+            return await client.throttleCheck(message.channel, ``, message.author.id, attachment);
 
         }
 
@@ -688,11 +684,6 @@ module.exports = {
 
           if ( !allBackgrounds.includes(backgroundValue) ) {
             return await Error.LogToUser(message.channel, `That background doesn't exist! Please try again, making sure you have typed the background's name exactly as it appears in \`${PREFIX}prefs rank list\``);
-          }
-
-          // TEMP
-          if ( backgroundValue === "tardis" && message.author.id !== "156482326887530498" ) {
-            return await Error.LogToUser(message.channel, `The TARDIS background is currently locked, sorry!`);
           }
 
           // Generate Background preview
@@ -868,7 +859,7 @@ module.exports = {
 
           // Output!
           const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `rank_background_${backgroundValue}_preview.png`);
-          return await message.channel.send(`Here's your preview of the **${backgroundValue}** Rank Background!`, attachment);
+          return await client.throttleCheck(message.channel, `Here's your preview of the **${backgroundValue}** Rank Background!`, message.author.id, attachment);
 
     }
 }

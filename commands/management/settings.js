@@ -131,7 +131,7 @@ module.exports = {
           }
         );
 
-        return message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
       else if( validOptions.includes(args[0]) ) {
@@ -170,7 +170,7 @@ module.exports = {
             }
           );
 
-          return await message.channel.send(embed);
+          return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
         else {

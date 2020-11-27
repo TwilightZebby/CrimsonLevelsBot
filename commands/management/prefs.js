@@ -85,7 +85,6 @@ module.exports = {
           }
         );
 
-        //return await message.channel.send(embed);
         return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
@@ -120,7 +119,6 @@ module.exports = {
             }
           );
 
-          //return await message.channel.send(embed);
           return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
@@ -272,7 +270,6 @@ module.exports = {
                     }
                   );
 
-                  //return await message.channel.send(embed);
                   return await client.throttleCheck(message.channel, embed, message.author.id);
 
                 
@@ -316,7 +313,6 @@ module.exports = {
                     }
                   );
 
-                  //return await message.channel.send(embed);
                   return await client.throttleCheck(message.channel, embed, message.author.id);
                 
                 
@@ -374,8 +370,7 @@ module.exports = {
                   embed.setTitle(`Updated Preferences`)
                   .setDescription(`Your preferences for **${option}** background have been updated to **${value}**`);
 
-                  //return await message.channel.send(embed);
-                  return await client.throttleCheck(message.channel, embed, message.author.id);
+                  return await message.channel.send(embed);
                                                     
                 
                 
@@ -399,11 +394,7 @@ module.exports = {
                   if ( !backgrounds.includes(value) ) {
                     return await Error.LogToUser(message.channel, `That background/value doesn't exist! Please try again`);
                   }
-                  
-                  // TEMP
-                  if ( value === "tardis" && message.author.id !== "156482326887530498" ) {
-                    return await Error.LogToUser(message.channel, `The TARDIS background is currently locked, sorry!`);
-                  }
+                
 
                   await Tables.UserPrefs.update(
                     {
@@ -423,8 +414,7 @@ module.exports = {
                   embed.setTitle(`Updated Preferences`)
                   .setDescription(`Your preferences for **${option}** background have been updated to **${value}**`);
 
-                  //return await message.channel.send(embed);
-                  return await client.throttleCheck(message.channel, embed, message.author.id);
+                  return await message.channel.send(embed);
 
               }
 
@@ -489,8 +479,7 @@ module.exports = {
             embed.setTitle(`Updated Preferences`)
             .setDescription(`Your preferences for **${option}** have been updated to **${value}**`);
 
-            //return await message.channel.send(embed);
-            return await client.throttleCheck(message.channel, embed, message.author.id);
+            return await message.channel.send(embed);
 
           }
 

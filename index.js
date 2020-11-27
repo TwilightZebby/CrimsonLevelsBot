@@ -57,16 +57,17 @@ const ManageRoles = require('./bot_modules/leveling/roleManageFunctions.js');
  * Throttle Responses to prevent hitting the API Ratelimit
  * 
  * @param {Discord.TextChannel} channel 
- * @param {Discord.Message} message 
+ * @param {Discord.Message} [message]
  * @param {String} userID 
+ * @param {Discord.MessageAttachment} [attachment]
  */
-client.throttleCheck = async (channel, message, userID) => {
+client.throttleCheck = async (channel, message, userID, attachment) => {
 
   if (!client.throttle.has(userID)) {
           
     let throttleTimeout = setTimeout(() => {
       client.throttle.delete(userID);
-    }, 300000);
+    }, 10000); // 10 seconds
   
     let userThrottle = {
       "messageCount": 1,
@@ -74,18 +75,37 @@ client.throttleCheck = async (channel, message, userID) => {
     };
   
     client.throttle.set(userID, userThrottle);
-    await channel.send(message);
+    if (message && !attachment) {
+      await channel.send(message);
+    }
+    else if (!message && attachment) {
+      await channel.send(attachment);
+    }
+    else {
+      await channel.send(message, attachment);
+    }
+    
     
   }
   else {
   
     let userThrottleMap = client.throttle.get(userID);
     
-    if (userThrottleMap["messageCount"] < 4) {
+    if (userThrottleMap["messageCount"] < 5) {
       userThrottleMap["messageCount"] += 1;
-      await channel.send(message);
+      
+      if (message && !attachment) {
+        await channel.send(message);
+      }
+      else if (!message && attachment) {
+        await channel.send(attachment);
+      }
+      else {
+        await channel.send(message, attachment);
+      }
+
     }
-    else if (userThrottleMap["messageCount"] === 4) {
+    /*else if (userThrottleMap["messageCount"] === 5) {
   
       userThrottleMap["messageCount"] += 1;
       
@@ -96,7 +116,7 @@ client.throttleCheck = async (channel, message, userID) => {
   
       await channel.startTyping();
   
-    }
+    }*/
     else if (userThrottleMap["messageCount"] >= 5) {
       // No responses, the User was throttled.            
   
@@ -1077,7 +1097,6 @@ client.on('message', async (message) => {
         // BOT DEV ONLY
         case 'dev':
           if ( message.author.id !== '156482326887530498' ) {
-            //return await message.channel.send();
             return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Bot's developer.`, message.author.id);
           }
           break;
@@ -1085,11 +1104,6 @@ client.on('message', async (message) => {
         // GUILD OWNER
         case 'owner':
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID ) {
-            /*return await message.channel.send(, {
-              allowedMentions: {
-                users: [message.author.id]
-              }
-            });*/
             return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by the Owner of this Guild.`, message.author.id);
           }
           break;
@@ -1098,11 +1112,6 @@ client.on('message', async (message) => {
         case 'admin':
           let adminPermissionCheck = message.member.hasPermission("ADMINISTRATOR", {checkAdmin: true});
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermissionCheck ) {
-            /*return await message.channel.send(, {
-              allowedMentions: {
-                users: [message.author.id]
-              }
-            });*/
             return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` Permission and the Owner of this Guild.`, message.author.id);
           }
           break;
@@ -1113,11 +1122,6 @@ client.on('message', async (message) => {
           let manageGuildPermissionCheck = message.member.hasPermission("MANAGE_GUILD", {checkAdmin: true});
           let banMembersPermissionCheck = message.member.hasPermission("BAN_MEMBERS", {checkAdmin: true});
           if ( message.author.id !== '156482326887530498' && message.author.id !== message.guild.ownerID && !adminPermCheck && !manageGuildPermissionCheck && !banMembersPermissionCheck ) {
-            /*return await message.channel.send(, {
-              allowedMentions: {
-                users: [message.author.id]
-              }
-            });*/
             return await client.throttleCheck(message.channel, `Sorry, but this command can only be used by those with the \`ADMINISTRATOR\` or \`MANAGE_SERVER\` or \`BAN_MEMBERS\` Permission and the Owner of this Guild.`, message.author.id);
           }
           break;
@@ -1178,7 +1182,7 @@ client.on('message', async (message) => {
         }
 
 
-        //await message.channel.send(reply);
+
         // THROTTLING
         return await client.throttleCheck(message.channel, reply, message.author.id);
       }
@@ -1197,19 +1201,16 @@ client.on('message', async (message) => {
             let timeLeft = (expirationTime - now) / 1000;
 
             // If greater than 60 Seconds, convert into Minutes
-            if (timeLeft > 60 && timeLeft < 3600) {
+            if (timeLeft >= 60 && timeLeft < 3600) {
               timeLeft = timeLeft / 60;
-              //return await message.channel.send();
               return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
             // If greater than 3600 Seconds, convert into Hours
-            else if (timeLeft > 3600) {
+            else if (timeLeft >= 3600) {
               timeLeft = timeLeft / 3600;
-              //return await message.channel.send();
               return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
 
-            //return await message.channel.send();
             return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, message.author.id);
           }
 
@@ -1278,7 +1279,6 @@ client.on('message', async (message) => {
           cooldownAmount = 1000;
         }
 
-        //await message.channel.send(reply);
         return await client.throttleCheck(message.channel, reply, message.author.id);
 
       }
@@ -1302,17 +1302,14 @@ client.on('message', async (message) => {
             // If greater than 60 seconds, convert to minutes
             if (timeLeft > 60 && timeLeft < 3600) {
               timeLeft = timeLeft / 60;
-              //return await message.channel.send();
               return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more minute(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
             // If greater than 3600 seconds, convert to hours
             else if (timeLeft > 3600) {
               timeLeft = timeLeft / 3600;
-              //return await message.channel.send();
               return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more hour(s) before reusing the \`${command.name}\` command.`, message.author.id);
             }
 
-            //return await message.channel.send();
             return await client.throttleCheck(message.channel, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, message.author.id);
 
           }
@@ -1367,13 +1364,11 @@ client.on('message', async (message) => {
 
     // Embed Links Permission
     if ( !embedLinksPerm && command.name !== 'ping' ) {
-      //return await message.channel.send();
       return await client.throttleCheck(message.channel, `Sorry ${message.author}, but I seem to be missing the \`EMBED_LINKS\` permission.`, message.author.id);
     }
 
     // Attach Files Permission
     if ( !attachFilesPerm && command.name === 'rank' ) {
-      //return await message.channel.send();
       return await client.throttleCheck(message.channel, `Sorry ${message.author}, but I seem to be missing the \`ATTACH_FILES\` permission, which I need for this command!`, message.author.id);
     }
 
@@ -1391,7 +1386,6 @@ client.on('message', async (message) => {
       command.execute(message, args);
     } catch (error) {
       await Errors.LogCustom(error, `(**index.js** - EXECUTE COMMAND FAIL)`);
-      //return await message.channel.send();
       return await client.throttleCheck(message.channel, `There was an error trying to run that command!`, message.author.id);
     }
 

@@ -94,7 +94,6 @@ module.exports = {
           }
         );
 
-        //return await message.channel.send(embed);
         return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
@@ -127,7 +126,6 @@ module.exports = {
           }
         );
 
-        //return await message.channel.send(embed);
         return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
