@@ -18,7 +18,7 @@ const Devs = require('../cmds/devFunctions.js');
 // Arrays so Bot knows if the Text Colour needs changing or not
 // ANY backgrounds not listed in these will use the full default white font colour
 const darkenAllFont = [
-    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon'
+    'pastel', 'agender', 'aromantic', 'demiromantic', 'pansexual', 'transgender', 'rainbow', 'gay', 'lesbian', 'screech', 'dragon', 'wolves'
 ];
 const darkenJustUsername = [
     'genderfluid', 'nonBinary', 'straightAlly'
@@ -32,6 +32,7 @@ const allBackgrounds = [];
 const standardBackgrounds = [];
 const prideBackgrounds = [];
 const gradientBackgrounds = [];
+const themedBackgrounds = [];
 
 const standardBGs = fs.readdirSync('./backgrounds/standard').filter(file => file.endsWith('.png'));
 for (const file of standardBGs) {
@@ -69,6 +70,19 @@ for (const file of gradientBGs) {
 
     gradientBackgrounds.push(tempSTRING);
     allBackgrounds.push(tempSTRING)
+
+}
+
+const themedBGs = fs.readdirSync('./backgrounds/themed').filter(file => file.endsWith('.png'));
+for (const file of themedBGs) {
+
+    // Add to Array
+    let tempSTRING = file.toString();
+    let tempSTRINGLength = tempSTRING.length;
+    tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+    themedBackgrounds.push(tempSTRING);
+    allBackgrounds.push(tempSTRING);
 
 }
 
@@ -147,7 +161,7 @@ module.exports = {
             let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
             let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
 
-            return await message.reply(`\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`);
+            return await client.throttleCheck(message.channel, `\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, message.author.id);
 
         } else {
 
@@ -157,7 +171,7 @@ module.exports = {
 
 
             // Generate Background
-            
+
 
 
             let backgroundPath;
@@ -167,6 +181,8 @@ module.exports = {
                 backgroundPath = `./backgrounds/pride/${userRankPref}.png`;
             } else if (gradientBackgrounds.includes(userRankPref)) {
                 backgroundPath = `./backgrounds/gradient/${userRankPref}.png`;
+            } else if (themedBackgrounds.includes(userRankPref)) {
+                backgroundPath = `./backgrounds/themed/${userRankPref}.png`;
             }
 
 
@@ -337,7 +353,7 @@ module.exports = {
 
             // Output!
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `rank.png`);
-            return await message.channel.send(``, attachment);
+            return await client.throttleCheck(message.channel, ``, message.author.id, attachment);
 
         }
 
@@ -437,11 +453,7 @@ module.exports = {
             let userDifference = currentXPINT - BaseLevels[`l${currentLevel}`];
             let levelProgress = Math.floor(( userDifference / levelDifference ) * 100);
 
-            return await message.channel.send(`${user.toString()}\n> You currently have **${currentXP}** XP, and are Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, {
-                allowedMentions: {
-                    parse: []
-                }
-            });
+            return await client.throttleCheck(message.channel, `> ${user.username}#${user.discriminator} currently has **${currentXP}** XP, and is Level **${currentLevel}**!\n> Progress to next level: ${levelProgress}%`, message.author.id);
 
         } else {
 
@@ -452,6 +464,8 @@ module.exports = {
                 backgroundPath = `./backgrounds/pride/${userRankPref}.png`;
             } else if (gradientBackgrounds.includes(userRankPref)) {
                 backgroundPath = `./backgrounds/gradient/${userRankPref}.png`;
+            } else if (themedBackgrounds.includes(userRankPref)) {
+                backgroundPath = `./backgrounds/themed/${userRankPref}.png`;
             }
 
 
@@ -622,7 +636,7 @@ module.exports = {
 
             // Output!
             const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `rank.png`);
-            return await message.channel.send(``, attachment);
+            return await client.throttleCheck(message.channel, ``, message.author.id, attachment);
 
         }
 
@@ -681,8 +695,11 @@ module.exports = {
           else if ( prideBackgrounds.includes(backgroundValue) ) {
             backgroundPath = `./backgrounds/pride/${backgroundValue}.png`;
           }
-          else if ( gradientBackgrounds.includes(userRankPref) ) {
+          else if ( gradientBackgrounds.includes(backgroundValue) ) {
             backgroundPath = `./backgrounds/gradient/${backgroundValue}.png`;
+          }
+          else if ( themedBackgrounds.includes(backgroundValue) ) {
+            backgroundPath = `./backgrounds/themed/${backgroundValue}.png`;
           }
 
 
@@ -842,7 +859,7 @@ module.exports = {
 
           // Output!
           const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `rank_background_${backgroundValue}_preview.png`);
-          return await message.channel.send(`Here's your preview of the **${backgroundValue}** Rank Background!`, attachment);
+          return await client.throttleCheck(message.channel, `Here's your preview of the **${backgroundValue}** Rank Background!`, message.author.id, attachment);
 
     }
 }

@@ -19,7 +19,7 @@ module.exports = {
     aliases: ['leaderboard'],
     //args: true,
     commandType: 'level',
-    //cooldown: 3, // IN SECONDS
+    cooldown: 5, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -94,7 +94,7 @@ module.exports = {
           }
         );
 
-        return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
       else {
@@ -126,7 +126,7 @@ module.exports = {
           }
         );
 
-        return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
 

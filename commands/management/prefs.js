@@ -24,7 +24,7 @@ module.exports = {
     aliases: ['preference', 'pref'],
     //args: true,
     commandType: 'management',
-    cooldown: 5, // IN SECONDS
+    cooldown: 6, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -85,7 +85,7 @@ module.exports = {
           }
         );
 
-        return await message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
       else if( validOptions.includes(args[0]) ) {
@@ -119,7 +119,7 @@ module.exports = {
             }
           );
 
-          return await message.channel.send(embed);
+          return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
         else {
@@ -166,6 +166,7 @@ module.exports = {
             let standardBackgrounds = [];
             let prideBackgrounds = [];
             let gradientBackgrounds = [];
+            let themedBackgrounds = [];
             let rankValues = [ 'guide', 'list', 'preview', 'disable' ];
 
             // Fetch all Backgrounds
@@ -207,6 +208,19 @@ module.exports = {
 
               gradientBackgrounds.push(tempSTRING);
               backgrounds.push(tempSTRING)
+
+            }
+
+            let themedBGs = fs.readdirSync('./backgrounds/themed').filter(file => file.endsWith('.png'));
+            for (const file of themedBGs) {
+
+                // Add to Array
+                let tempSTRING = file.toString();
+                let tempSTRINGLength = tempSTRING.length;
+                tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
+
+                themedBackgrounds.push(tempSTRING);
+                backgrounds.push(tempSTRING);
 
             }
 
@@ -256,7 +270,7 @@ module.exports = {
                     }
                   );
 
-                  return await message.channel.send(embed);
+                  return await client.throttleCheck(message.channel, embed, message.author.id);
 
                 
                 
@@ -290,12 +304,16 @@ module.exports = {
                       value: prideBackgrounds.join(', ')
                     },
                     {
+                      name: `Themed Backgrounds`,
+                      value: themedBackgrounds.join(', ')
+                    },
+                    {
                       name: `\u200B`,
                       value: `*You can see a preview of all my backgrounds in one place either by checking out the \`#rank-backgrounds\` channel in my [Support Server](https://discord.gg/YuxSF39) or viewing the [Imgur Post](https://imgur.com/a/Z2emsOJ)!*`
                     }
                   );
 
-                  return await message.channel.send(embed);
+                  return await client.throttleCheck(message.channel, embed, message.author.id);
                 
                 
                 
@@ -376,6 +394,7 @@ module.exports = {
                   if ( !backgrounds.includes(value) ) {
                     return await Error.LogToUser(message.channel, `That background/value doesn't exist! Please try again`);
                   }
+                
 
                   await Tables.UserPrefs.update(
                     {

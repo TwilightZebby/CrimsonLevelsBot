@@ -22,7 +22,7 @@ module.exports = {
     aliases: ['setting', 'config'],
     //args: true,
     commandType: 'management',
-    cooldown: 5, // IN SECONDS
+    cooldown: 8, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -30,7 +30,7 @@ module.exports = {
     //    'admin' - Those set as "Admin" in the Bot, the Guild Owner, and me only
     //    'mod' - Those set as either "Mod" or "Admin", and the Guild Owner, and me only
     //     otherwise, comment out for everyone to be able to use
-    limitation: 'owner',
+    limitation: 'admin',
 
     // FLAGS
     //    If the Command has flags allowed in its arguments (eg: "--risk"), list them here in the following format:
@@ -131,7 +131,7 @@ module.exports = {
           }
         );
 
-        return message.channel.send(embed);
+        return await client.throttleCheck(message.channel, embed, message.author.id);
 
       }
       else if( validOptions.includes(args[0]) ) {
@@ -170,7 +170,7 @@ module.exports = {
             }
           );
 
-          return await message.channel.send(embed);
+          return await client.throttleCheck(message.channel, embed, message.author.id);
 
         }
         else {

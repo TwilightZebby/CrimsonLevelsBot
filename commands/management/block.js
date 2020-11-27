@@ -39,7 +39,12 @@ module.exports = {
       // Check for custom Prefix
       PREFIX = await Prefixs.Fetch(message.guild.id);
 
-      return await BlockList.Block(message, args);
+      if (!args || !args.length || args.length === 1) {
+        return await BlockList.Block(message, args);
+      }
+      else {
+        return await BlockList.BulkBlock(message, args);
+      }
 
 
 

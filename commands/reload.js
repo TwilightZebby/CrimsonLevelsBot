@@ -13,7 +13,7 @@ module.exports = {
     //aliases: [''],
     args: true,
     commandType: 'general',
-    //cooldown: 3, // IN SECONDS
+    cooldown: 3, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -40,7 +40,7 @@ module.exports = {
       let command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
       // if no command found
       if (!command) {
-        return await message.reply(`There is no command with the name/alias of **${commandName}**`);
+        return await message.channel.send(`There is no command with the name/alias of **${commandName}**`);
       }
 
 
@@ -54,7 +54,7 @@ module.exports = {
 
           let newCommand = require(`./level/${command.name}.js`);
           client.commands.set(newCommand.name, newCommand);
-          return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+          return await message.channel.send(`Successfully reloaded the **${newCommand.name}** command!`);
 
         } catch (err) {
 
@@ -74,7 +74,7 @@ module.exports = {
 
           let newCommand = require(`./management/${command.name}.js`);
           client.commands.set(newCommand.name, newCommand);
-          return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+          return await message.channel.send(`Successfully reloaded the **${newCommand.name}** command!`);
 
         } catch (err) {
 
@@ -94,7 +94,7 @@ module.exports = {
 
           let newCommand = require(`./${command.name}.js`);
           client.commands.set(newCommand.name, newCommand);
-          return await message.reply(`Successfully reloaded the **${newCommand.name}** command!`);
+          return await message.channel.send(`Successfully reloaded the **${newCommand.name}** command!`);
 
         } catch (err) {
 

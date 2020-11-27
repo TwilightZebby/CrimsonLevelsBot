@@ -107,7 +107,7 @@ module.exports = {
     async GenerateXP() {
 
         // Generate a random amount of XP
-        return Math.floor( ( Math.random() * 10 ) + 1 );
+        return Math.floor( ( Math.random() * 10 ) + 1 ); // Update to between 25 and 15 when I push the XP Update
 
     },
     

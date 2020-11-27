@@ -19,7 +19,7 @@ module.exports = {
     aliases: ['roles'],
     //args: true,
     commandType: 'management',
-    cooldown: 5, // IN SECONDS
+    cooldown: 8, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer

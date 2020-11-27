@@ -13,7 +13,7 @@ module.exports = {
     aliases: ['about'],
     //args: true,
     commandType: 'general',
-    //cooldown: 3, // IN SECONDS
+    cooldown: 3, // IN SECONDS
 
     // LIMITATION MUST BE ONE OF THE FOLLOWING:
     //    'dev' - Limits to me only, as the Bot's Developer
@@ -36,6 +36,27 @@ module.exports = {
       // Fetch values
       let guildCount = Array.from(client.guilds.cache.values()).length;
       let userZebby = await client.users.fetch('156482326887530498');
+      let clientUptime = client.uptime;
+      let readableUptime = "";
+
+      // Make Uptime readable
+      clientUptime = Math.floor(clientUptime / 1000);
+      if ( clientUptime < 60 ) {
+        // Seconds
+        readableUptime = `${Math.floor(clientUptime)} seconds`;
+      }
+      else if ( clientUptime >= 60 && clientUptime < 3600 ) {
+        // Minutes
+        readableUptime = `${Math.floor(clientUptime / 60)} minutes`;
+      }
+      else if ( clientUptime >= 3600 && clientUptime < 86400 ) {
+        // Hours
+        readableUptime = `${Math.floor(clientUptime / 3600)} hours`;
+      }
+      else if ( clientUptime >= 86400 ) {
+        // Days
+        readableUptime = `${Math.floor(clientUptime / 86400)} days`;
+      }
 
 
       // Embed
@@ -63,8 +84,8 @@ module.exports = {
         value: guildCount,
         inline: true
       }, {
-        name: `\u200B`,
-        value: `\u200B`,
+        name: `Bot Uptime`,
+        value: readableUptime,
         inline: true
       }, {
         name: `Top.gg Listing`,
@@ -80,7 +101,7 @@ module.exports = {
         inline: true
       });
 
-      return await message.channel.send(embed);
+      return await client.throttleCheck(message.channel, embed, message.author.id);
 
 
       //END OF COMMAND
