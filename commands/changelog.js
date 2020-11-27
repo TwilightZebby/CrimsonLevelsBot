@@ -53,7 +53,7 @@ module.exports = {
       .addFields(
         {
           name: `Latest Version`,
-          value: `[v1.6.1]() - Released .`
+          value: `[v1.6.1](https://gist.github.com/TwilightZebby/c78e4023f706c924481b4abd2e983e74) - Released 27th November 2020`
         },
         {
           name: `Previous Versions`,
