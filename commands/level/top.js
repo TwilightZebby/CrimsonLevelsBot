@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 //const fs = require('fs');
 //const Canvas = require('canvas');
-//const { client } = require('../../bot_modules/constants.js');
+const { client } = require('../../bot_modules/constants.js');
 const ns = require('number-string');
 
 //let { PREFIX } = require('../../config.js');
