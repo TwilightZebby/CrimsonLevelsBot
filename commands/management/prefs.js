@@ -207,7 +207,8 @@ module.exports = {
               tempSTRING = tempSTRING.substr(0, tempSTRINGLength - 4);
 
               gradientBackgrounds.push(tempSTRING);
-              backgrounds.push(tempSTRING)
+              backgrounds.push(tempSTRING);
+              rankValues.push(tempSTRING);
 
             }
 
@@ -221,6 +222,7 @@ module.exports = {
 
                 themedBackgrounds.push(tempSTRING);
                 backgrounds.push(tempSTRING);
+                rankValues.push(tempSTRING);
 
             }
 
