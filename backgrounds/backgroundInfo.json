@@ -1,0 +1,384 @@
+{
+    "blueNebula": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "cybernetic": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "emeraldLandscape": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "limeNebula": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "paintStains": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "redNebula": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "wolves": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "beta": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "blurple": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "burntOrange": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "default": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "dragon": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "lipstickDeath": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "pastel": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "screech": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "simplyPink": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "sunset": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "agender": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "aromantic": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "asexual": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "bisexual": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "demiromantic": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "gay": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "genderfluid": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "lesbian": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "nonBinary": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "pansexual": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "polyamory": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "rainbow": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "straightAlly": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "transgender": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    },
+
+
+    "amongUs": {
+        "colors": {
+            "username": "#000000",
+            "level": "#000000",
+            "xp": "#000000",
+            "rank": "#000000",
+            "progressBarFill": "#ab0202",
+            "progressBarEmpty": "#000000"
+        }
+    }
+}
