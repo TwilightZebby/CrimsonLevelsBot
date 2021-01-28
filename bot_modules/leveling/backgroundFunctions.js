@@ -79,6 +79,28 @@ for (const file of themedBGs) {
 
 
 
+
+// NUMBERS
+// Thanks to https://stackoverflow.com/a/32638472
+const abbreviateNumber = (num, fixed) => {
+    if (num === null) { return null; } // terminate early
+
+    if (num === 0) { return '0'; } // terminate early
+
+    fixed = (!fixed || fixed < 0) ? 0 : fixed; // number of decimal places to show
+
+    var b = (num).toPrecision(2).split("e"), // get power
+        k = b.length === 1 ? 0 : Math.floor(Math.min(b[1].slice(1), 14) / 3), // floor at decimals, ceiling at trillions
+        c = k < 1 ? num.toFixed(0 + fixed) : (num / Math.pow(10, k * 3) ).toFixed(1 + fixed), // divide by power
+        d = c < 0 ? c : Math.abs(c), // enforce -0 is 0
+        e = d + ['', 'K', 'M', 'B', 'T'][k]; // append power
+        
+    return e;
+};
+
+
+
+
 // CANVAS
 
 // Apply Text
@@ -129,10 +151,8 @@ module.exports = {
         let currentXP = await XPs.FetchXP(message);
         let currentLevel = await Levels.FetchLevel(currentXP);
 
-        // Add commas if need be
-        currentXP = ns.toClean(currentXP, {
-            thousandSeperator: ",",
-        });
+        // Shorten if need be
+        currentXP = abbreviateNumber(currentXP, 0);
 
 
 
@@ -203,22 +223,22 @@ module.exports = {
             // DISPLAY NAME
             ctx.font = applyText(canvas, message.member.displayName, ctx);
             ctx.fillStyle = backgroundColors["username"];
-            ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
-
-            // XP
-            ctx.font = "28px sans-serif";
-            ctx.fillStyle = backgroundColors["xp"];
-            ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
+            ctx.fillText(message.member.displayName, canvas.width / 2.3, canvas.height / 2.2);
 
             // LEVELS
             ctx.font = "28px sans-serif";
             ctx.fillStyle = backgroundColors["level"];
-            ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+            ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.3, canvas.height / 1.45);
+
+            // XP
+            ctx.font = "28px sans-serif";
+            ctx.fillStyle = backgroundColors["xp"];
+            ctx.fillText(`XP: ${currentXP}`, canvas.width / 1.35, canvas.height / 1.45);
 
             // PROGRESS BAR (thanks to canvas-extras)
             // https://www.npmjs.com/package/canvas-extras
             ctx.beginPath();
-            ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, backgroundColors["progressBarFill"], backgroundColors["progressBarEmpty"]);
+            ctx.progressBar(levelProgress, 100, canvas.width / 2.4, canvas.height / 1.4, 350, 40, backgroundColors["progressBarFill"], backgroundColors["progressBarEmpty"]);
             ctx.closePath();
 
 
@@ -321,10 +341,8 @@ module.exports = {
         let currentXP = await XPs.FetchXP(message, userMember);
         let currentLevel = await Levels.FetchLevel(currentXP);
 
-        // Add commas if need be
-        currentXP = ns.toClean(currentXP, {
-            thousandSeperator: ",",
-        });
+        // Shorten if need be
+        currentXP = abbreviateNumber(currentXP, 0);
 
 
 
@@ -384,22 +402,22 @@ module.exports = {
             // DISPLAY NAME
             ctx.font = applyText(canvas, userMember.displayName, ctx);
             ctx.fillStyle = backgroundColors["username"];
-            ctx.fillText(userMember.displayName, canvas.width / 2.5, canvas.height / 3.0);
- 
-            // XP
-            ctx.font = "28px sans-serif";
-            ctx.fillStyle = backgroundColors["xp"];
-            ctx.fillText(`XP: ${currentXP}`, canvas.width / 2.5, canvas.height / 1.6);
+            ctx.fillText(userMember.displayName, canvas.width / 2.3, canvas.height / 2.2);
  
             // LEVELS
             ctx.font = "28px sans-serif";
             ctx.fillStyle = backgroundColors["level"];
-            ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.5, canvas.height / 2.0);
+            ctx.fillText(`Level: ${currentLevel}`, canvas.width / 2.3, canvas.height / 1.45);
+
+            // XP
+            ctx.font = "28px sans-serif";
+            ctx.fillStyle = backgroundColors["xp"];
+            ctx.fillText(`XP: ${currentXP}`, canvas.width / 1.35, canvas.height / 1.45);
  
             // PROGRESS BAR (thanks to canvas-extras)
             // https://www.npmjs.com/package/canvas-extras
             ctx.beginPath();
-            ctx.progressBar(levelProgress, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, backgroundColors["progressBarFill"], backgroundColors["progressBarEmpty"]);
+            ctx.progressBar(levelProgress, 100, canvas.width / 2.4, canvas.height / 1.4, 350, 40, backgroundColors["progressBarFill"], backgroundColors["progressBarEmpty"]);
             ctx.closePath();
 
 
@@ -507,22 +525,22 @@ module.exports = {
           // DISPLAY NAME
           ctx.font = applyText(canvas, message.member.displayName, ctx);
           ctx.fillStyle = backgroundColors["username"];
-          ctx.fillText(message.member.displayName, canvas.width / 2.5, canvas.height / 3.0);
-
-          // XP
-          ctx.font = "28px sans-serif";
-          ctx.fillStyle = backgroundColors["xp"];
-          ctx.fillText(`XP`, canvas.width / 2.5, canvas.height / 1.6);
+          ctx.fillText(message.member.displayName, canvas.width / 2.3, canvas.height / 2.2);
 
           // LEVELS
           ctx.font = "28px sans-serif";
           ctx.fillStyle = backgroundColors["level"];
-          ctx.fillText(`Level`, canvas.width / 2.5, canvas.height / 2.0);
+          ctx.fillText(`Level`, canvas.width / 2.3, canvas.height / 1.45);
+
+          // XP
+          ctx.font = "28px sans-serif";
+          ctx.fillStyle = backgroundColors["xp"];
+          ctx.fillText(`XP`, canvas.width / 1.35, canvas.height / 1.45);
 
           // PROGRESS BAR (thanks to canvas-extras)
           // https://www.npmjs.com/package/canvas-extras
           ctx.beginPath();
-          ctx.progressBar(50, 100, canvas.width / 2.3, canvas.height / 1.35, 300, 25, backgroundColors["progressBarFill"], backgroundColors["progressBarEmpty"]);
+          ctx.progressBar(50, 100, canvas.width / 2.4, canvas.height / 1.4, 350, 40, backgroundColors["progressBarFill"], backgroundColors["progressBarEmpty"]);
           ctx.closePath();
 
 
