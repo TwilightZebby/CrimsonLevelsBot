@@ -1,6 +1,4 @@
 # Crimson Level Bot
-*(Formally "CrimsonRoulette")*
-
 A *free* Leveling Bot that stays a free Leveling Bot, with no music modules or the like. We also allow Users to turn off @mentions from the Bot!
 
 ---
@@ -60,6 +58,8 @@ Upon inviting the Bot to your Server, you will be asked to grant the Bot some Pe
 * blocklist
 	* View the Server's BlockList
 	* Use `--dump` flag to have the Bot dump the Server's *full* BlockList as a `.json` file
+* background
+    * Use to view a list of all the Backgrounds, and/or to preview them
 
 ---
 This bot is still in active development, so feel free to report any bugs or suggest new things via [our support server!](https://discord.gg/YuxSF39)
