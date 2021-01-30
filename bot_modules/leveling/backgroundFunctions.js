@@ -483,15 +483,15 @@ module.exports = {
     async GenerateCardPreview(message, args) {
 
         // First check for a BG name
-        if ( !args[2] ) {
-            return await Error.LogToUser(message.channel, `I couldn't find any given Background Names! Please try again, making sure you use the format: \`${PREFIX}prefs rank preview backgroundName\``);
+        if ( !args[1] ) {
+            return await Error.LogToUser(message.channel, `I couldn't find any given Background Names! Please try again, making sure you use the format: \`${PREFIX}background preview backgroundName\``);
           }
 
           // Now look for the background
-          let backgroundValue = args[2];
+          let backgroundValue = args[1];
 
           if ( !allBackgrounds.includes(backgroundValue) ) {
-            return await Error.LogToUser(message.channel, `That background doesn't exist! Please try again, making sure you have typed the background's name exactly as it appears in \`${PREFIX}prefs rank list\``);
+            return await Error.LogToUser(message.channel, `That background doesn't exist! Please try again, making sure you have typed the background's name exactly as it appears in \`${PREFIX}background list\``);
           }
 
           // Generate Background preview

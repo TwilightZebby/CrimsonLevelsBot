@@ -81,7 +81,7 @@ module.exports = {
             name: `Preferences Guide`,
             value: `To change a preference, use \`${PREFIX}prefs [option] [value]\`, where \`[option]\` is one of the __underlined__ words above.
             For more information, use \`${PREFIX}prefs guide\`
-            For specific information on Rank Backgrounds, use \`${PREFIX}prefs rank guide\``
+            For specific information on Rank Backgrounds, use \`${PREFIX}background\``
           }
         );
 
@@ -111,7 +111,7 @@ module.exports = {
             },
             {
               name: `Rank Backgrounds`,
-              value: `These are the background images that show up when you use the \`${PREFIX}rank\` command. You can see the full list of [them here](#) or by using \`${PREFIX}prefs rank list\``
+              value: `These are the background images that show up when you use the \`${PREFIX}rank\` command. You can see the full list of them by using \`${PREFIX}background list\``
             },
             {
               name: `Allow Mentions`,
@@ -240,7 +240,7 @@ module.exports = {
 
 
             if ( !rankValues.includes(value) ) {
-              return await Error.LogToUser(message.channel, `That wasn't a valid Background or option! Please use \`${PREFIX}prefs rank guide\` for more information`);
+              return await Error.LogToUser(message.channel, `That wasn't a valid Background or option! Please use \`${PREFIX}background\` for more information`);
             }
             else {
 
@@ -248,31 +248,7 @@ module.exports = {
 
                 // RANK BGs GUIDE
                 case 'guide':
-                  embed.setTitle(`Preferences: Rank Backgrounds Guide`)
-                  .addFields(
-                    {
-                      name: `Setting/Changing your chosen background`,
-                      value: `To set a background for the \`rank\` command - simply use \`${PREFIX}prefs rank backgroundName\`, where \`backgroundName\` is replaced with the name of the background!`
-                    },
-                    {
-                      name: `Disable backgrounds for yourself`,
-                      value: `Don't want a background when you use the \`rank\` command? Simply use \`${PREFIX}prefs rank disable\` to switch to a plain-text output`
-                    },
-                    {
-                      name: `Viewing a list of backgrounds`,
-                      value: `Use \`${PREFIX}prefs rank list\` to get a list of all the available backgrounds!`
-                    },
-                    {
-                      name: `Previewing Backgrounds`,
-                      value: `Want to see what the Background would look like for yourself? Use \`${PREFIX}prefs rank preview backgroundName\`, replacing \`backgroundName\` with the name of the Background`
-                    },
-                    {
-                      name: `Preview all the backgrounds`,
-                      value: `Want to see all the Rank Backgrounds in one place? Either check out \`#rank-backgrounds\` channel in my [Support Server](https://discord.gg/YuxSF39) or view the [Imgur Post](https://imgur.com/a/Z2emsOJ)!`
-                    }
-                  );
-
-                  return await client.throttleCheck(message.channel, embed, message.author.id);
+                  return await client.throttleCheck(message.channel, `Moved to \`${PREFIX}background\` command`, message.author.id);
 
                 
                 
@@ -291,31 +267,7 @@ module.exports = {
 
                 // RANK BGs LIST
                 case 'list':
-                  embed.setTitle(`Preferences: Rank Backgrounds List`)
-                  .addFields(
-                    {
-                      name: `Standard Backgrounds`,
-                      value: standardBackgrounds.join(', ')
-                    },
-                    {
-                      name: `Gradient Backgrounds`,
-                      value: gradientBackgrounds.join(', ')
-                    },
-                    {
-                      name: `Pride Backgrounds`,
-                      value: prideBackgrounds.join(', ')
-                    },
-                    {
-                      name: `Themed Backgrounds`,
-                      value: themedBackgrounds.join(', ')
-                    },
-                    {
-                      name: `\u200B`,
-                      value: `*You can see a preview of all my backgrounds in one place either by checking out the \`#rank-backgrounds\` channel in my [Support Server](https://discord.gg/YuxSF39) or viewing the [Imgur Post](https://imgur.com/a/Z2emsOJ)!*`
-                    }
-                  );
-
-                  return await client.throttleCheck(message.channel, embed, message.author.id);
+                  return await client.throttleCheck(message.channel, `Moved to \`${PREFIX}background list\` command`, message.author.id);
                 
                 
                 
@@ -334,8 +286,7 @@ module.exports = {
 
                 // PREVIEW BGs
                 case 'preview':
-
-                  return await Backgrounds.GenerateCardPreview(message, args);
+                  return await client.throttleCheck(message.channel, `Moved to \`${PREFIX}background preview\` command`, message.author.id);
                                   
                 
                 
