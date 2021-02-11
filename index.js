@@ -13,8 +13,8 @@ const { sequelize } = require('./bot_modules/constants.js');
 const Tables = require('./bot_modules/tables.js');
 
 // top.gg api stuff
-//const DBL = require("dblapi.js");
-//const dbl = new DBL(DBLTOKEN, client);
+//const AutoPoster = require('topgg-autoposter');
+//const ap = AutoPoster(DBLTOKEN, client);
 
 // Maps / Collections
 client.commands = new Discord.Collection(); // Store of all commands within .\commands\
@@ -170,23 +170,6 @@ process.on('unhandledRejection', async (error) => {
   return await Errors.LogCustom(error, `Unhandled Promise Rejection:`)
 
 });
-
-
-// top.gg error handling
-/*dbl.on('error', async (e) => {
-
-  // Log to console
-  console.error(`DiscordBotList Error:\n ${e}`);
-
-  // Log to error log channel
-  let errorChannel = await client.guilds.fetch('681805468749922308');
-  errorChannel = errorChannel.channels.resolve('726336306497454081');
-
-  return await errorChannel.send(`\`\`\`DiscordBotList Error:\n
-  ${e}
-  \`\`\``);
-
-})*/
 
 
 // Discord Error Handling
