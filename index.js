@@ -6,15 +6,11 @@ const Sequelize = require('sequelize');
 // ********** Global Variables
 // Discord
 const { client } = require('./bot_modules/constants.js');
-let { PREFIX, TOKEN, DBLTOKEN } = require('./config.js');
+let { PREFIX, TOKEN } = require('./config.js');
 
 // Database (Sequlize)
 const { sequelize } = require('./bot_modules/constants.js');
 const Tables = require('./bot_modules/tables.js');
-
-// top.gg api stuff
-//const AutoPoster = require('topgg-autoposter');
-//const ap = AutoPoster(DBLTOKEN, client);
 
 // Maps / Collections
 client.commands = new Discord.Collection(); // Store of all commands within .\commands\
